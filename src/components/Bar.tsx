@@ -10,13 +10,17 @@ import Flag, { type FlagName } from "./Flag";
    note is the reason the palette looks the way it does, and the
    ones from a place carry their flag. */
 const FLAVOURS: { id: Flavour; name: string; note: string; flag?: FlagName }[] = [
+  // the schools first, then the places
   { id: "braun",    name: "Braun",    note: "Dieter Rams" },
   { id: "zurich",   name: "Zürich",   note: "Müller-Brockmann" },
-  { id: "holanda",  name: "Holanda",  note: "Oranje", flag: "holanda" },
   { id: "graphite", name: "Graphite", note: "Carvão quente" },
   { id: "brasil",   name: "Brasil",   note: "Niemeyer · Burle Marx", flag: "brasil" },
+  { id: "holanda",  name: "Holanda",  note: "Oranje", flag: "holanda" },
   { id: "alemanha", name: "Alemanha", note: "Bauhaus", flag: "alemanha" },
 ];
+
+/** the first entry that comes from a place rather than a school */
+const FIRST_FLAG = FLAVOURS.findIndex((f) => f.flag);
 
 export default function Bar() {
   const { setWorkspace, setLauncher, setFlavour, toggleGrid } = useOS();
@@ -128,6 +132,7 @@ export default function Bar() {
                 {FLAVOURS.map((f, i) => (
                   <motion.li
                     key={f.id}
+                    className={i === FIRST_FLAG ? "popover__group" : undefined}
                     initial={{ opacity: 0, x: -8 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ ...soft, delay: 0.03 * i }}

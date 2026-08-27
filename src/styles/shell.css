@@ -124,6 +124,8 @@
   transform-origin: top right;
 }
 .popover__head { padding: 8px 9px 7px; }
+/* the flag themes are a different kind of thing, so they get a rule */
+.popover__group { margin-top: 6px; padding-top: 6px; border-top: 1px solid var(--line); }
 
 
 .popover__swatch[data-flavour="braun"]    { background: linear-gradient(135deg, #f6f2e9 50%, #9c6b3e 50%); }

@@ -6,7 +6,7 @@ import Flag, { type FlagName } from "../components/Flag";
 const RAMP = ["--n-0", "--n-5", "--n-10", "--n-15", "--n-20", "--n-30", "--n-40", "--n-60", "--n-80", "--n-95"];
 const ACCENTS = ["--accent-dim", "--accent", "--accent-soft"];
 const TRICOLOUR = ["--accent", "--accent-2", "--accent-3"];
-const FLAVOURS: Flavour[] = ["braun", "zurich", "holanda", "graphite", "brasil", "alemanha"];
+const FLAVOURS: Flavour[] = ["braun", "zurich", "graphite", "brasil", "holanda", "alemanha"];
 const ORIGIN: string[] = ["brasil", "holanda", "alemanha"];
 
 /* The system's own token sheet, live. Changing anything here

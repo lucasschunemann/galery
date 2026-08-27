@@ -53,8 +53,11 @@ foco; a segunda e a terceira são preenchimento apenas.
 | **Zürich** | Josef Müller-Brockmann | vermelho |
 | **Graphite** | carvão quente | azul-violeta |
 | 🇧🇷 **Brasil** | Niemeyer e Burle Marx | verde · amarelo · azul |
-| 🇳🇱 **Holanda** | vermelho, branco e azul, com o laranja de Oranje | azul · vermelho · laranja |
+| 🇳🇱 **Holanda** | Oranje | azul · vermelho · laranja |
 | 🇩🇪 **Alemanha** | Bauhaus | vermelho · ouro · preto |
+
+No seletor os dois grupos ficam separados por um fio: escolas em cima,
+lugares embaixo.
 
 Nos temas de escola os três tokens de acento guardam o mesmo valor, então
 tudo que rotaciona entre eles continua monocromático. Nos de bandeira, as
