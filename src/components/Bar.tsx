@@ -5,15 +5,12 @@ import { useSfx } from "../os/useSfx";
 import { panelVariants, snappy, soft } from "../os/motion";
 
 const FLAVOURS: { id: Flavour; name: string; note: string }[] = [
-  { id: "matcha", name: "Matcha", note: "verde, calmo" },
-  { id: "sakura", name: "Sakura", note: "rosa, macio" },
-  { id: "yozora", name: "Yozora", note: "noite, lilás" },
-  { id: "sumi", name: "Sumi", note: "carvão, âmbar" },
-  { id: "washi", name: "Washi", note: "papel, claro" },
+  { id: "graphite", name: "Graphite", note: "escuro neutro" },
+  { id: "slate", name: "Slate", note: "escuro frio" },
+  { id: "ochre", name: "Ochre", note: "escuro quente" },
+  { id: "paper", name: "Paper", note: "claro quente" },
+  { id: "delft", name: "Delft", note: "claro frio" },
 ];
-
-const GREET = (h: number) =>
-  h < 5 ? "boa madrugada" : h < 12 ? "bom dia" : h < 18 ? "boa tarde" : "boa noite";
 
 export default function Bar() {
   const { setWorkspace, setLauncher, setFlavour, lock } = useOS();
@@ -51,7 +48,7 @@ export default function Bar() {
           title="Buscar — ⌘K"
         >
           <span className="bar__mark" aria-hidden />
-          <span className="bar__name">komorebi</span>
+          <span className="bar__name">raam</span>
         </button>
 
         <nav className="ws" aria-label="Áreas">
@@ -82,9 +79,9 @@ export default function Bar() {
             key={active?.id ?? "idle"}
             className="bar__win"
             data-idle={!active}
-            initial={{ opacity: 0, y: 8, filter: "blur(6px)" }}
-            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-            exit={{ opacity: 0, y: -8, filter: "blur(6px)", transition: { duration: 0.16 } }}
+            initial={{ opacity: 0, y: 5 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -5, transition: { duration: 0.11 } }}
             transition={soft}
           >
             {active ? (
@@ -93,7 +90,7 @@ export default function Bar() {
                 {active.title}
               </>
             ) : (
-              <>{GREET(now.getHours())}, lucas</>
+              <>área {workspace}</>
             )}
           </motion.span>
         </AnimatePresence>
@@ -106,7 +103,7 @@ export default function Bar() {
             className="bar__btn"
             onPointerDown={(e) => { e.stopPropagation(); setOpen((v) => !v); sfx("click"); }}
             data-on={open}
-            title="Ambiente"
+            title="Tema"
           >
             <span className="bar__swatch" aria-hidden />
             {current?.name}
@@ -120,7 +117,7 @@ export default function Bar() {
                 initial="enter" animate="live" exit="leave"
                 onPointerDown={(e) => e.stopPropagation()}
               >
-                <li className="popover__head t-label">Ambiente</li>
+                <li className="popover__head t-label">Tema</li>
                 {FLAVOURS.map((f, i) => (
                   <motion.li
                     key={f.id}
@@ -148,10 +145,11 @@ export default function Bar() {
         <button
           className="bar__btn bar__btn--icon"
           onClick={() => { sfx("close"); lock(); }}
-          title="Descansar — ⌘L"
+          title="Bloquear — ⌘L"
         >
-          <svg viewBox="0 0 20 20" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-            <path d="M15.6 12.4A6.4 6.4 0 017.6 4.4a6.4 6.4 0 108 8z" />
+          <svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <rect x="4" y="9" width="12" height="8" rx="1.5" />
+            <path d="M7 9V6.5a3 3 0 016 0V9" />
           </svg>
         </button>
 

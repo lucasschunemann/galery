@@ -4,7 +4,7 @@ import { useSfx } from "../os/useSfx";
 
 const RAMP = ["--n-0", "--n-5", "--n-10", "--n-15", "--n-20", "--n-30", "--n-40", "--n-60", "--n-80", "--n-95"];
 const ACCENTS = ["--accent-dim", "--accent", "--accent-soft"];
-const FLAVOURS: Flavour[] = ["matcha", "sakura", "yozora", "sumi", "washi"];
+const FLAVOURS: Flavour[] = ["graphite", "slate", "ochre", "paper", "delft"];
 
 /* The system's own token sheet, live. Changing anything here
    changes the OS you are looking at — including this window. */
@@ -24,16 +24,16 @@ export default function Tokens() {
   return (
     <div className="pane tokens">
       <header className="pane__head">
-        <p className="t-label">Sistema · tokens</p>
-        <h1 className="t-h">Paleta tonal</h1>
+        <p className="t-label">Sistema</p>
+        <h1 className="t-h">Tokens</h1>
         <p className="t-body">
-          Elevação é expressa por tom, nunca por sombra. Um acento por paleta,
-          e o resto é uma rampa neutra de dez passos.
+          Uma rampa neutra de dez passos e um único acento. Superfícies são
+          separadas por uma linha de 1px, não por sombra.
         </p>
       </header>
 
       <section className="tok__block">
-        <p className="t-label">Paleta ativa</p>
+        <p className="t-label">Tema</p>
         <div className="tok__flavours">
           {FLAVOURS.map((f) => (
             <button

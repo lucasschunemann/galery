@@ -6,14 +6,14 @@ import { useSfx } from "../os/useSfx";
 type Line = { kind: "in" | "out" | "err"; text: string };
 
 const BANNER = [
-  "komorebi — um shell tranquilo",
+  "raam — shell",
   'Digite "help" para ver os comandos disponíveis.',
 ];
 
 const NEOFETCH = String.raw`
-     ┌───────┐       lucas em casa
+     ┌───────┐       lucas@raam
      │  ▘ ▘  │       ───────────────
-     │   ─   │       OS      KOMOREBI
+     │   ─   │       OS      RAAM
      │  ───  │       WM      dwindle
      └───────┘       BAR     helvetia-bar
                      PALETTE {theme}
@@ -54,7 +54,7 @@ export default function Terminal() {
         out("comandos disponíveis:");
         out("  ls                lista os projetos");
         out("  open <alvo>       abre um app ou projeto");
-        out("  ambiente <nome>   matcha | sakura | yozora | sumi | washi");
+        out("  tema <nome>       graphite | slate | ochre | paper | delft");
         out("  whoami            quem escreveu isto");
         out("  neofetch          informações do sistema");
         out("  date              data e hora");
@@ -81,12 +81,12 @@ export default function Terminal() {
       }
 
       case "theme":
-      case "ambiente":
+      case "tema":
       case "flavour": {
         const t = arg.toLowerCase() as Flavour;
-        if (["matcha", "sakura", "yozora", "sumi", "washi"].includes(t)) {
+        if (["graphite", "slate", "ochre", "paper", "delft"].includes(t)) {
           setFlavour(t); sfx("chime"); out(`paleta alterada para ${t}`);
-        } else push({ kind: "err", text: "ambiente: matcha, sakura, yozora, sumi ou washi" });
+        } else push({ kind: "err", text: "tema: graphite, slate, ochre, paper ou delft" });
         break;
       }
 

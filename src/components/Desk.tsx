@@ -40,29 +40,29 @@ export default function Desk() {
             <div className="home__rule" />
 
             <div className="home__row">
-              <p className="home__index t-label">área {workspace}</p>
+              <p className="home__index t-label">Área {workspace}</p>
               <h1 className="home__title t-display">
                 Lucas
                 <br />
                 Schünemann
               </h1>
               <p className="home__sub">
-                ux/ui designer &amp; web developer
-                <em>interfaces, sistemas e movimento</em>
+                UX/UI Designer &amp; Web Developer
+                <em>Interfaces, sistemas e movimento</em>
               </p>
             </div>
 
             <div className="home__rule" />
 
             <dl className="home__data">
-              <div><dt className="t-label">ambiente</dt><dd>{flavour}</dd></div>
-              <div><dt className="t-label">áreas</dt><dd>{WORKSPACES.length}</dd></div>
-              <div><dt className="t-label">janelas abertas</dt><dd>{windows.length}</dd></div>
+              <div><dt className="t-label">Tema</dt><dd>{flavour}</dd></div>
+              <div><dt className="t-label">Áreas</dt><dd>{WORKSPACES.length}</dd></div>
+              <div><dt className="t-label">Janelas</dt><dd>{windows.length}</dd></div>
             </dl>
 
             <button className="home__cta" onClick={() => setLauncher(true)}>
               <kbd>⌘</kbd><kbd>K</kbd>
-              <span>procurar alguma coisa</span>
+              <span>Buscar</span>
             </button>
           </motion.div>
         )}

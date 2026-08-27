@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import { panelVariants } from "../os/motion";
 import { useOS, APPS, WORKSPACES, type Flavour } from "../os/store";
 import { useSfx } from "../os/useSfx";
 import { PROJECTS } from "../data/projects";
@@ -54,15 +55,15 @@ export default function Launcher() {
         kind: "cmd" as const,
         run: () => store.setWorkspace(n),
       })),
-      ...(["matcha", "sakura", "yozora", "sumi", "washi"] as Flavour[]).map((f) => ({
+      ...(["graphite", "slate", "ochre", "paper", "delft"] as Flavour[]).map((f) => ({
         key: `fl:${f}`,
         glyph: "◍",
-        label: `Ambiente: ${f}`,
-        hint: "tema cor paleta",
+        label: `Tema: ${f}`,
+        hint: "cor aparência",
         kind: "cmd" as const,
         run: () => store.setFlavour(f),
       })),
-      { key: "lock", glyph: "◐", label: "Descansar a tela", hint: "bloquear sessão", kind: "cmd", run: () => store.lock() },
+      { key: "lock", glyph: "◐", label: "Bloquear a tela", hint: "sessão", kind: "cmd", run: () => store.lock() },
     ];
 
     return [...apps, ...projects, ...cmds];
@@ -117,10 +118,8 @@ export default function Launcher() {
         >
           <motion.div
             className="launcher__panel glass--high"
-            initial={{ opacity: 0, y: -14, scale: 0.985 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -8, scale: 0.99, transition: { duration: 0.12 } }}
-            transition={{ type: "spring", stiffness: 420, damping: 32 }}
+            variants={panelVariants}
+            initial="enter" animate="live" exit="leave"
           >
             <div className="launcher__field">
               <span className="launcher__prompt" aria-hidden>›</span>
@@ -128,7 +127,7 @@ export default function Launcher() {
                 ref={inputRef}
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
-                placeholder="abrir, buscar, comandar"
+                placeholder="Buscar ou executar um comando"
                 aria-label="Buscar"
                 spellCheck={false}
                 onKeyDown={(e) => {

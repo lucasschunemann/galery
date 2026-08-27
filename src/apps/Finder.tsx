@@ -120,16 +120,16 @@ export default function Finder() {
               <motion.div
                 key="grid" className="grid"
                 initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                exit={{ opacity: 0, y: -12, filter: "blur(6px)", transition: { duration: 0.16 } }}
+                exit={{ opacity: 0, y: -6, transition: { duration: 0.11 } }}
               >
                 {items.map((p, i) => (
                   <motion.button
                     key={p.id}
                     className="card"
-                    initial={{ opacity: 0, y: 34, scale: 0.94, filter: "blur(8px)" }}
-                    animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
-                    transition={{ ...stagger(i, 0.055), filter: { duration: 0.4, delay: i * 0.055 } }}
-                    whileTap={{ scale: 0.985 }}
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={stagger(i, 0.028)}
+                    whileTap={{ scale: 0.99 }}
                     onPointerEnter={() => sfx("hover")}
                     onClick={() => openProject(p.id, p.title)}
                   >
@@ -156,9 +156,9 @@ export default function Finder() {
             {view === "flow" && (
               <motion.div
                 key="flow" className="flow"
-                initial={{ opacity: 0, scale: 0.97, filter: "blur(8px)" }}
-                animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-                exit={{ opacity: 0, scale: 0.98, filter: "blur(6px)", transition: { duration: 0.16 } }}
+                initial={{ opacity: 0, scale: 0.99 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.995, transition: { duration: 0.11 } }}
                 transition={soft}
               >
                 <div className="flow__stage">
@@ -209,8 +209,8 @@ export default function Finder() {
             {view === "list" && (
               <motion.table
                 key="list" className="list"
-                initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10, transition: { duration: 0.16 } }}
+                initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6, transition: { duration: 0.11 } }}
                 transition={soft}
               >
                 <thead>
@@ -226,7 +226,7 @@ export default function Finder() {
                   {items.map((p, i) => (
                     <motion.tr
                       key={p.id}
-                      initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }}
+                      initial={{ opacity: 0, x: -6 }} animate={{ opacity: 1, x: 0 }}
                       transition={stagger(i, 0.03)}
                       onClick={() => openProject(p.id, p.title)}
                     >

@@ -26,7 +26,7 @@ export default function About() {
         />
         <div>
           <h1 className="about__name">Lucas Schünemann</h1>
-          <p className="about__ver">komorebi · 木漏れ日 · 2026</p>
+          <p className="about__ver">raam · 2026</p>
         </div>
       </div>
 

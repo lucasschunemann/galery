@@ -93,14 +93,14 @@ export default function Window({
         zIndex: floating ? win.z : 100 + index,
         pointerEvents: hidden ? "none" : "auto",
       }}
-      initial={{ ...geo, opacity: 0, scale: 0.9, filter: "blur(8px)" }}
+      initial={{ ...geo, opacity: 0, scale: 0.985 }}
       animate={
         hidden
-          ? { ...geo, opacity: 0, scale: 0.95, x: (geo.x as number) + dir * -54, filter: "blur(12px)" }
-          : { ...geo, opacity: 1, scale: 1, filter: "blur(0px)" }
+          ? { ...geo, opacity: 0, scale: 0.99, x: (geo.x as number) + dir * -28 }
+          : { ...geo, opacity: 1, scale: 1 }
       }
-      exit={{ opacity: 0, scale: 0.93, filter: "blur(10px)", transition: { duration: 0.24 } }}
-      transition={{ ...tile, filter: { duration: 0.34 }, opacity: { duration: 0.28 } }}
+      exit={{ opacity: 0, scale: 0.985, transition: { duration: 0.13 } }}
+      transition={{ ...tile, opacity: { duration: 0.16 } }}
       onPointerDown={() => focus(win.id)}
       aria-label={win.title}
       aria-hidden={hidden}

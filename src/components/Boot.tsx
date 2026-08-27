@@ -4,15 +4,13 @@ import { useOS } from "../os/store";
 import { SFX, unlockAudio } from "../os/sound";
 import { gentle, soft } from "../os/motion";
 
-/* Booting is not a status report. It is the few seconds before
-   someone opens the door — so it counts in sentences, not in
-   kernel timestamps. */
+/* Short, factual, and over quickly — the loading screen is not
+   where the personality goes. */
 const STEPS = [
-  "arrumando a mesa",
-  "acendendo a luz",
-  "aquecendo a água",
-  "abrindo as janelas",
-  "quase pronto",
+  "Carregando o sistema",
+  "Preparando o espaço de trabalho",
+  "Restaurando a sessão",
+  "Pronto",
 ];
 
 export default function Boot() {
@@ -29,7 +27,7 @@ export default function Boot() {
   useEffect(() => {
     if (!started) return;
     const t0 = performance.now();
-    const DUR = 3400;
+    const DUR = 2200;
     let raf = 0;
     const tick = (now: number) => {
       const p = Math.min(1, (now - t0) / DUR);
@@ -96,7 +94,7 @@ export default function Boot() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ ...gentle(0.9), delay: 0.16 }}
             >
-              komorebi
+              raam
             </motion.h1>
 
             <motion.p
@@ -105,7 +103,7 @@ export default function Boot() {
               animate={{ opacity: 1 }}
               transition={{ ...gentle(0.7), delay: 0.4 }}
             >
-              木漏れ日 — a luz que passa entre as folhas
+Um sistema operacional como portfólio
             </motion.p>
 
             <div className="boot__slot">
@@ -122,7 +120,7 @@ export default function Boot() {
                     whileHover={{ scale: 1.035 }}
                     whileTap={{ scale: 0.97 }}
                   >
-                    entrar
+                    Entrar
                   </motion.button>
                 ) : (
                   <motion.p

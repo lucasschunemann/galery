@@ -70,7 +70,7 @@ export default function Lock() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1, duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
           >
-            <p className="lock__label t-label">descansando</p>
+            <p className="lock__label t-label">Bloqueado</p>
             <p className="lock__time t-num">{time}</p>
             <p className="lock__date">{date}</p>
           </motion.div>
@@ -85,7 +85,7 @@ export default function Lock() {
             <div className="lock__avatar" aria-hidden>LS</div>
             <div className="lock__user">
               <span className="lock__name">lucas</span>
-              <span className="lock__host">em casa</span>
+              <span className="lock__host">lucas@raam</span>
             </div>
 
             <div className="lock__field glass">
@@ -94,18 +94,18 @@ export default function Lock() {
                 type="password"
                 value={pw}
                 onChange={(e) => setPw(e.target.value)}
-                placeholder="qualquer coisa"
+                placeholder="Senha"
                 aria-label="Senha"
               />
               <button type="submit" className="lock__go" title="Entrar">→</button>
             </div>
             <p className="lock__hint">
-              qualquer senha entra — não há nada aqui para trancar
+Qualquer senha entra — não há nada aqui para trancar
             </p>
           </motion.form>
 
           <div className="lock__foot">
-            <span>komorebi</span>
+            <span>raam</span>
             <span>lucas schünemann — ux/ui &amp; web</span>
           </div>
         </motion.div>

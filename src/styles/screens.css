@@ -16,14 +16,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background:
-    radial-gradient(52% 42% at 50% 42%, var(--accent-a10), transparent 72%),
-    radial-gradient(70% 60% at 78% 88%, var(--wall-c), transparent 74%);
-  animation: bootBreathe 9s var(--ease-in-out) infinite;
-}
-@keyframes bootBreathe {
-  0%, 100% { opacity: 0.75; transform: scale(1); }
-  50%      { opacity: 1;    transform: scale(1.05); }
+  background: radial-gradient(56% 46% at 50% 44%, var(--wall-c), transparent 70%);
 }
 
 .boot__stage {
@@ -32,68 +25,62 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 22px;
+  gap: 18px;
   padding: 0 24px;
   text-align: center;
 }
 
 /* the ring that fills as the room gets ready */
-.boot__ring { position: relative; width: 110px; height: 110px; }
+.boot__ring { position: relative; width: 64px; height: 64px; }
 .boot__ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
-.boot__ring-track { fill: none; stroke: var(--line-strong); stroke-width: 1.5; }
+.boot__ring-track { fill: none; stroke: var(--line-strong); stroke-width: 2.5; }
 .boot__ring-fill {
   fill: none;
   stroke: var(--accent);
   stroke-width: 2.5;
   stroke-linecap: round;
-  transition: stroke-dashoffset 0.3s linear;
-  filter: drop-shadow(0 0 10px var(--accent-a20));
+  transition: stroke-dashoffset 0.2s linear;
 }
 .boot__seed {
   position: absolute;
   top: 50%; left: 50%;
   translate: -50% -50%;
-  width: 26px; height: 26px;
-  border-radius: 50%;
+  width: 12px; height: 12px;
+  border-radius: var(--r-xs);
   background: var(--accent);
-  box-shadow: 0 0 40px var(--accent-a20);
 }
 
 .boot__word {
-  font-family: var(--font-round);
-  font-weight: 800;
-  font-size: clamp(var(--fs-42), 8vw, var(--fs-70));
-  letter-spacing: -0.045em;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: clamp(var(--fs-30), 5vw, var(--fs-48));
+  letter-spacing: -0.032em;
   line-height: 1;
 }
 .boot__sub {
   font-family: var(--font-sans);
-  font-size: var(--fs-13);
-  font-weight: 400;
+  font-size: var(--fs-14);
   color: var(--text-mute);
-  letter-spacing: 0.01em;
 }
 
-.boot__slot { min-height: 58px; display: grid; place-items: center; margin-top: 6px; }
+.boot__slot { min-height: 44px; display: grid; place-items: center; margin-top: 4px; }
 
 .boot__power {
-  padding: 15px 40px;
-  border-radius: var(--r-full);
+  padding: 9px 22px;
+  border-radius: var(--r-sm);
   background: var(--accent);
-  color: var(--n-0);
+  color: #fff;
   font-family: var(--font-sans);
-  font-size: var(--fs-15);
-  font-weight: 700;
-  letter-spacing: -0.005em;
-  box-shadow: 0 10px 30px -10px var(--accent-a20);
+  font-size: var(--fs-14);
+  font-weight: 500;
+  transition: background var(--d-1) var(--ease);
 }
-[data-flavour="washi"] .boot__power { color: #fff; }
+.boot__power:hover { background: var(--accent-dim); }
 
 .boot__step {
   font-family: var(--font-sans);
-  font-size: var(--fs-15);
-  font-weight: 500;
-  color: var(--text-dim);
+  font-size: var(--fs-14);
+  color: var(--text-mute);
 }
 
 .boot__foot {
@@ -124,9 +111,9 @@
 .lock__scrim {
   position: absolute;
   inset: 0;
-  backdrop-filter: blur(64px) saturate(130%) brightness(0.86);
-  -webkit-backdrop-filter: blur(64px) saturate(130%) brightness(0.86);
-  background: var(--accent-a10);
+  backdrop-filter: blur(28px) saturate(120%) brightness(0.9);
+  -webkit-backdrop-filter: blur(28px) saturate(120%) brightness(0.9);
+  background: var(--shade);
 }
 
 .lock__grid { display: none; }
@@ -141,22 +128,21 @@
   position: relative;
   align-self: end;
   text-align: center;
-  padding-bottom: 46px;
+  padding-bottom: 40px;
 }
-.lock__label { color: var(--text-mute); margin-bottom: 18px; }
+.lock__label { color: var(--text-mute); margin-bottom: 14px; }
 .lock__time {
-  font-family: var(--font-round);
-  font-weight: 800;
-  font-size: clamp(76px, 16vw, 180px);
-  letter-spacing: -0.05em;
-  line-height: 0.9;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: clamp(64px, 12vw, 132px);
+  letter-spacing: -0.045em;
+  line-height: 1;
   color: var(--text);
 }
 .lock__date {
-  margin-top: 16px;
+  margin-top: 12px;
   font-family: var(--font-sans);
-  font-size: var(--fs-15);
-  font-weight: 500;
+  font-size: var(--fs-14);
   color: var(--text-dim);
 }
 
@@ -179,28 +165,28 @@
 }
 
 .lock__avatar {
-  width: 46px; height: 46px;
+  width: 34px; height: 34px;
   display: grid;
   place-items: center;
-  border-radius: 50%;
-  background: var(--accent-a20);
-  color: var(--accent);
+  border-radius: var(--r-sm);
+  background: var(--accent);
+  color: #fff;
   font-family: var(--font-sans);
-  font-size: var(--fs-13);
-  font-weight: 700;
+  font-size: var(--fs-12);
+  font-weight: 500;
 }
 .lock__user { display: flex; flex-direction: column; gap: 1px; }
-.lock__name { font-family: var(--font-sans); font-size: var(--fs-15); font-weight: 600; color: var(--text); }
-.lock__host { font-family: var(--font-sans); font-size: var(--fs-11); color: var(--text-mute); }
+.lock__name { font-family: var(--font-sans); font-size: var(--fs-14); font-weight: 500; color: var(--text); }
+.lock__host { font-family: var(--font-mono); font-size: var(--fs-12); color: var(--text-mute); }
 
 .lock__field {
   grid-column: 1 / -1;
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 7px 7px 7px 20px;
-  border-radius: var(--r-full);
-  margin-top: 14px;
+  padding: 5px 5px 5px 14px;
+  border-radius: var(--r-sm);
+  margin-top: 12px;
 }
 .lock__field input {
   flex: 1;
@@ -209,13 +195,13 @@
   outline: 0;
   background: none;
   font-family: var(--font-sans);
-  font-size: var(--fs-15);
-  letter-spacing: 0.2em;
+  font-size: var(--fs-14);
+  letter-spacing: 0.16em;
   color: var(--text);
 }
 .lock__field input::placeholder { letter-spacing: 0.06em; color: var(--text-mute); }
 .lock__go {
-  width: 38px; height: 38px;
+  width: 28px; height: 28px;
   flex: none;
   display: grid;
   place-items: center;
@@ -232,9 +218,9 @@
   grid-column: 1 / -1;
   text-align: center;
   font-family: var(--font-sans);
-  font-size: var(--fs-11);
+  font-size: var(--fs-12);
   color: var(--text-mute);
-  margin-top: 12px;
+  margin-top: 14px;
 }
 
 .lock__foot {

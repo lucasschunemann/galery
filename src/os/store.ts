@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-export type Flavour = "matcha" | "sakura" | "yozora" | "sumi" | "washi";
+export type Flavour = "graphite" | "paper" | "slate" | "ochre" | "delft";
 export type Rect = { x: number; y: number; w: number; h: number };
 
 export interface WindowState {
@@ -78,7 +78,7 @@ export const useOS = create<OSState>((set, get) => ({
   focusId: null,
   workspace: 1,
   zTop: 100,
-  flavour: "matcha",
+  flavour: "graphite",
   sound: true,
   grain: true,
   launcher: false,

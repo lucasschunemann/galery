@@ -22,9 +22,6 @@ export default function ProjectView({ id }: { id?: string }) {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5, ease: EASE }}
       >
-        <Cover variant={p.art} index={idx} accent={p.accent} title={p.title} className="proj__herobed" />
-        <div className="proj__heroveil" />
-
         <motion.div
           className="proj__herocard"
           initial={{ opacity: 0, y: 18 }}
