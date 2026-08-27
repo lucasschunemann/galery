@@ -350,7 +350,7 @@
 .proj__cols { display: grid; grid-template-columns: 1fr 240px; gap: calc(var(--col-gap) * 2); padding: var(--row-gap) 0; }
 .proj__prose { display: flex; flex-direction: column; gap: 14px; }
 .proj__prose p { font-family: var(--font-sans); font-size: var(--fs-13); line-height: 1.62; color: var(--text-dim); max-width: 58ch; }
-.proj__prose p:first-child { font-size: var(--fs-19); line-height: 1.4; color: var(--text); letter-spacing: -0.018em; }
+.proj__prose p:first-child { font-size: var(--fs-20); line-height: 1.4; color: var(--text); letter-spacing: -0.018em; }
 
 .data { display: grid; grid-template-columns: 1fr; }
 .data dt { padding: 16px 0 8px; border-top: 1px solid var(--line); }
@@ -389,7 +389,7 @@
 .about__name { font-family: var(--font-sans); font-weight: 600; font-size: var(--fs-24); letter-spacing: -0.024em; line-height: 1.1; color: var(--text); }
 .about__ver { margin-top: 5px; font-family: var(--font-mono); font-size: var(--fs-12); color: var(--text-mute); }
 .about__bio { font-family: var(--font-sans); font-size: var(--fs-13); line-height: 1.62; color: var(--text-dim); max-width: 58ch; }
-.about__bio:first-of-type { font-size: var(--fs-19); line-height: 1.42; color: var(--text); letter-spacing: -0.018em; }
+.about__bio:first-of-type { font-size: var(--fs-20); line-height: 1.42; color: var(--text); letter-spacing: -0.018em; }
 
 .specs { width: 100%; border-collapse: collapse; }
 .specs th {
@@ -397,7 +397,7 @@
   padding: 16px var(--col-gap) 16px 0;
   vertical-align: baseline;
   font-family: var(--font-sans);
-  font-size: var(--fs-10);
+  font-size: var(--fs-11);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.09em;
@@ -489,7 +489,7 @@
 .tok__ramp--accent { grid-template-columns: repeat(3, 1fr); max-width: 260px; }
 .tok__step { display: flex; flex-direction: column; gap: 6px; }
 .tok__chip { display: block; height: 40px; border-radius: var(--r-xs); border: 1px solid var(--line); }
-.tok__step .t-mono { font-size: var(--fs-9); text-align: center; }
+.tok__step .t-mono { font-size: var(--fs-11); text-align: center; }
 
 .tok__toggles { display: flex; flex-wrap: wrap; gap: 8px; }
 .tok__toggle {
@@ -513,7 +513,7 @@
   border: 1px solid var(--line);
   background: var(--n-5);
   font-family: var(--font-mono);
-  font-size: var(--fs-10);
+  font-size: var(--fs-11);
   line-height: 1.8;
   color: var(--text-dim);
   overflow-x: auto;

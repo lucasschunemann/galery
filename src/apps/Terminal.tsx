@@ -6,14 +6,14 @@ import { useSfx } from "../os/useSfx";
 type Line = { kind: "in" | "out" | "err"; text: string };
 
 const BANNER = [
-  "raam",
+  "von",
   'Digite "help" para ver os comandos disponíveis.',
 ];
 
 const NEOFETCH = String.raw`
-     ┌───────┐       lucas@raam
+     ┌───────┐       lucas@von
      │  ▘ ▘  │       ───────────────
-     │   ─   │       OS      RAAM
+     │   ─   │       OS      VON
      │  ───  │       WM      dwindle
      └───────┘       BAR     helvetia-bar
                      PALETTE {theme}

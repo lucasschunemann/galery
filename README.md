@@ -1,10 +1,10 @@
-# RAAM
-
-*Raam* é "janela" em holandês.
+# VON
 
 Um portfólio construído como um sistema operacional: janelas em mosaico,
 uma rampa neutra e um acento por tema, tudo desenhado em código. Não há
 nenhum arquivo de imagem no projeto.
+
+*Von* é a partícula que liga um nome a um lugar, no alemão e no holandês.
 
 ## O princípio
 

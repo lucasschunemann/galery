@@ -59,7 +59,7 @@ export default function Bar() {
           title="Buscar — ⌘K"
         >
           <span className="bar__mark" aria-hidden />
-          <span className="bar__name">raam</span>
+          <span className="bar__name">von</span>
         </button>
 
         <nav className="ws" aria-label="Áreas">

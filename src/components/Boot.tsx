@@ -94,7 +94,7 @@ export default function Boot() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ ...gentle(0.9), delay: 0.16 }}
             >
-              raam
+              von
             </motion.h1>
 
             <motion.p
