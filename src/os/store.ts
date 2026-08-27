@@ -42,7 +42,7 @@ export const APPS: Record<string, AppMeta> = {
 };
 
 interface OSState {
-  phase: "boot" | "lock" | "live";
+  phase: "boot" | "live";
   windows: WindowState[];
   focusId: string | null;
   workspace: number;
@@ -56,8 +56,6 @@ interface OSState {
   drag: { guides: Guide[]; preview: Rect | null; overId: string | null } | null;
 
   setPhase: (p: OSState["phase"]) => void;
-  lock: () => void;
-  unlock: () => void;
 
   open: (appId: string, props?: Record<string, unknown>) => void;
   close: (id: string) => void;
@@ -95,8 +93,6 @@ export const useOS = create<OSState>((set, get) => ({
   drag: null,
 
   setPhase: (phase) => set({ phase }),
-  lock: () => set({ phase: "lock", launcher: false }),
-  unlock: () => set({ phase: "live" }),
 
   open: (appId, props) => {
     const meta = APPS[appId];

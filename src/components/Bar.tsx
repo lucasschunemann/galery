@@ -19,7 +19,7 @@ const FLAVOURS: { id: Flavour; name: string; note: string; flag?: FlagName }[] =
 ];
 
 export default function Bar() {
-  const { setWorkspace, setLauncher, setFlavour, lock, toggleGrid } = useOS();
+  const { setWorkspace, setLauncher, setFlavour, toggleGrid } = useOS();
   const workspace = useOS((s) => s.workspace);
   const windows = useOS((s) => s.windows);
   const focusId = useOS((s) => s.focusId);
@@ -160,14 +160,6 @@ export default function Bar() {
           title="Mostrar a grade — ⌘G"
         >
           <Pict name="grid" size={15} />
-        </button>
-
-        <button
-          className="bar__btn bar__btn--icon"
-          onClick={() => { sfx("close"); lock(); }}
-          title="Bloquear — ⌘L"
-        >
-          <Pict name="lock" size={15} />
         </button>
 
         <div className="bar__time">

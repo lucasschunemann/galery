@@ -37,7 +37,7 @@ export default function Boot() {
       if (p < 1) raf = requestAnimationFrame(tick);
       else if (!done.current) {
         done.current = true;
-        setTimeout(() => setPhase("lock"), 620);
+        setTimeout(() => setPhase("live"), 520);
       }
     };
     raf = requestAnimationFrame(tick);

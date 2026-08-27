@@ -64,7 +64,6 @@ export default function Launcher() {
         kind: "cmd" as const,
         run: () => store.setFlavour(f),
       })),
-      { key: "lock", glyph: "lock", label: "Bloquear a tela", hint: "sessão", kind: "cmd", run: () => store.lock() },
       { key: "grid", glyph: "grid", label: "Mostrar a grade", hint: "overlay layout", kind: "cmd", run: () => store.toggleGrid() },
     ];
 

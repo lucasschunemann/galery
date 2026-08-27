@@ -37,33 +37,39 @@ Uma área de trabalho vazia não é um estado de erro. É a tela inicial.
 
 ## Programa de cores
 
-Seis temas. Três vêm de uma escola de design, três vêm de um lugar. Todos
-têm uma rampa neutra de dez passos e exatamente um acento, e não há duas
-famílias de acento repetidas: o conjunto só vale se cada tema for uma
-decisão diferente, não um humor diferente.
+Seis temas, e os dois tipos obedecem a regras diferentes.
 
-Nenhum neutro aqui é cinza puro. Mesmo os temas escuros carregam alguma
-temperatura, porque um cinza perfeitamente neutro é uma cor que não existe
-em lugar nenhum e lê como equipamento.
+**Três vêm de uma escola de design.** Recebem um acento e mais nada: a
+disciplina é a ideia inteira, e nenhum deles repete família de acento.
 
-| Tema | Origem | Acento |
+**Três vêm de um lugar.** Saem de bandeiras tricolores, então são os únicos
+com direito a três cores, e são todos claros, porque bandeira lê no branco.
+A cor primária é sempre a que tem contraste para carregar texto e anel de
+foco; a segunda e a terceira são preenchimento apenas.
+
+| Tema | Origem | Cores |
 |---|---|---|
-| **Braun** | Dieter Rams. O padrão | tan terroso |
+| **Braun** | Dieter Rams | tan terroso |
 | **Zürich** | Josef Müller-Brockmann | vermelho |
-| **Holanda** | Oranje | laranja |
 | **Graphite** | carvão quente | azul-violeta |
-| **Brasil** | Niemeyer e Burle Marx | verde |
-| **Alemanha** | Bauhaus | ouro |
+| 🇧🇷 **Brasil** | Niemeyer e Burle Marx | verde · amarelo · azul |
+| 🇳🇱 **Holanda** | vermelho, branco e azul, com o laranja de Oranje | azul · vermelho · laranja |
+| 🇩🇪 **Alemanha** | Bauhaus | vermelho · ouro · preto |
 
-Os três temas de lugar carregam a bandeira no seletor; os três de escola
-carregam um chip de duas cores. A distinção é proposital.
+Nos temas de escola os três tokens de acento guardam o mesmo valor, então
+tudo que rotaciona entre eles continua monocromático. Nos de bandeira, as
+capas de projeto pegam uma das três cores por posição na grade, o que dá
+ritmo sem precisar de nenhuma regra nova.
+
+Nenhum neutro aqui é cinza puro. Mesmo o tema escuro carrega temperatura,
+porque um cinza perfeitamente neutro é uma cor que não existe em lugar
+nenhum e lê como equipamento.
 
 Sobre as escolhas: o **Brasil** não é a bandeira pregada na parede, é o
-escuro de uma prancha do Burle Marx à noite, com o verde da bandeira como
-único sinal. A **Holanda** usa o laranja de Orange-Nassau, que sinaliza o
-país melhor que a própria bandeira, sobre neutros frios para que o acento
-seja a única coisa quente na sala. A **Alemanha** fica com o preto e o ouro
-porque o vermelho já é de Zürich.
+branco de concreto de Brasília com o verde carregando o texto. A **Holanda**
+usa o azul da bandeira como primária e guarda o laranja de Orange-Nassau
+como terceira. A **Alemanha** usa um vermelho mais fundo que o de Zürich,
+para que os dois não se confundam.
 
 ## Rodando
 
@@ -87,7 +93,6 @@ tela inicial.
 | `⌘W` | fechar janela |
 | `⌘F` | soltar / encaixar a janela |
 | `⌘J` | alternar o foco |
-| `⌘L` | bloquear |
 | `⌘G` | mostrar a grade: 12 colunas e linha de base de 8px sobre tudo |
 | `alt` (arrastando) | desliga o snap e posiciona livremente |
 

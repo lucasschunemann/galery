@@ -32,10 +32,15 @@ export default function Cover({ variant, index, accent = 1, className }: Props) 
   const raw = useId().replace(/:/g, "");
   const id = (n: string) => `${n}-${raw}`;
 
+  /* Each cover takes one of the three accent slots by position.
+     The school themes hold the same colour in all three, so they
+     stay monochrome; the flag themes get a rhythm across the grid. */
+  const tone = `var(--accent${index % 3 === 0 ? "" : `-${(index % 3) + 1}`})`;
+
   const loud = accent === 2;
-  const bg = loud ? "var(--accent)" : "var(--n-15)";
+  const bg = loud ? tone : "var(--n-15)";
   const ink = loud ? "var(--n-0)" : "var(--n-80)";
-  const sig = loud ? "var(--n-0)" : "var(--accent)";
+  const sig = loud ? "var(--n-0)" : tone;
   const q = accent === 0 ? 0.45 : 1;
 
   const body = () => {

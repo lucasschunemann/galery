@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useOS, WORKSPACES } from "./os/store";
 import { useSfx } from "./os/useSfx";
 import { useCompact } from "./os/useViewport";
@@ -7,7 +7,6 @@ import Bar from "./components/Bar";
 import Rail from "./components/Rail";
 import Windows from "./components/Windows";
 import Launcher from "./components/Launcher";
-import Lock from "./components/Lock";
 import Boot from "./components/Boot";
 import Cursor from "./components/Cursor";
 import Desk from "./components/Desk";
@@ -27,13 +26,22 @@ export default function App() {
     document.documentElement.dataset.flavour = flavour;
   }, [flavour]);
 
-  /* open the work gallery once the session starts */
+  /* Open the gallery once, when the session starts.
+
+     This used to list `store` as a dependency. `store` is the whole
+     zustand state, so it changed on every update and the effect
+     re-ran constantly: closing the last window immediately
+     reopened it, and the home screen was unmounted mid-animation. */
+  const greeted = useRef(false);
   useEffect(() => {
-    if (phase !== "live") return;
-    if (useOS.getState().windows.length) return;
-    const t = setTimeout(() => { store.open("files"); sfx("open"); }, 420);
+    if (phase !== "live" || greeted.current) return;
+    greeted.current = true;
+    const t = setTimeout(() => {
+      useOS.getState().open("files");
+      sfx("open");
+    }, 420);
     return () => clearTimeout(t);
-  }, [phase, store, sfx]);
+  }, [phase, sfx]);
 
   /* ---------------- keyboard: the OS is driven from here ---------------- */
   useEffect(() => {
@@ -47,8 +55,6 @@ export default function App() {
         if (e.key === "Enter") document.querySelector<HTMLElement>(".boot__power")?.click();
         return;
       }
-      if (phase === "lock") return;
-
       if (e.key === "Escape" && launcher) { store.setLauncher(false); return; }
 
       if (mod && e.key.toLowerCase() === "k") { e.preventDefault(); store.setLauncher(!launcher); sfx("open"); return; }
@@ -65,8 +71,6 @@ export default function App() {
         e.preventDefault(); sfx("close"); store.close(focusId);
       } else if (k === "f" && focusId) {
         e.preventDefault(); sfx("click"); store.toggleFloat(focusId);
-      } else if (k === "l") {
-        e.preventDefault(); sfx("close"); store.lock();
       } else if (k === "g") {
         e.preventDefault(); store.toggleGrid(); sfx("click");
       } else if (k === "j") {
@@ -93,7 +97,6 @@ export default function App() {
         </>
       )}
 
-      <Lock />
       <Boot />
       <Cursor />
     </div>

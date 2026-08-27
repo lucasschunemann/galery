@@ -5,6 +5,7 @@ import Flag, { type FlagName } from "../components/Flag";
 
 const RAMP = ["--n-0", "--n-5", "--n-10", "--n-15", "--n-20", "--n-30", "--n-40", "--n-60", "--n-80", "--n-95"];
 const ACCENTS = ["--accent-dim", "--accent", "--accent-soft"];
+const TRICOLOUR = ["--accent", "--accent-2", "--accent-3"];
 const FLAVOURS: Flavour[] = ["braun", "zurich", "holanda", "graphite", "brasil", "alemanha"];
 const ORIGIN: string[] = ["brasil", "holanda", "alemanha"];
 
@@ -21,7 +22,9 @@ export default function Tokens() {
   const read = (v: string) =>
     getComputedStyle(document.documentElement).getPropertyValue(v).trim() || "—";
 
-  const sheet = [...RAMP, ...ACCENTS].map((v) => `  ${v}: ${read(v)};`).join("\n");
+  const sheet = [...RAMP, ...ACCENTS, ...(ORIGIN.includes(flavour) ? ["--accent-2", "--accent-3"] : [])]
+    .map((v) => `  ${v}: ${read(v)};`)
+    .join("\n");
 
   return (
     <div className="pane tokens">
@@ -80,6 +83,24 @@ export default function Tokens() {
           ))}
         </div>
       </section>
+
+      {ORIGIN.includes(flavour) && (
+        <section className="tok__block">
+          <p className="t-label">Tricolor</p>
+          <p className="t-body">
+            Os temas tirados de uma bandeira são os únicos com três cores. A
+            primeira carrega texto e foco; as outras duas são preenchimento.
+          </p>
+          <div className="tok__ramp tok__ramp--accent">
+            {TRICOLOUR.map((v, i) => (
+              <div key={v} className="tok__step">
+                <span className="tok__chip" style={{ background: `var(${v})` }} />
+                <span className="t-mono">{["primária", "segunda", "terceira"][i]}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       <section className="tok__block">
         <p className="t-label">Sistema</p>
