@@ -56,7 +56,7 @@ export default function Launcher() {
         kind: "cmd" as const,
         run: () => store.setWorkspace(n),
       })),
-      ...(["braun", "linen", "zurich", "delft", "graphite", "ulm", "basel", "stedelijk"] as Flavour[]).map((f) => ({
+      ...(["braun", "zurich", "holanda", "graphite", "brasil", "alemanha"] as Flavour[]).map((f) => ({
         key: `fl:${f}`,
         glyph: "tokens",
         label: `Tema: ${f}`,

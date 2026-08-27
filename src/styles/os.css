@@ -87,41 +87,31 @@
 /* ============================================================
    COLOUR PROGRAMME
 
-   Eight rooms. Every one is a ten-step neutral ramp plus exactly
-   one accent — the discipline is the point; the variety lives in
-   temperature, not in quantity of colour.
+   Six rooms. Three come from a school of design, three from a
+   place. Every one is a ten-step neutral ramp plus exactly one
+   accent, and no two accents share a family — the set is only
+   worth having if each theme is a different decision rather than
+   a different mood.
 
-   No neutral here is truly grey. Even the dark rooms carry a
-   little warmth, because a perfectly neutral grey is a colour
-   that exists nowhere and reads as equipment.
+   No neutral here is truly grey. Even the dark rooms carry some
+   temperature, because a perfectly neutral grey is a colour that
+   exists nowhere and reads as equipment.
    ============================================================ */
 
-/* --- braun · Dieter Rams: creme quente, âmbar (default) --- */
+/* --- braun · Dieter Rams: creme, tan terroso (default) ---
+   Rams was more restrained than memory suggests: the Braun
+   palette leans brown and sand, not orange. */
 :root,
 [data-flavour="braun"] {
   --n-0:  #fffdf9; --n-5:  #fbf8f1; --n-10: #f6f2e9; --n-15: #f1ebe0; --n-20: #eae3d5;
   --n-30: #ded5c4; --n-40: #c5bba7; --n-60: #968c7b; --n-80: #4e483f; --n-95: #1d1b17;
-  --accent: #c8763a; --accent-dim: #a25b28; --accent-soft: #85481d;
-  --accent-a10: rgba(200,118,58,.09); --accent-a20: rgba(200,118,58,.2);
+  --accent: #9c6b3e; --accent-dim: #7b512c; --accent-soft: #5e3d1f;
+  --accent-a10: rgba(156,107,62,.09); --accent-a20: rgba(156,107,62,.2);
   --glass: rgba(251,248,241,.78); --glass-high: rgba(255,253,249,.93);
   --line: rgba(29,27,23,.09); --line-strong: rgba(29,27,23,.16);
   --sheen: rgba(255,255,255,.9); --shade: rgba(72,60,42,.14);
   --text: #1d1b17; --text-dim: #625b50; --text-mute: #968c7b;
   --wall-a: #ece5d8; --wall-b: #f6f2e9; --wall-c: #ded4c2;
-  color-scheme: light;
-}
-
-/* --- linen · quase branco, azul contido --- */
-[data-flavour="linen"] {
-  --n-0:  #fffefc; --n-5:  #fbfaf7; --n-10: #f7f5f1; --n-15: #f2efea; --n-20: #ebe8e2;
-  --n-30: #e0dcd4; --n-40: #c8c3b9; --n-60: #96918a; --n-80: #4b4842; --n-95: #1b1a18;
-  --accent: #3a6ea8; --accent-dim: #2b5482; --accent-soft: #1e3f64;
-  --accent-a10: rgba(58,110,168,.08); --accent-a20: rgba(58,110,168,.18);
-  --glass: rgba(251,250,247,.78); --glass-high: rgba(255,254,252,.93);
-  --line: rgba(27,26,24,.08); --line-strong: rgba(27,26,24,.15);
-  --sheen: rgba(255,255,255,.9); --shade: rgba(60,55,45,.12);
-  --text: #1b1a18; --text-dim: #5d5951; --text-mute: #96918a;
-  --wall-a: #efece6; --wall-b: #f7f5f1; --wall-c: #e2ded6;
   color-scheme: light;
 }
 
@@ -139,17 +129,20 @@
   color-scheme: light;
 }
 
-/* --- delft · azul de Delft sobre branco de leite --- */
-[data-flavour="delft"] {
-  --n-0:  #fefefe; --n-5:  #fbfbfc; --n-10: #f6f7f8; --n-15: #f0f2f4; --n-20: #e8ebee;
-  --n-30: #dce0e5; --n-40: #c3c9d0; --n-60: #8d939b; --n-80: #464c54; --n-95: #15181c;
-  --accent: #33548f; --accent-dim: #253e6d; --accent-soft: #1a2e52;
-  --accent-a10: rgba(51,84,143,.08); --accent-a20: rgba(51,84,143,.18);
-  --glass: rgba(251,251,252,.8); --glass-high: rgba(254,254,254,.94);
-  --line: rgba(21,24,28,.08); --line-strong: rgba(21,24,28,.16);
-  --sheen: rgba(255,255,255,.9); --shade: rgba(35,45,60,.12);
-  --text: #15181c; --text-dim: #5c6167; --text-mute: #8d939b;
-  --wall-a: #eceff2; --wall-b: #f6f7f8; --wall-c: #e0e4e9;
+/* --- holanda · Oranje ---
+   The flag is red, white and blue, but the country signals itself
+   with the orange of Orange-Nassau. Neutrals stay cool so the
+   accent stays the only warm thing in the room. */
+[data-flavour="holanda"] {
+  --n-0:  #ffffff; --n-5:  #fafbfc; --n-10: #f4f6f8; --n-15: #eef1f4; --n-20: #e5eaee;
+  --n-30: #d8dee4; --n-40: #bfc7cf; --n-60: #8a939c; --n-80: #414950; --n-95: #12171b;
+  --accent: #e2600f; --accent-dim: #b34a0b; --accent-soft: #8c390a;
+  --accent-a10: rgba(226,96,15,.08); --accent-a20: rgba(226,96,15,.18);
+  --glass: rgba(250,251,252,.8); --glass-high: rgba(255,255,255,.94);
+  --line: rgba(18,23,27,.08); --line-strong: rgba(18,23,27,.16);
+  --sheen: rgba(255,255,255,.9); --shade: rgba(25,40,55,.12);
+  --text: #12171b; --text-dim: #58616a; --text-mute: #8a939c;
+  --wall-a: #eaeef2; --wall-b: #f4f6f8; --wall-c: #dee4ea;
   color-scheme: light;
 }
 
@@ -167,45 +160,35 @@
   color-scheme: dark;
 }
 
-/* --- ulm · Otl Aicher e a HfG: neutro quente, laranja --- */
-[data-flavour="ulm"] {
-  --n-0:  #0c0a08; --n-5:  #100e0b; --n-10: #15120f; --n-15: #1b1713; --n-20: #221d18;
-  --n-30: #2e2821; --n-40: #3d352c; --n-60: #726859; --n-80: #a49a8b; --n-95: #faf7f2;
-  --accent: #e0793f; --accent-dim: #a5552a; --accent-soft: #f2bb96;
-  --accent-a10: rgba(224,121,63,.1); --accent-a20: rgba(224,121,63,.22);
-  --glass: rgba(21,18,15,.74); --glass-high: rgba(27,23,19,.88);
-  --line: rgba(250,247,242,.07); --line-strong: rgba(250,247,242,.13);
-  --sheen: rgba(250,247,242,.035); --shade: rgba(8,4,0,.48);
-  --text: #faf7f2; --text-dim: #a49a8b; --text-mute: #726859;
-  --wall-a: #0b0908; --wall-b: #12100d; --wall-c: #201b15;
+/* --- brasil · Niemeyer e Burle Marx ---
+   Not the flag pinned to a wall: the dark of a Burle Marx garden
+   plan at night, with the flag's green as the only signal. */
+[data-flavour="brasil"] {
+  --n-0:  #080b09; --n-5:  #0c100e; --n-10: #101512; --n-15: #151b18; --n-20: #1b221e;
+  --n-30: #242d28; --n-40: #313d36; --n-60: #5f7168; --n-80: #93a49a; --n-95: #f2f7f3;
+  --accent: #2aa862; --accent-dim: #1a7846; --accent-soft: #9fdcbc;
+  --accent-a10: rgba(42,168,98,.1); --accent-a20: rgba(42,168,98,.22);
+  --glass: rgba(16,21,18,.74); --glass-high: rgba(21,27,24,.88);
+  --line: rgba(242,247,243,.07); --line-strong: rgba(242,247,243,.13);
+  --sheen: rgba(242,247,243,.035); --shade: rgba(0,4,2,.5);
+  --text: #f2f7f3; --text-dim: #93a49a; --text-mute: #5f7168;
+  --wall-a: #070a08; --wall-b: #0e1310; --wall-c: #18211c;
   color-scheme: dark;
 }
 
-/* --- basel · Hofmann e Ruder: cinza fresco, azul de sinal --- */
-[data-flavour="basel"] {
-  --n-0:  #0a0b0d; --n-5:  #0e1013; --n-10: #131518; --n-15: #191b1f; --n-20: #1f2226;
-  --n-30: #2a2d33; --n-40: #383c43; --n-60: #6a6e77; --n-80: #9ba0a8; --n-95: #f6f7f8;
-  --accent: #5c8fd6; --accent-dim: #3f679e; --accent-soft: #b4cdec;
-  --accent-a10: rgba(92,143,214,.1); --accent-a20: rgba(92,143,214,.22);
-  --glass: rgba(19,21,24,.74); --glass-high: rgba(25,27,31,.88);
-  --line: rgba(246,247,248,.07); --line-strong: rgba(246,247,248,.13);
-  --sheen: rgba(246,247,248,.035); --shade: rgba(0,2,6,.5);
-  --text: #f6f7f8; --text-dim: #9ba0a8; --text-mute: #6a6e77;
-  --wall-a: #090a0c; --wall-b: #101216; --wall-c: #1b1f25;
-  color-scheme: dark;
-}
-
-/* --- stedelijk · Crouwel e a Total Design: preto e um amarelo --- */
-[data-flavour="stedelijk"] {
-  --n-0:  #0a0a09; --n-5:  #0e0e0d; --n-10: #131312; --n-15: #181817; --n-20: #1e1e1c;
-  --n-30: #282826; --n-40: #363634; --n-60: #6a6a66; --n-80: #9c9c97; --n-95: #fafaf8;
-  --accent: #e8c93f; --accent-dim: #ac9426; --accent-soft: #f6e79f;
-  --accent-a10: rgba(232,201,63,.1); --accent-a20: rgba(232,201,63,.22);
-  --glass: rgba(19,19,18,.76); --glass-high: rgba(24,24,23,.9);
-  --line: rgba(250,250,248,.08); --line-strong: rgba(250,250,248,.14);
-  --sheen: rgba(250,250,248,.035); --shade: rgba(0,0,0,.52);
-  --text: #fafaf8; --text-dim: #9c9c97; --text-mute: #6a6a66;
-  --wall-a: #090908; --wall-b: #111110; --wall-c: #1b1b19;
+/* --- alemanha · Bauhaus ---
+   Black, red and gold. Red is already spoken for by Zürich, so
+   this room takes the black and the gold. */
+[data-flavour="alemanha"] {
+  --n-0:  #0a0a0a; --n-5:  #0e0e0d; --n-10: #121211; --n-15: #171716; --n-20: #1d1d1b;
+  --n-30: #262625; --n-40: #343432; --n-60: #6b6a66; --n-80: #9d9c97; --n-95: #faf9f6;
+  --accent: #e3b23c; --accent-dim: #a8801f; --accent-soft: #f3dc9d;
+  --accent-a10: rgba(227,178,60,.1); --accent-a20: rgba(227,178,60,.22);
+  --glass: rgba(18,18,17,.76); --glass-high: rgba(23,23,22,.9);
+  --line: rgba(250,249,246,.08); --line-strong: rgba(250,249,246,.14);
+  --sheen: rgba(250,249,246,.035); --shade: rgba(0,0,0,.52);
+  --text: #faf9f6; --text-dim: #9d9c97; --text-mute: #6b6a66;
+  --wall-a: #090909; --wall-b: #111110; --wall-c: #1b1b19;
   color-scheme: dark;
 }
 

@@ -2,7 +2,7 @@ import { create } from "zustand";
 import type { PictName } from "../components/Pict";
 import type { Guide } from "./snap";
 
-export type Flavour = "braun" | "linen" | "zurich" | "delft" | "graphite" | "ulm" | "basel" | "stedelijk";
+export type Flavour = "braun" | "zurich" | "holanda" | "graphite" | "brasil" | "alemanha";
 export type Rect = { x: number; y: number; w: number; h: number };
 
 export interface WindowState {

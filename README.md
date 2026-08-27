@@ -37,27 +37,33 @@ Uma área de trabalho vazia não é um estado de erro. É a tela inicial.
 
 ## Programa de cores
 
-Oito temas, cada um tirado de uma linhagem real em vez de inventado. Todos
-têm uma rampa neutra de dez passos e exatamente um acento. A variedade vive
-na temperatura, não na quantidade de cor.
+Seis temas. Três vêm de uma escola de design, três vêm de um lugar. Todos
+têm uma rampa neutra de dez passos e exatamente um acento, e não há duas
+famílias de acento repetidas: o conjunto só vale se cada tema for uma
+decisão diferente, não um humor diferente.
 
 Nenhum neutro aqui é cinza puro. Mesmo os temas escuros carregam alguma
 temperatura, porque um cinza perfeitamente neutro é uma cor que não existe
 em lugar nenhum e lê como equipamento.
 
-| Tema | Linhagem |
-|---|---|
-| **Braun** | Dieter Rams. O padrão |
-| **Linen** | branco quente, azul contido |
-| **Zürich** | Josef Müller-Brockmann |
-| **Delft** | azul de Delft |
-| **Graphite** | carvão quente |
-| **Ulm** | Otl Aicher, HfG Ulm |
-| **Basel** | Armin Hofmann, Emil Ruder |
-| **Stedelijk** | Wim Crouwel, Total Design |
+| Tema | Origem | Acento |
+|---|---|---|
+| **Braun** | Dieter Rams. O padrão | tan terroso |
+| **Zürich** | Josef Müller-Brockmann | vermelho |
+| **Holanda** | Oranje | laranja |
+| **Graphite** | carvão quente | azul-violeta |
+| **Brasil** | Niemeyer e Burle Marx | verde |
+| **Alemanha** | Bauhaus | ouro |
 
-Trocar de tema retinge tudo: papel de parede, capas de projeto, interface.
-O seletor mostra a fonte de cada paleta.
+Os três temas de lugar carregam a bandeira no seletor; os três de escola
+carregam um chip de duas cores. A distinção é proposital.
+
+Sobre as escolhas: o **Brasil** não é a bandeira pregada na parede, é o
+escuro de uma prancha do Burle Marx à noite, com o verde da bandeira como
+único sinal. A **Holanda** usa o laranja de Orange-Nassau, que sinaliza o
+país melhor que a própria bandeira, sobre neutros frios para que o acento
+seja a única coisa quente na sala. A **Alemanha** fica com o preto e o ouro
+porque o vermelho já é de Zürich.
 
 ## Rodando
 

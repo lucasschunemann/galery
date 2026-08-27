@@ -4,18 +4,18 @@ import { useOS, WORKSPACES, APPS, type Flavour } from "../os/store";
 import { useSfx } from "../os/useSfx";
 import { panelVariants, snappy, soft } from "../os/motion";
 import Pict from "./Pict";
+import Flag, { type FlagName } from "./Flag";
 
-/* every theme carries the lineage it was taken from — the note is
-   not decoration, it is the reason the palette looks like that */
-const FLAVOURS: { id: Flavour; name: string; note: string }[] = [
-  { id: "braun",     name: "Braun",     note: "Dieter Rams" },
-  { id: "linen",     name: "Linen",     note: "Branco quente" },
-  { id: "zurich",    name: "Zürich",    note: "Müller-Brockmann" },
-  { id: "delft",     name: "Delft",     note: "Azul de Delft" },
-  { id: "graphite",  name: "Graphite",  note: "Carvão quente" },
-  { id: "ulm",       name: "Ulm",       note: "Aicher · HfG" },
-  { id: "basel",     name: "Basel",     note: "Hofmann · Ruder" },
-  { id: "stedelijk", name: "Stedelijk", note: "Crouwel · Total Design" },
+/* Three rooms from a school of design, three from a place. Each
+   note is the reason the palette looks the way it does, and the
+   ones from a place carry their flag. */
+const FLAVOURS: { id: Flavour; name: string; note: string; flag?: FlagName }[] = [
+  { id: "braun",    name: "Braun",    note: "Dieter Rams" },
+  { id: "zurich",   name: "Zürich",   note: "Müller-Brockmann" },
+  { id: "holanda",  name: "Holanda",  note: "Oranje", flag: "holanda" },
+  { id: "graphite", name: "Graphite", note: "Carvão quente" },
+  { id: "brasil",   name: "Brasil",   note: "Niemeyer · Burle Marx", flag: "brasil" },
+  { id: "alemanha", name: "Alemanha", note: "Bauhaus", flag: "alemanha" },
 ];
 
 export default function Bar() {
@@ -136,7 +136,11 @@ export default function Bar() {
                       data-on={flavour === f.id}
                       onClick={() => { setFlavour(f.id); setOpen(false); sfx("chime"); }}
                     >
-                      <span className="popover__swatch" data-flavour={f.id} aria-hidden />
+                      {f.flag ? (
+                        <Flag name={f.flag} className="popover__flag" />
+                      ) : (
+                        <span className="popover__swatch" data-flavour={f.id} aria-hidden />
+                      )}
                       <span className="popover__label">
                         {f.name}
                         <em>{f.note}</em>

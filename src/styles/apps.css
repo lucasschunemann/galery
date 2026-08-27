@@ -473,30 +473,17 @@
 .tok__flavswatch i { width: 7px; height: 14px; border-radius: 1px; }
 
 
+
 .tok__flavswatch[data-flavour="braun"] i:nth-child(1) { background: #f6f2e9; }
 .tok__flavswatch[data-flavour="braun"] i:nth-child(2) { background: #c5bba7; }
-.tok__flavswatch[data-flavour="braun"] i:nth-child(3) { background: #c8763a; }
-.tok__flavswatch[data-flavour="linen"] i:nth-child(1) { background: #f7f5f1; }
-.tok__flavswatch[data-flavour="linen"] i:nth-child(2) { background: #c8c3b9; }
-.tok__flavswatch[data-flavour="linen"] i:nth-child(3) { background: #3a6ea8; }
+.tok__flavswatch[data-flavour="braun"] i:nth-child(3) { background: #9c6b3e; }
 .tok__flavswatch[data-flavour="zurich"] i:nth-child(1) { background: #f8f7f5; }
 .tok__flavswatch[data-flavour="zurich"] i:nth-child(2) { background: #c5c3be; }
 .tok__flavswatch[data-flavour="zurich"] i:nth-child(3) { background: #d8332a; }
-.tok__flavswatch[data-flavour="delft"] i:nth-child(1) { background: #f6f7f8; }
-.tok__flavswatch[data-flavour="delft"] i:nth-child(2) { background: #c3c9d0; }
-.tok__flavswatch[data-flavour="delft"] i:nth-child(3) { background: #33548f; }
 .tok__flavswatch[data-flavour="graphite"] i:nth-child(1) { background: #141312; }
 .tok__flavswatch[data-flavour="graphite"] i:nth-child(2) { background: #3a3632; }
 .tok__flavswatch[data-flavour="graphite"] i:nth-child(3) { background: #7d92c9; }
-.tok__flavswatch[data-flavour="ulm"] i:nth-child(1) { background: #15120f; }
-.tok__flavswatch[data-flavour="ulm"] i:nth-child(2) { background: #3d352c; }
-.tok__flavswatch[data-flavour="ulm"] i:nth-child(3) { background: #e0793f; }
-.tok__flavswatch[data-flavour="basel"] i:nth-child(1) { background: #131518; }
-.tok__flavswatch[data-flavour="basel"] i:nth-child(2) { background: #383c43; }
-.tok__flavswatch[data-flavour="basel"] i:nth-child(3) { background: #5c8fd6; }
-.tok__flavswatch[data-flavour="stedelijk"] i:nth-child(1) { background: #131312; }
-.tok__flavswatch[data-flavour="stedelijk"] i:nth-child(2) { background: #363634; }
-.tok__flavswatch[data-flavour="stedelijk"] i:nth-child(3) { background: #e8c93f; }
+.tok__flag { flex: none; border-radius: 2px; color: var(--text); }
 
 .tok__ramp { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; }
 .tok__ramp--accent { grid-template-columns: repeat(3, 1fr); max-width: 260px; }

@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { useOS, type Flavour } from "../os/store";
 import { useSfx } from "../os/useSfx";
+import Flag, { type FlagName } from "../components/Flag";
 
 const RAMP = ["--n-0", "--n-5", "--n-10", "--n-15", "--n-20", "--n-30", "--n-40", "--n-60", "--n-80", "--n-95"];
 const ACCENTS = ["--accent-dim", "--accent", "--accent-soft"];
-const FLAVOURS: Flavour[] = ["braun", "linen", "zurich", "delft", "graphite", "ulm", "basel", "stedelijk"];
+const FLAVOURS: Flavour[] = ["braun", "zurich", "holanda", "graphite", "brasil", "alemanha"];
+const ORIGIN: string[] = ["brasil", "holanda", "alemanha"];
 
 /* The system's own token sheet, live. Changing anything here
    changes the OS you are looking at — including this window. */
@@ -42,9 +44,13 @@ export default function Tokens() {
               data-on={flavour === f}
               onClick={() => { setFlavour(f); sfx("chime"); }}
             >
-              <span className="tok__flavswatch" data-flavour={f} aria-hidden>
-                <i /><i /><i />
-              </span>
+              {ORIGIN.includes(f) ? (
+                <Flag name={f as FlagName} className="tok__flag" />
+              ) : (
+                <span className="tok__flavswatch" data-flavour={f} aria-hidden>
+                  <i /><i /><i />
+                </span>
+              )}
               {f}
             </button>
           ))}

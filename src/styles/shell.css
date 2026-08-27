@@ -125,14 +125,18 @@
 }
 .popover__head { padding: 8px 9px 7px; }
 
-.popover__swatch[data-flavour="braun"]     { background: linear-gradient(135deg, #f6f2e9 50%, #c8763a 50%); }
-.popover__swatch[data-flavour="linen"]     { background: linear-gradient(135deg, #f7f5f1 50%, #3a6ea8 50%); }
-.popover__swatch[data-flavour="zurich"]    { background: linear-gradient(135deg, #f8f7f5 50%, #d8332a 50%); }
-.popover__swatch[data-flavour="delft"]     { background: linear-gradient(135deg, #f6f7f8 50%, #33548f 50%); }
-.popover__swatch[data-flavour="graphite"]  { background: linear-gradient(135deg, #141312 50%, #7d92c9 50%); }
-.popover__swatch[data-flavour="ulm"]       { background: linear-gradient(135deg, #15120f 50%, #e0793f 50%); }
-.popover__swatch[data-flavour="basel"]     { background: linear-gradient(135deg, #131518 50%, #5c8fd6 50%); }
-.popover__swatch[data-flavour="stedelijk"] { background: linear-gradient(135deg, #131312 50%, #e8c93f 50%); }
+
+.popover__swatch[data-flavour="braun"]    { background: linear-gradient(135deg, #f6f2e9 50%, #9c6b3e 50%); }
+.popover__swatch[data-flavour="zurich"]   { background: linear-gradient(135deg, #f8f7f5 50%, #d8332a 50%); }
+.popover__swatch[data-flavour="graphite"] { background: linear-gradient(135deg, #141312 50%, #7d92c9 50%); }
+
+/* the flags sit on the same footprint as the two-tone chips */
+.popover__flag {
+  width: 20px; height: 14px;
+  flex: none;
+  border-radius: 2px;
+  color: var(--text);
+}
 
 .popover button {
   width: 100%;
@@ -153,9 +157,9 @@
 }
 .popover__label em { font-style: normal; font-size: var(--fs-11); color: var(--text-mute); }
 .popover__swatch {
-  width: 20px; height: 20px;
+  width: 20px; height: 14px;
   flex: none;
-  border-radius: var(--r-xs);
+  border-radius: 2px;
   border: 1px solid var(--line-strong);
 }
 
