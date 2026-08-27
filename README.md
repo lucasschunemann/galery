@@ -20,18 +20,28 @@ As regras da casa:
 - **Raios são pequenos.** Maciez é um problema de espaçamento, não de canto.
 - **Movimento é abundante, mas preciso.** Rápido, amortecido, nunca elástico.
 - **Nenhum ornamento sobrevive se não carregar informação.**
+- **Margem é material.** O ar dentro de um painel não é sobra — é o que
+  torna o texto legível.
 
-## Temas
+## Programa de cores
 
-| | |
+Oito temas, cada um tirado de uma linhagem real em vez de inventado. Todos
+são uma rampa neutra de dez passos mais exatamente um acento — a disciplina
+é o ponto; a variedade vive na temperatura, não na quantidade de cor.
+
+| Tema | Linhagem |
 |---|---|
-| **Graphite** | escuro neutro — o padrão |
-| **Slate** | escuro frio |
-| **Ochre** | escuro quente |
-| **Paper** | claro quente |
-| **Delft** | claro frio |
+| **Graphite** | neutro escuro — o padrão |
+| **Basel** | Armin Hofmann · Emil Ruder |
+| **Ulm** | Otl Aicher · HfG Ulm |
+| **Stedelijk** | Wim Crouwel · Total Design |
+| **Zürich** | Josef Müller-Brockmann |
+| **Braun** | Dieter Rams |
+| **Delft** | azul de Delft |
+| **München** | Aicher, 1972 |
 
 Trocar de tema retinge tudo: papel de parede, capas de projeto, interface.
+O seletor mostra a fonte de cada paleta.
 
 ## Rodando
 
@@ -56,6 +66,7 @@ tela inicial.
 | `⌘F` | soltar / encaixar a janela |
 | `⌘J` | alternar o foco |
 | `⌘L` | bloquear |
+| `⌘G` | mostrar a grade — 12 colunas e linha de base de 8px sobre tudo |
 
 ## Peças
 
@@ -66,6 +77,7 @@ tela inicial.
 | Papel de parede | `src/components/Wallpaper.tsx` | Campo quase plano, uma massa de luz muito lenta, grade modular e grão. O teste: se você o nota lendo uma janela, está alto demais |
 | Temas | `src/styles/os.css` | Cinco, cada um com rampa neutra de dez passos e um acento |
 | Capas | `src/components/Cover.tsx` | Oito composições planas construídas sobre a mesma grade, que herdam a paleta por CSS vars |
+| Pictogramas | `src/components/Pict.tsx` | Um sistema desenhado à maneira de Ulm: mesma grade de 24, mesma espessura, só círculos, quadrados e diagonais de 45° |
 | Buscar | `src/components/Launcher.tsx` | Apps, projetos e comandos numa lista só, teclado primeiro |
 
 ## Tipografia
