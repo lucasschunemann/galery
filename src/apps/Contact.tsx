@@ -48,7 +48,7 @@ export default function Contact() {
             <label className="row">
               <span>Assunto:</span>
               <input
-                required placeholder="Um projeto, uma ideia, um oi" className="row__input"
+                required placeholder="Assunto" className="row__input"
                 value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })}
               />
             </label>
@@ -70,10 +70,10 @@ export default function Contact() {
             transition={{ type: "spring", stiffness: 300, damping: 22 }}
           >
             <div className="contact__ok-badge">✓</div>
-            <p><strong>Mensagem na fila de saída.</strong></p>
+            <p><strong>Mensagem escrita.</strong></p>
             <p className="contact__ok-sub">
-              Este formulário é uma demonstração — nada sai daqui. Para falar comigo de
-              verdade, use o e-mail abaixo.
+              Este formulário é uma demonstração e não envia nada. Para falar comigo,
+              use o e-mail abaixo.
             </p>
             <button className="btn btn--ghost" onClick={() => { setState("idle"); sfx("click"); }}>
               Escrever outra

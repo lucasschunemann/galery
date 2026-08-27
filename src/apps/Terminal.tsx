@@ -6,7 +6,7 @@ import { useSfx } from "../os/useSfx";
 type Line = { kind: "in" | "out" | "err"; text: string };
 
 const BANNER = [
-  "raam — shell",
+  "raam",
   'Digite "help" para ver os comandos disponíveis.',
 ];
 
@@ -54,7 +54,7 @@ export default function Terminal() {
         out("comandos disponíveis:");
         out("  ls                lista os projetos");
         out("  open <alvo>       abre um app ou projeto");
-        out("  tema <nome>       graphite basel ulm stedelijk zurich braun delft muenchen");
+        out("  tema <nome>       braun linen zurich delft graphite ulm basel stedelijk");
         out("  whoami            quem escreveu isto");
         out("  neofetch          informações do sistema");
         out("  date              data e hora");
@@ -84,14 +84,14 @@ export default function Terminal() {
       case "tema":
       case "flavour": {
         const t = arg.toLowerCase() as Flavour;
-        if (["graphite", "basel", "ulm", "stedelijk", "zurich", "braun", "delft", "muenchen"].includes(t)) {
+        if (["braun", "linen", "zurich", "delft", "graphite", "ulm", "basel", "stedelijk"].includes(t)) {
           setFlavour(t); sfx("chime"); out(`paleta alterada para ${t}`);
-        } else push({ kind: "err", text: "tema: graphite basel ulm stedelijk zurich braun delft muenchen" });
+        } else push({ kind: "err", text: "tema: braun linen zurich delft graphite ulm basel stedelijk" });
         break;
       }
 
       case "whoami":
-        out("lucas — designer que programa, dev que desenha.");
+        out("lucas schünemann, designer e desenvolvedor front-end.");
         out("uid=1000  groups=design,frontend,motion");
         break;
 
@@ -124,7 +124,7 @@ export default function Terminal() {
         break;
 
       case "rm":
-        push({ kind: "err", text: "rm: operação não permitida — este portfólio é imutável." });
+        push({ kind: "err", text: "rm: operação não permitida neste portfólio." });
         sfx("error");
         break;
 

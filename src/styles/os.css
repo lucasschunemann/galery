@@ -37,12 +37,15 @@
   --fs-76: 76px;
   --fs-96: 96px;
 
-  /* ---- geometry: small. Softness is a spacing problem. ---- */
-  --r-xs: 4px;
-  --r-sm: 6px;
-  --r-md: 8px;
-  --r-lg: 12px;
-  --r-xl: 16px;
+  /* ---- geometry ----
+     Corners are generous and continuous. A sharp corner pointed at
+     the reader is the one piece of geometry an interface can do
+     nothing useful with, so there are none left in the system. */
+  --r-xs: 6px;
+  --r-sm: 10px;
+  --r-md: 14px;
+  --r-lg: 20px;
+  --r-xl: 28px;
   --r-full: 999px;
 
   /* ---- the grid ----
@@ -59,13 +62,15 @@
   --col-gap: 32px;
   --row-gap: 44px;
 
-  /* ---- motion: quantity without elasticity ---- */
-  --ease: cubic-bezier(0.25, 0.1, 0.25, 1);
+  /* ---- motion ----
+     Things settle rather than arrive. Nothing overshoots, nothing
+     hurries, and nothing announces that it moved. */
+  --ease: cubic-bezier(0.32, 0.08, 0.24, 1);
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
-  --d-1: 0.12s;
-  --d-2: 0.22s;
-  --d-3: 0.4s;
+  --d-1: 0.16s;
+  --d-2: 0.28s;
+  --d-3: 0.48s;
 
   /* ---- z ---- */
   --z-wall: 0;
@@ -82,123 +87,126 @@
 /* ============================================================
    COLOUR PROGRAMME
 
-   Eight rooms, each taken from a real lineage rather than
-   invented. Every one is a ten-step neutral ramp plus exactly
-   one accent — the discipline is the point; the variety lives
-   in temperature, not in quantity of colour.
+   Eight rooms. Every one is a ten-step neutral ramp plus exactly
+   one accent — the discipline is the point; the variety lives in
+   temperature, not in quantity of colour.
+
+   No neutral here is truly grey. Even the dark rooms carry a
+   little warmth, because a perfectly neutral grey is a colour
+   that exists nowhere and reads as equipment.
    ============================================================ */
 
-/* --- graphite · neutro escuro (default) --- */
+/* --- braun · Dieter Rams: creme quente, âmbar (default) --- */
 :root,
-[data-flavour="graphite"] {
-  --n-0:  #08090a; --n-5:  #0c0d0e; --n-10: #0f1011; --n-15: #141516; --n-20: #191a1c;
-  --n-30: #232426; --n-40: #2e3034; --n-60: #5c6069; --n-80: #8a8f98; --n-95: #f7f8f8;
-  --accent: #6e79d6; --accent-dim: #4a53a0; --accent-soft: #b6bcee;
-  --accent-a10: rgba(110,121,214,.1); --accent-a20: rgba(110,121,214,.22);
-  --glass: rgba(15,16,17,.72); --glass-high: rgba(20,21,22,.86);
-  --line: rgba(255,255,255,.07); --line-strong: rgba(255,255,255,.12);
-  --sheen: rgba(255,255,255,.03); --shade: rgba(0,0,0,.5);
-  --text: #f7f8f8; --text-dim: #8a8f98; --text-mute: #5c6069;
-  --wall-a: #08090a; --wall-b: #0d0e10; --wall-c: #16171b;
-  color-scheme: dark;
+[data-flavour="braun"] {
+  --n-0:  #fffdf9; --n-5:  #fbf8f1; --n-10: #f6f2e9; --n-15: #f1ebe0; --n-20: #eae3d5;
+  --n-30: #ded5c4; --n-40: #c5bba7; --n-60: #968c7b; --n-80: #4e483f; --n-95: #1d1b17;
+  --accent: #c8763a; --accent-dim: #a25b28; --accent-soft: #85481d;
+  --accent-a10: rgba(200,118,58,.09); --accent-a20: rgba(200,118,58,.2);
+  --glass: rgba(251,248,241,.78); --glass-high: rgba(255,253,249,.93);
+  --line: rgba(29,27,23,.09); --line-strong: rgba(29,27,23,.16);
+  --sheen: rgba(255,255,255,.9); --shade: rgba(72,60,42,.14);
+  --text: #1d1b17; --text-dim: #625b50; --text-mute: #968c7b;
+  --wall-a: #ece5d8; --wall-b: #f6f2e9; --wall-c: #ded4c2;
+  color-scheme: light;
 }
 
-/* --- basel · Hofmann e Ruder: cinza frio, azul de sinal --- */
-[data-flavour="basel"] {
-  --n-0:  #090b0e; --n-5:  #0d1014; --n-10: #111419; --n-15: #161a20; --n-20: #1c2027;
-  --n-30: #262b34; --n-40: #333944; --n-60: #626a78; --n-80: #929aa8; --n-95: #f4f6f9;
-  --accent: #3d7bf7; --accent-dim: #2a56b0; --accent-soft: #a8c4fb;
-  --accent-a10: rgba(61,123,247,.1); --accent-a20: rgba(61,123,247,.22);
-  --glass: rgba(17,20,25,.72); --glass-high: rgba(22,26,32,.86);
-  --line: rgba(244,246,249,.07); --line-strong: rgba(244,246,249,.13);
-  --sheen: rgba(244,246,249,.035); --shade: rgba(0,2,8,.52);
-  --text: #f4f6f9; --text-dim: #929aa8; --text-mute: #626a78;
-  --wall-a: #080a0d; --wall-b: #0e1116; --wall-c: #171d26;
+/* --- linen · quase branco, azul contido --- */
+[data-flavour="linen"] {
+  --n-0:  #fffefc; --n-5:  #fbfaf7; --n-10: #f7f5f1; --n-15: #f2efea; --n-20: #ebe8e2;
+  --n-30: #e0dcd4; --n-40: #c8c3b9; --n-60: #96918a; --n-80: #4b4842; --n-95: #1b1a18;
+  --accent: #3a6ea8; --accent-dim: #2b5482; --accent-soft: #1e3f64;
+  --accent-a10: rgba(58,110,168,.08); --accent-a20: rgba(58,110,168,.18);
+  --glass: rgba(251,250,247,.78); --glass-high: rgba(255,254,252,.93);
+  --line: rgba(27,26,24,.08); --line-strong: rgba(27,26,24,.15);
+  --sheen: rgba(255,255,255,.9); --shade: rgba(60,55,45,.12);
+  --text: #1b1a18; --text-dim: #5d5951; --text-mute: #96918a;
+  --wall-a: #efece6; --wall-b: #f7f5f1; --wall-c: #e2ded6;
+  color-scheme: light;
+}
+
+/* --- zürich · Müller-Brockmann: papel, um vermelho --- */
+[data-flavour="zurich"] {
+  --n-0:  #fffefd; --n-5:  #fcfbfa; --n-10: #f8f7f5; --n-15: #f2f1ee; --n-20: #ebeae7;
+  --n-30: #dedcd8; --n-40: #c5c3be; --n-60: #8f8c87; --n-80: #46443f; --n-95: #141312;
+  --accent: #d8332a; --accent-dim: #ab2620; --accent-soft: #831b17;
+  --accent-a10: rgba(216,51,42,.07); --accent-a20: rgba(216,51,42,.17);
+  --glass: rgba(252,251,250,.8); --glass-high: rgba(255,254,253,.94);
+  --line: rgba(20,19,18,.09); --line-strong: rgba(20,19,18,.17);
+  --sheen: rgba(255,255,255,.9); --shade: rgba(40,36,30,.12);
+  --text: #141312; --text-dim: #5a5852; --text-mute: #8f8c87;
+  --wall-a: #f0efec; --wall-b: #f8f7f5; --wall-c: #e5e3df;
+  color-scheme: light;
+}
+
+/* --- delft · azul de Delft sobre branco de leite --- */
+[data-flavour="delft"] {
+  --n-0:  #fefefe; --n-5:  #fbfbfc; --n-10: #f6f7f8; --n-15: #f0f2f4; --n-20: #e8ebee;
+  --n-30: #dce0e5; --n-40: #c3c9d0; --n-60: #8d939b; --n-80: #464c54; --n-95: #15181c;
+  --accent: #33548f; --accent-dim: #253e6d; --accent-soft: #1a2e52;
+  --accent-a10: rgba(51,84,143,.08); --accent-a20: rgba(51,84,143,.18);
+  --glass: rgba(251,251,252,.8); --glass-high: rgba(254,254,254,.94);
+  --line: rgba(21,24,28,.08); --line-strong: rgba(21,24,28,.16);
+  --sheen: rgba(255,255,255,.9); --shade: rgba(35,45,60,.12);
+  --text: #15181c; --text-dim: #5c6167; --text-mute: #8d939b;
+  --wall-a: #eceff2; --wall-b: #f6f7f8; --wall-c: #e0e4e9;
+  color-scheme: light;
+}
+
+/* --- graphite · carvão quente, azul suave --- */
+[data-flavour="graphite"] {
+  --n-0:  #0b0a09; --n-5:  #100e0d; --n-10: #141312; --n-15: #1a1817; --n-20: #201e1c;
+  --n-30: #2b2825; --n-40: #3a3632; --n-60: #6d675f; --n-80: #a09990; --n-95: #f7f5f2;
+  --accent: #7d92c9; --accent-dim: #556894; --accent-soft: #c0cce8;
+  --accent-a10: rgba(125,146,201,.1); --accent-a20: rgba(125,146,201,.22);
+  --glass: rgba(20,19,18,.74); --glass-high: rgba(26,24,23,.88);
+  --line: rgba(247,245,242,.07); --line-strong: rgba(247,245,242,.13);
+  --sheen: rgba(247,245,242,.035); --shade: rgba(0,0,0,.48);
+  --text: #f7f5f2; --text-dim: #a09990; --text-mute: #6d675f;
+  --wall-a: #0a0908; --wall-b: #100f0d; --wall-c: #1c1a18;
   color-scheme: dark;
 }
 
 /* --- ulm · Otl Aicher e a HfG: neutro quente, laranja --- */
 [data-flavour="ulm"] {
-  --n-0:  #0b0a09; --n-5:  #0f0e0c; --n-10: #131210; --n-15: #191714; --n-20: #1f1c19;
-  --n-30: #2a2622; --n-40: #38332d; --n-60: #6b645b; --n-80: #9d948a; --n-95: #f8f5f1;
-  --accent: #e8703a; --accent-dim: #a84e26; --accent-soft: #f5b596;
-  --accent-a10: rgba(232,112,58,.1); --accent-a20: rgba(232,112,58,.22);
-  --glass: rgba(19,18,16,.72); --glass-high: rgba(25,23,20,.86);
-  --line: rgba(248,245,241,.07); --line-strong: rgba(248,245,241,.13);
-  --sheen: rgba(248,245,241,.035); --shade: rgba(8,4,0,.5);
-  --text: #f8f5f1; --text-dim: #9d948a; --text-mute: #6b645b;
-  --wall-a: #0a0908; --wall-b: #100e0c; --wall-c: #1d1813;
+  --n-0:  #0c0a08; --n-5:  #100e0b; --n-10: #15120f; --n-15: #1b1713; --n-20: #221d18;
+  --n-30: #2e2821; --n-40: #3d352c; --n-60: #726859; --n-80: #a49a8b; --n-95: #faf7f2;
+  --accent: #e0793f; --accent-dim: #a5552a; --accent-soft: #f2bb96;
+  --accent-a10: rgba(224,121,63,.1); --accent-a20: rgba(224,121,63,.22);
+  --glass: rgba(21,18,15,.74); --glass-high: rgba(27,23,19,.88);
+  --line: rgba(250,247,242,.07); --line-strong: rgba(250,247,242,.13);
+  --sheen: rgba(250,247,242,.035); --shade: rgba(8,4,0,.48);
+  --text: #faf7f2; --text-dim: #a49a8b; --text-mute: #726859;
+  --wall-a: #0b0908; --wall-b: #12100d; --wall-c: #201b15;
   color-scheme: dark;
 }
 
-/* --- stedelijk · Crouwel e a Total Design: preto e um amarelo chapado --- */
+/* --- basel · Hofmann e Ruder: cinza fresco, azul de sinal --- */
+[data-flavour="basel"] {
+  --n-0:  #0a0b0d; --n-5:  #0e1013; --n-10: #131518; --n-15: #191b1f; --n-20: #1f2226;
+  --n-30: #2a2d33; --n-40: #383c43; --n-60: #6a6e77; --n-80: #9ba0a8; --n-95: #f6f7f8;
+  --accent: #5c8fd6; --accent-dim: #3f679e; --accent-soft: #b4cdec;
+  --accent-a10: rgba(92,143,214,.1); --accent-a20: rgba(92,143,214,.22);
+  --glass: rgba(19,21,24,.74); --glass-high: rgba(25,27,31,.88);
+  --line: rgba(246,247,248,.07); --line-strong: rgba(246,247,248,.13);
+  --sheen: rgba(246,247,248,.035); --shade: rgba(0,2,6,.5);
+  --text: #f6f7f8; --text-dim: #9ba0a8; --text-mute: #6a6e77;
+  --wall-a: #090a0c; --wall-b: #101216; --wall-c: #1b1f25;
+  color-scheme: dark;
+}
+
+/* --- stedelijk · Crouwel e a Total Design: preto e um amarelo --- */
 [data-flavour="stedelijk"] {
-  --n-0:  #0a0a0a; --n-5:  #0e0e0e; --n-10: #121212; --n-15: #171717; --n-20: #1d1d1d;
-  --n-30: #262626; --n-40: #333333; --n-60: #666666; --n-80: #969696; --n-95: #fafafa;
-  --accent: #f2d02c; --accent-dim: #b39a14; --accent-soft: #faeb9c;
-  --accent-a10: rgba(242,208,44,.1); --accent-a20: rgba(242,208,44,.22);
-  --glass: rgba(18,18,18,.74); --glass-high: rgba(23,23,23,.88);
-  --line: rgba(250,250,250,.08); --line-strong: rgba(250,250,250,.14);
-  --sheen: rgba(250,250,250,.035); --shade: rgba(0,0,0,.55);
-  --text: #fafafa; --text-dim: #969696; --text-mute: #666666;
-  --wall-a: #090909; --wall-b: #101010; --wall-c: #1a1a1a;
+  --n-0:  #0a0a09; --n-5:  #0e0e0d; --n-10: #131312; --n-15: #181817; --n-20: #1e1e1c;
+  --n-30: #282826; --n-40: #363634; --n-60: #6a6a66; --n-80: #9c9c97; --n-95: #fafaf8;
+  --accent: #e8c93f; --accent-dim: #ac9426; --accent-soft: #f6e79f;
+  --accent-a10: rgba(232,201,63,.1); --accent-a20: rgba(232,201,63,.22);
+  --glass: rgba(19,19,18,.76); --glass-high: rgba(24,24,23,.9);
+  --line: rgba(250,250,248,.08); --line-strong: rgba(250,250,248,.14);
+  --sheen: rgba(250,250,248,.035); --shade: rgba(0,0,0,.52);
+  --text: #fafaf8; --text-dim: #9c9c97; --text-mute: #6a6a66;
+  --wall-a: #090908; --wall-b: #111110; --wall-c: #1b1b19;
   color-scheme: dark;
-}
-
-/* --- zürich · Müller-Brockmann: branco, preto, um vermelho --- */
-[data-flavour="zurich"] {
-  --n-0:  #ffffff; --n-5:  #fcfcfc; --n-10: #f7f7f7; --n-15: #f1f1f1; --n-20: #eaeaea;
-  --n-30: #dedede; --n-40: #c4c4c4; --n-60: #8e8e8e; --n-80: #454545; --n-95: #111111;
-  --accent: #e2231a; --accent-dim: #b31a12; --accent-soft: #8c130d;
-  --accent-a10: rgba(226,35,26,.08); --accent-a20: rgba(226,35,26,.18);
-  --glass: rgba(252,252,252,.8); --glass-high: rgba(255,255,255,.93);
-  --line: rgba(17,17,17,.1); --line-strong: rgba(17,17,17,.18);
-  --sheen: rgba(255,255,255,.85); --shade: rgba(20,20,20,.12);
-  --text: #111111; --text-dim: #575757; --text-mute: #8e8e8e;
-  --wall-a: #efefef; --wall-b: #f7f7f7; --wall-c: #e4e4e4;
-  color-scheme: light;
-}
-
-/* --- braun · Dieter Rams: quase branco quente, âmbar --- */
-[data-flavour="braun"] {
-  --n-0:  #ffffff; --n-5:  #fbf9f5; --n-10: #f6f3ec; --n-15: #f0ece4; --n-20: #e8e3d9;
-  --n-30: #dbd5c8; --n-40: #c0b9aa; --n-60: #918a7d; --n-80: #4a453d; --n-95: #1b1916;
-  --accent: #cf7c2c; --accent-dim: #a35f1d; --accent-soft: #8a4f16;
-  --accent-a10: rgba(207,124,44,.09); --accent-a20: rgba(207,124,44,.2);
-  --glass: rgba(251,249,245,.8); --glass-high: rgba(255,255,255,.93);
-  --line: rgba(27,25,22,.1); --line-strong: rgba(27,25,22,.18);
-  --sheen: rgba(255,255,255,.85); --shade: rgba(60,50,35,.13);
-  --text: #1b1916; --text-dim: #5f584e; --text-mute: #918a7d;
-  --wall-a: #ece7dc; --wall-b: #f6f3ec; --wall-c: #e0d9cb;
-  color-scheme: light;
-}
-
-/* --- delft · azul de Delft sobre branco frio --- */
-[data-flavour="delft"] {
-  --n-0:  #ffffff; --n-5:  #fafbfc; --n-10: #f5f7f9; --n-15: #eff2f5; --n-20: #e7ebef;
-  --n-30: #dbe1e7; --n-40: #c2cad3; --n-60: #8c96a2; --n-80: #454f5c; --n-95: #141a22;
-  --accent: #2b4c8c; --accent-dim: #1e376a; --accent-soft: #16294f;
-  --accent-a10: rgba(43,76,140,.08); --accent-a20: rgba(43,76,140,.18);
-  --glass: rgba(250,251,252,.8); --glass-high: rgba(255,255,255,.93);
-  --line: rgba(20,26,34,.09); --line-strong: rgba(20,26,34,.16);
-  --sheen: rgba(255,255,255,.85); --shade: rgba(20,34,56,.12);
-  --text: #141a22; --text-dim: #5b6673; --text-mute: #8c96a2;
-  --wall-a: #eaeef2; --wall-b: #f5f7f9; --wall-c: #dfe5eb;
-  color-scheme: light;
-}
-
-/* --- münchen · Aicher, 1972: claro e frio, azul de céu --- */
-[data-flavour="muenchen"] {
-  --n-0:  #ffffff; --n-5:  #fafcfc; --n-10: #f4f8f9; --n-15: #edf3f5; --n-20: #e4ecef;
-  --n-30: #d6e1e5; --n-40: #b9c9cf; --n-60: #85969d; --n-80: #3f4e54; --n-95: #101a1e;
-  --accent: #3d8fc4; --accent-dim: #2a6b96; --accent-soft: #1d5375;
-  --accent-a10: rgba(61,143,196,.09); --accent-a20: rgba(61,143,196,.2);
-  --glass: rgba(250,252,252,.8); --glass-high: rgba(255,255,255,.93);
-  --line: rgba(16,26,30,.09); --line-strong: rgba(16,26,30,.16);
-  --sheen: rgba(255,255,255,.85); --shade: rgba(20,45,55,.12);
-  --text: #101a1e; --text-dim: #566569; --text-mute: #85969d;
-  --wall-a: #e8f0f2; --wall-b: #f4f8f9; --wall-c: #dcE8ec;
-  color-scheme: light;
 }
 
 /* ============================================================
@@ -207,17 +215,23 @@
 
 .glass {
   background: var(--glass);
-  backdrop-filter: blur(24px) saturate(125%);
-  -webkit-backdrop-filter: blur(24px) saturate(125%);
+  backdrop-filter: blur(28px) saturate(128%);
+  -webkit-backdrop-filter: blur(28px) saturate(128%);
   border: 1px solid var(--line);
-  box-shadow: 0 1px 2px var(--shade), 0 8px 24px -16px var(--shade);
+  box-shadow: 0 1px 2px var(--shade), 0 10px 30px -20px var(--shade);
 }
 .glass--high {
   background: var(--glass-high);
-  backdrop-filter: blur(32px) saturate(140%);
-  -webkit-backdrop-filter: blur(32px) saturate(140%);
+  backdrop-filter: blur(38px) saturate(145%);
+  -webkit-backdrop-filter: blur(38px) saturate(145%);
   border: 1px solid var(--line-strong);
-  box-shadow: 0 2px 4px var(--shade), 0 24px 60px -24px var(--shade);
+  box-shadow: 0 2px 6px var(--shade), 0 28px 70px -28px var(--shade);
+}
+
+/* where the browser can draw a continuous corner, let it —
+   the transition into the curve is what reads as "soft" */
+@supports (corner-shape: squircle) {
+  .glass, .win, .card__art, .btn { corner-shape: squircle; }
 }
 
 /* ============================================================

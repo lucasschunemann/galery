@@ -4,7 +4,7 @@ import { useSfx } from "../os/useSfx";
 
 const RAMP = ["--n-0", "--n-5", "--n-10", "--n-15", "--n-20", "--n-30", "--n-40", "--n-60", "--n-80", "--n-95"];
 const ACCENTS = ["--accent-dim", "--accent", "--accent-soft"];
-const FLAVOURS: Flavour[] = ["graphite", "basel", "ulm", "stedelijk", "zurich", "braun", "delft", "muenchen"];
+const FLAVOURS: Flavour[] = ["braun", "linen", "zurich", "delft", "graphite", "ulm", "basel", "stedelijk"];
 
 /* The system's own token sheet, live. Changing anything here
    changes the OS you are looking at — including this window. */
@@ -27,8 +27,8 @@ export default function Tokens() {
         <p className="t-label">Sistema</p>
         <h1 className="t-h">Tokens</h1>
         <p className="t-body">
-          Uma rampa neutra de dez passos e um único acento. Superfícies são
-          separadas por uma linha de 1px, não por sombra.
+          Cada tema tem uma rampa neutra de dez passos e um acento. As superfícies
+          se separam por uma linha de 1px, sem sombra.
         </p>
       </header>
 

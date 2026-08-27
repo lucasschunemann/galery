@@ -124,14 +124,15 @@
   transform-origin: top right;
 }
 .popover__head { padding: 8px 9px 7px; }
-.popover__swatch[data-flavour="graphite"]  { background: linear-gradient(135deg, #0f1011 50%, #6e79d6 50%); }
-.popover__swatch[data-flavour="basel"]     { background: linear-gradient(135deg, #111419 50%, #3d7bf7 50%); }
-.popover__swatch[data-flavour="ulm"]       { background: linear-gradient(135deg, #131210 50%, #e8703a 50%); }
-.popover__swatch[data-flavour="stedelijk"] { background: linear-gradient(135deg, #121212 50%, #f2d02c 50%); }
-.popover__swatch[data-flavour="zurich"]    { background: linear-gradient(135deg, #f7f7f7 50%, #e2231a 50%); }
-.popover__swatch[data-flavour="braun"]     { background: linear-gradient(135deg, #f6f3ec 50%, #cf7c2c 50%); }
-.popover__swatch[data-flavour="delft"]     { background: linear-gradient(135deg, #f5f7f9 50%, #2b4c8c 50%); }
-.popover__swatch[data-flavour="muenchen"]  { background: linear-gradient(135deg, #f4f8f9 50%, #3d8fc4 50%); }
+
+.popover__swatch[data-flavour="braun"]     { background: linear-gradient(135deg, #f6f2e9 50%, #c8763a 50%); }
+.popover__swatch[data-flavour="linen"]     { background: linear-gradient(135deg, #f7f5f1 50%, #3a6ea8 50%); }
+.popover__swatch[data-flavour="zurich"]    { background: linear-gradient(135deg, #f8f7f5 50%, #d8332a 50%); }
+.popover__swatch[data-flavour="delft"]     { background: linear-gradient(135deg, #f6f7f8 50%, #33548f 50%); }
+.popover__swatch[data-flavour="graphite"]  { background: linear-gradient(135deg, #141312 50%, #7d92c9 50%); }
+.popover__swatch[data-flavour="ulm"]       { background: linear-gradient(135deg, #15120f 50%, #e0793f 50%); }
+.popover__swatch[data-flavour="basel"]     { background: linear-gradient(135deg, #131518 50%, #5c8fd6 50%); }
+.popover__swatch[data-flavour="stedelijk"] { background: linear-gradient(135deg, #131312 50%, #e8c93f 50%); }
 
 .popover button {
   width: 100%;
@@ -334,11 +335,6 @@
   pointer-events: none;
   color: var(--n-40);
 }
-.desk__mark { position: absolute; width: 14px; height: 14px; opacity: 0.7; }
-.desk__mark--tl { top: 5px; left: 5px; }
-.desk__mark--tr { top: 5px; right: 5px; }
-.desk__mark--bl { bottom: 5px; left: 5px; }
-.desk__mark--br { bottom: 5px; right: 5px; }
 
 /* the home screen: an empty workspace is not a void, it is a page */
 .home {

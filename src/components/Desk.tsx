@@ -14,20 +14,6 @@ export default function Desk() {
 
   return (
     <div className="desk" data-empty={empty}>
-      {(["tl", "tr", "bl", "br"] as const).map((c, i) => (
-        <motion.svg
-          key={c}
-          className={`desk__mark desk__mark--${c}`}
-          viewBox="0 0 24 24"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.25 + i * 0.06, duration: 0.5 }}
-          aria-hidden
-        >
-          <path d="M12 0v8M12 16v8M0 12h8M16 12h8" stroke="currentColor" strokeWidth="1" />
-        </motion.svg>
-      ))}
-
       <AnimatePresence>
         {empty && (
           <motion.div

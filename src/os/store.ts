@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import type { PictName } from "../components/Pict";
 
-export type Flavour = "graphite" | "basel" | "ulm" | "stedelijk" | "zurich" | "braun" | "delft" | "muenchen";
+export type Flavour = "braun" | "linen" | "zurich" | "delft" | "graphite" | "ulm" | "basel" | "stedelijk";
 export type Rect = { x: number; y: number; w: number; h: number };
 
 export interface WindowState {
@@ -81,7 +81,7 @@ export const useOS = create<OSState>((set, get) => ({
   focusId: null,
   workspace: 1,
   zTop: 100,
-  flavour: "graphite",
+  flavour: "braun",
   sound: true,
   grain: true,
   launcher: false,
@@ -237,8 +237,10 @@ export function dwindle(area: Rect, count: number, gap: number): Rect[] {
       out.push(region);
       break;
     }
-    // the first split favours the master pane; the rest halve evenly
-    const ratio = i === 0 ? 0.58 : 0.5;
+    /* The first split is 0.618 rather than a half. A room reads
+       calmer when its parts are unequal — an even division makes
+       the eye compare the two halves instead of settling into one. */
+    const ratio = i === 0 ? 0.618 : 0.5;
     const horizontal = region.w >= region.h;
 
     if (horizontal) {

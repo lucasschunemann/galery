@@ -8,14 +8,14 @@ import Pict from "./Pict";
 /* every theme carries the lineage it was taken from — the note is
    not decoration, it is the reason the palette looks like that */
 const FLAVOURS: { id: Flavour; name: string; note: string }[] = [
-  { id: "graphite",  name: "Graphite",  note: "Neutro escuro" },
-  { id: "basel",     name: "Basel",     note: "Hofmann · Ruder" },
-  { id: "ulm",       name: "Ulm",       note: "Aicher · HfG" },
-  { id: "stedelijk", name: "Stedelijk", note: "Crouwel · Total Design" },
-  { id: "zurich",    name: "Zürich",    note: "Müller-Brockmann" },
   { id: "braun",     name: "Braun",     note: "Dieter Rams" },
+  { id: "linen",     name: "Linen",     note: "Branco quente" },
+  { id: "zurich",    name: "Zürich",    note: "Müller-Brockmann" },
   { id: "delft",     name: "Delft",     note: "Azul de Delft" },
-  { id: "muenchen",  name: "München",   note: "Aicher · 1972" },
+  { id: "graphite",  name: "Graphite",  note: "Carvão quente" },
+  { id: "ulm",       name: "Ulm",       note: "Aicher · HfG" },
+  { id: "basel",     name: "Basel",     note: "Hofmann · Ruder" },
+  { id: "stedelijk", name: "Stedelijk", note: "Crouwel · Total Design" },
 ];
 
 export default function Bar() {

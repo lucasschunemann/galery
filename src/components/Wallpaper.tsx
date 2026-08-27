@@ -5,13 +5,37 @@ import { useOS } from "../os/store";
    WALLPAPER.
 
    A desktop still needs a ground, but this one is meant to be
-   forgotten: a near-flat neutral field, one very slow accent
-   glow, a faint modular grid inherited from Total Design, and
-   grain to keep the gradient from banding.
+   forgotten: a near-flat field, one slow mass of light, a faint
+   modular grid, and grain to keep the gradient from banding.
 
-   The test is simple — if you notice it while reading a window,
-   it is too loud.
+   The light is not decorative. It sits where the sun would sit
+   at the reader's actual hour and carries the colour temperature
+   of that hour, so the room at seven in the morning is not the
+   room at midnight. Nobody is meant to notice this. It is the
+   kind of change you feel a week later without being able to
+   say what moved.
+
+   The test for everything else: if you notice it while reading a
+   window, it is too loud.
    ============================================================ */
+
+/** where the light sits, and how warm it is, at a given hour */
+function daylight(now: Date) {
+  const h = now.getHours() + now.getMinutes() / 60;
+  // the arc runs from the lower left before dawn to the lower right
+  // after dusk, passing overhead around one in the afternoon
+  const t = ((h - 6) / 12) * Math.PI;          // 06h → 0, 18h → π
+  const above = h > 5.5 && h < 18.5;
+  const x = 0.5 - Math.cos(t) * 0.34;
+  const y = above ? 0.5 - Math.sin(t) * 0.42 : 0.86;
+
+  // warmth peaks at the two edges of the day and bottoms out at noon
+  const noonDistance = Math.min(Math.abs(h - 13), 12) / 12;
+  const warmth = above ? Math.pow(noonDistance, 1.6) : 0.12;
+  const strength = above ? 0.55 + Math.sin(Math.max(0, t)) * 0.45 : 0.34;
+
+  return { x, y, warmth, strength };
+}
 
 export default function Wallpaper() {
   const ref = useRef<HTMLCanvasElement>(null);
@@ -30,6 +54,9 @@ export default function Wallpaper() {
     const pointer = { x: 0.5, y: 0.5, tx: 0.5, ty: 0.5 };
     let C = read();
     let grainTile: CanvasPattern | null = null;
+    let sun = daylight(new Date());
+    // the hour only needs checking now and then
+    const clock = setInterval(() => { sun = daylight(new Date()); }, 60_000);
 
     function read() {
       const cs = getComputedStyle(document.documentElement);
@@ -77,25 +104,35 @@ export default function Wallpaper() {
       ctx!.fillStyle = g;
       ctx!.fillRect(0, 0, w, h);
 
-      // one wide, very slow mass — it reads as light in the room
-      const cx = w * (0.72 + Math.sin(t * 0.021) * 0.05) + (pointer.x - 0.5) * -18;
-      const cy = h * (0.18 + Math.cos(t * 0.017) * 0.05) + (pointer.y - 0.5) * -12;
-      const r = Math.max(w, h) * 0.78;
+      const d = sun;
+      // the mass of light, placed at this hour's sun
+      const cx = w * d.x + Math.sin(t * 0.021) * 26 + (pointer.x - 0.5) * -18;
+      const cy = h * d.y + Math.cos(t * 0.017) * 20 + (pointer.y - 0.5) * -12;
+      const r = Math.max(w, h) * 0.82;
       const g2 = ctx!.createRadialGradient(cx, cy, 0, cx, cy, r);
-      g2.addColorStop(0, hexA(C.c, 0.7));
-      g2.addColorStop(0.5, hexA(C.c, 0.22));
+      g2.addColorStop(0, hexA(C.c, 0.72 * d.strength));
+      g2.addColorStop(0.5, hexA(C.c, 0.22 * d.strength));
       g2.addColorStop(1, hexA(C.c, 0));
       ctx!.fillStyle = g2;
       ctx!.fillRect(0, 0, w, h);
 
-      // and a single restrained accent, barely above the noise floor
-      const ax = w * (0.24 + Math.cos(t * 0.014) * 0.04);
-      const ay = h * (0.76 + Math.sin(t * 0.019) * 0.04);
+      // the hour's colour temperature, laid over the same spot
+      if (d.warmth > 0.02) {
+        const g3 = ctx!.createRadialGradient(cx, cy, 0, cx, cy, r * 0.8);
+        g3.addColorStop(0, `rgba(255, 186, 112, ${0.07 * d.warmth})`);
+        g3.addColorStop(1, "rgba(255, 186, 112, 0)");
+        ctx!.fillStyle = g3;
+        ctx!.fillRect(0, 0, w, h);
+      }
+
+      // a single restrained accent, barely above the noise floor
+      const ax = w * (1 - d.x) + Math.cos(t * 0.014) * 22;
+      const ay = h * (1 - d.y * 0.6);
       const ar = Math.max(w, h) * 0.46;
-      const g3 = ctx!.createRadialGradient(ax, ay, 0, ax, ay, ar);
-      g3.addColorStop(0, hexA(C.accent, 0.05));
-      g3.addColorStop(1, hexA(C.accent, 0));
-      ctx!.fillStyle = g3;
+      const g4 = ctx!.createRadialGradient(ax, ay, 0, ax, ay, ar);
+      g4.addColorStop(0, hexA(C.accent, 0.045));
+      g4.addColorStop(1, hexA(C.accent, 0));
+      ctx!.fillStyle = g4;
       ctx!.fillRect(0, 0, w, h);
     }
 
@@ -158,6 +195,7 @@ export default function Wallpaper() {
 
     return () => {
       cancelAnimationFrame(raf);
+      clearInterval(clock);
       window.removeEventListener("resize", resize);
       window.removeEventListener("pointermove", onMove);
       obs.disconnect();

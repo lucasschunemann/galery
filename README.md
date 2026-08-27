@@ -3,42 +3,58 @@
 *Raam* é "janela" em holandês.
 
 Um portfólio construído como um sistema operacional: janelas em mosaico,
-uma rampa neutra, um acento por tema — tudo desenhado em código, sem uma
-única imagem no projeto.
+uma rampa neutra e um acento por tema, tudo desenhado em código. Não há
+nenhum arquivo de imagem no projeto.
 
 ## O princípio
 
 A linhagem é o modernismo do norte da Europa lido através do design de
-produto contemporâneo: Rams e Ulm para a disciplina, Crouwel e a Total
-Design para a grade, Linear e Notion para como isso se comporta em
-software.
+produto contemporâneo: Rams e a HfG Ulm para a disciplina, Crouwel e a Total
+Design para a grade, Linear e Notion para como isso se comporta em software.
 
 As regras da casa:
 
-- **Uma rampa neutra, um acento, nada mais.**
-- **Superfícies são separadas por uma linha de 1px, não por sombra.**
-- **Raios são pequenos.** Maciez é um problema de espaçamento, não de canto.
-- **Movimento é abundante, mas preciso.** Rápido, amortecido, nunca elástico.
-- **Nenhum ornamento sobrevive se não carregar informação.**
-- **Margem é material.** O ar dentro de um painel não é sobra — é o que
-  torna o texto legível.
+- Uma rampa neutra, um acento, nada mais.
+- Superfícies se separam por uma linha de 1px, sem sombra.
+- Todo canto é generoso e contínuo. Não sobrou nenhum canto vivo apontado
+  para quem lê.
+- Movimento é abundante, mas nada dispara e nada ultrapassa o alvo.
+- Margem é material. O ar dentro de um painel não é sobra: é o que torna
+  o texto legível.
+- Nenhum ornamento sobrevive se não carregar informação.
+
+Três decisões estruturais não aparecem em lugar nenhum da tela:
+
+O primeiro corte do layout é 0.618, não a metade. Uma sala fica mais calma
+quando suas partes são desiguais; uma divisão exata faz o olho comparar os
+dois lados em vez de se acomodar em um.
+
+A luz do papel de parede fica onde o sol estaria na hora real de quem está
+lendo, com a temperatura de cor daquela hora. A sala às sete da manhã não é
+a mesma de meia-noite. Ninguém deve notar isso.
+
+Uma área de trabalho vazia não é um estado de erro. É a tela inicial.
 
 ## Programa de cores
 
 Oito temas, cada um tirado de uma linhagem real em vez de inventado. Todos
-são uma rampa neutra de dez passos mais exatamente um acento — a disciplina
-é o ponto; a variedade vive na temperatura, não na quantidade de cor.
+têm uma rampa neutra de dez passos e exatamente um acento. A variedade vive
+na temperatura, não na quantidade de cor.
+
+Nenhum neutro aqui é cinza puro. Mesmo os temas escuros carregam alguma
+temperatura, porque um cinza perfeitamente neutro é uma cor que não existe
+em lugar nenhum e lê como equipamento.
 
 | Tema | Linhagem |
 |---|---|
-| **Graphite** | neutro escuro — o padrão |
-| **Basel** | Armin Hofmann · Emil Ruder |
-| **Ulm** | Otl Aicher · HfG Ulm |
-| **Stedelijk** | Wim Crouwel · Total Design |
+| **Braun** | Dieter Rams. O padrão |
+| **Linen** | branco quente, azul contido |
 | **Zürich** | Josef Müller-Brockmann |
-| **Braun** | Dieter Rams |
 | **Delft** | azul de Delft |
-| **München** | Aicher, 1972 |
+| **Graphite** | carvão quente |
+| **Ulm** | Otl Aicher, HfG Ulm |
+| **Basel** | Armin Hofmann, Emil Ruder |
+| **Stedelijk** | Wim Crouwel, Total Design |
 
 Trocar de tema retinge tudo: papel de parede, capas de projeto, interface.
 O seletor mostra a fonte de cada paleta.
@@ -73,8 +89,8 @@ tela inicial.
 | Peça | Onde | O que é |
 |---|---|---|
 | Layout | `src/os/store.ts` | `dwindle`: cada janela toma metade do que sobrou, dividindo o lado mais longo da região restante |
-| Movimento | `src/os/motion.ts` | Molas criticamente amortecidas e tweens curtos — a coreografia é farta, o caráter não |
-| Papel de parede | `src/components/Wallpaper.tsx` | Campo quase plano, uma massa de luz muito lenta, grade modular e grão. O teste: se você o nota lendo uma janela, está alto demais |
+| Movimento | `src/os/motion.ts` | Molas criticamente amortecidas e tweens curtos. A coreografia é farta, o caráter não |
+| Papel de parede | `src/components/Wallpaper.tsx` | Campo quase plano, uma massa de luz posicionada pela hora do dia, grade modular e grão. O teste: se você o nota lendo uma janela, está alto demais |
 | Temas | `src/styles/os.css` | Cinco, cada um com rampa neutra de dez passos e um acento |
 | Capas | `src/components/Cover.tsx` | Oito composições planas construídas sobre a mesma grade, que herdam a paleta por CSS vars |
 | Pictogramas | `src/components/Pict.tsx` | Um sistema desenhado à maneira de Ulm: mesma grade de 24, mesma espessura, só círculos, quadrados e diagonais de 45° |
@@ -82,7 +98,7 @@ tela inicial.
 
 ## Tipografia
 
-Inter, uma família só, carregada por peso e tracking em vez de por variedade —
+Inter, uma família só, carregada por peso e tracking em vez de por variedade,
 como Linear e Notion fazem. Mono aparece só onde o dado pede: índices,
 terminal, nomes de arquivo.
 

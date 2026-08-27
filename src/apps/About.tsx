@@ -3,13 +3,13 @@ import { useOS } from "../os/store";
 import { useSfx } from "../os/useSfx";
 
 const SPECS = [
-  ["host", "lucas schünemann"],
-  ["role", "ux/ui designer & web developer"],
-  ["shell", "design 3.2 GHz · código 3.0 GHz"],
-  ["uptime", "8 anos em produção"],
-  ["render", "motion · webgl · canvas"],
-  ["locale", "brasil — remoto, gmt-3"],
-  ["status", "aberto a projetos"],
+  ["Nome", "Lucas Schünemann"],
+  ["Função", "UX/UI Designer e Web Developer"],
+  ["Foco", "Interfaces, design systems, motion"],
+  ["Experiência", "8 anos"],
+  ["Ferramentas", "Figma, React, TypeScript, WebGL"],
+  ["Local", "Brasil, remoto (GMT-3)"],
+  ["Situação", "Aberto a projetos"],
 ];
 
 export default function About() {
@@ -19,11 +19,7 @@ export default function About() {
   return (
     <div className="about">
       <div className="about__head">
-        <motion.div
-          className="about__orb"
-          animate={{ rotate: 360 }}
-          transition={{ duration: 26, repeat: Infinity, ease: "linear" }}
-        />
+        <span className="about__mark" aria-hidden>LS</span>
         <div>
           <h1 className="about__name">Lucas Schünemann</h1>
           <p className="about__ver">raam · 2026</p>
@@ -31,15 +27,14 @@ export default function About() {
       </div>
 
       <p className="about__bio">
-        Eu projeto e construo interfaces. Comecei no design, aprendi a programar porque
-        queria que as coisas se movessem exatamente como eu tinha imaginado, e nunca mais
-        separei as duas coisas. Gosto de sistemas: cor, tipografia, componente, token,
-        deploy — tudo junto, tudo coerente.
+        Eu projeto e construo interfaces. Comecei no design e aprendi a programar
+        porque queria controlar como as coisas se movem. Desde então trabalho nas duas
+        pontas: cor, tipografia, componente, token, deploy.
       </p>
       <p className="about__bio">
-        Este site é um sistema operacional. Janelas tiladas, paletas tonais, um acento
-        por tema, tudo desenhado em código — não existe uma única imagem no projeto.
-        É a forma mais honesta que eu conheço de mostrar como eu trabalho.
+        Este site é um sistema operacional funcional. As janelas se organizam em
+        mosaico, os temas trocam a paleta inteira e nada aqui usa arquivo de imagem:
+        cada superfície é desenhada em código.
       </p>
 
       <table className="specs">

@@ -100,7 +100,7 @@ export default function Lock() {
               <button type="submit" className="lock__go" title="Entrar">→</button>
             </div>
             <p className="lock__hint">
-Qualquer senha entra — não há nada aqui para trancar
+Qualquer senha funciona. Não há nada trancado aqui.
             </p>
           </motion.form>
 
