@@ -1,0 +1,120 @@
+/* ============================================================
+   Menu bar — the translucent white strip of 10.0
+   ============================================================ */
+
+.menubar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: var(--menubar-h);
+  z-index: var(--z-menubar);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 8px;
+  font-size: 12px;
+  color: #16232f;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.93),
+    rgba(246, 250, 255, 0.82) 62%,
+    rgba(222, 234, 246, 0.86)
+  );
+  backdrop-filter: blur(18px) saturate(180%);
+  -webkit-backdrop-filter: blur(18px) saturate(180%);
+  border-bottom: 1px solid rgba(0, 40, 90, 0.22);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.6), 0 3px 10px -4px rgba(0, 30, 70, 0.3);
+  user-select: none;
+}
+
+.menubar__left, .menubar__right { display: flex; align-items: center; gap: 2px; }
+.menubar__menu { position: relative; }
+
+.menubar__btn {
+  border: 0;
+  background: none;
+  padding: 3px 9px;
+  border-radius: 5px;
+  font-size: 12px;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  color: inherit;
+  transition: background 0.12s, color 0.12s;
+}
+.menubar__btn:hover { background: rgba(20, 80, 160, 0.1); }
+.menubar__btn[data-open="true"] {
+  background: linear-gradient(to bottom, var(--accent), var(--accent-lo));
+  color: #fff;
+}
+.menubar__logo { padding: 3px 10px; }
+
+.menubar__app {
+  font-weight: 700;
+  padding: 0 8px 0 2px;
+  letter-spacing: 0.1px;
+}
+
+.menubar__extra {
+  border: 0;
+  background: none;
+  padding: 3px 6px;
+  border-radius: 5px;
+  display: grid;
+  place-items: center;
+  color: #2a3a4a;
+  opacity: 0.75;
+  transition: opacity 0.15s, background 0.15s;
+}
+.menubar__extra:hover { opacity: 1; background: rgba(20, 80, 160, 0.1); }
+.menubar__extra[aria-pressed="true"] { opacity: 1; color: var(--accent-lo); }
+
+.menubar__clock {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 6px 0 4px;
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+.menubar__date { opacity: 0.62; font-weight: 400; }
+@media (max-width: 620px) { .menubar__date, .menubar__app { display: none; } }
+
+/* ---------------- dropdown ---------------- */
+
+.menu {
+  position: absolute;
+  top: calc(100% + 3px);
+  left: 0;
+  min-width: 224px;
+  padding: 5px;
+  border-radius: 8px;
+  z-index: 10;
+  list-style: none;
+}
+.menu__sep {
+  height: 1px;
+  margin: 5px 8px;
+  background: linear-gradient(to right, transparent, rgba(0, 40, 90, 0.2), transparent);
+}
+.menu__item {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 16px 1fr auto;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 8px;
+  border: 0;
+  border-radius: 5px;
+  background: none;
+  text-align: left;
+  font-size: 12.5px;
+  color: #17242f;
+  white-space: nowrap;
+}
+.menu__item:hover {
+  background: linear-gradient(to bottom, var(--accent), var(--accent-lo));
+  color: #fff;
+}
+.menu__check { font-size: 11px; opacity: 0.9; }
+.menu__hint { font-size: 11px; opacity: 0.5; }
+.menu__item:hover .menu__hint { opacity: 0.85; }

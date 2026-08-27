@@ -1,0 +1,184 @@
+/* ============================================================
+   AERO OS — design tokens
+   Frutiger Aero / Aqua (Mac OS X 10.0–10.4) revival
+   ============================================================ */
+
+:root {
+  /* --- typography: the authentic OS X stack --- */
+  --font-ui: "Lucida Grande", "Lucida Sans Unicode", -apple-system,
+             "Segoe UI", Tahoma, sans-serif;
+  --font-display: "Helvetica Neue", Helvetica, "Arial Black", Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Monaco, "Courier New", monospace;
+
+  /* --- aqua chrome --- */
+  --chrome-1: #fdfdfd;
+  --chrome-2: #e8e8e8;
+  --chrome-3: #cfcfcf;
+  --chrome-edge: #8d8d8d;
+  --chrome-text: #1a1a1a;
+  --chrome-text-dim: #6b6b6b;
+
+  /* --- accent (themeable) --- */
+  --accent-lo: #0a4c9b;
+  --accent: #2b8ef0;
+  --accent-hi: #a8d8ff;
+  --accent-glow: rgba(60, 160, 255, 0.55);
+
+  /* --- sky / wallpaper --- */
+  --sky-top: #1f6fd0;
+  --sky-mid: #6fc0f7;
+  --sky-low: #cfeeff;
+  --land-hi: #9ddb4e;
+  --land-lo: #2f7d1f;
+
+  /* --- glass --- */
+  --glass: rgba(255, 255, 255, 0.34);
+  --glass-strong: rgba(255, 255, 255, 0.62);
+  --glass-line: rgba(255, 255, 255, 0.72);
+  --glass-shadow: rgba(8, 34, 68, 0.28);
+
+  /* --- geometry --- */
+  --r-win: 11px;
+  --r-gel: 999px;
+  --r-card: 14px;
+  --menubar-h: 26px;
+  --dock-h: 74px;
+
+  /* --- motion --- */
+  --ease-aqua: cubic-bezier(0.22, 1.2, 0.32, 1);
+  --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* --- z --- */
+  --z-wallpaper: 0;
+  --z-icons: 10;
+  --z-windows: 100;
+  --z-dock: 9000;
+  --z-menubar: 9500;
+  --z-overlay: 9800;
+  --z-cursor: 10000;
+}
+
+/* -------- theme: graphite (Mac OS X "Graphite" appearance) -------- */
+[data-theme="graphite"] {
+  --accent-lo: #4a5560;
+  --accent: #8b98a5;
+  --accent-hi: #dfe6ec;
+  --accent-glow: rgba(150, 165, 180, 0.5);
+  --sky-top: #4d6274;
+  --sky-mid: #9fb3c2;
+  --sky-low: #dfe8ee;
+  --land-hi: #a9b8a2;
+  --land-lo: #4f6350;
+}
+
+/* -------- theme: sunset (Frutiger Aero @ golden hour) -------- */
+[data-theme="sunset"] {
+  --accent-lo: #a63a12;
+  --accent: #ff8a3d;
+  --accent-hi: #ffdcb0;
+  --accent-glow: rgba(255, 150, 70, 0.55);
+  --sky-top: #2e2a6b;
+  --sky-mid: #f2743d;
+  --sky-low: #ffd9a0;
+  --land-hi: #d9a84e;
+  --land-lo: #5c3a1e;
+}
+
+/* -------- theme: bliss (the wallpaper everyone remembers) -------- */
+[data-theme="bliss"] {
+  --accent-lo: #17631e;
+  --accent: #46b93e;
+  --accent-hi: #cdf5b8;
+  --accent-glow: rgba(90, 210, 90, 0.5);
+  --sky-top: #1567c9;
+  --sky-mid: #7ec8f5;
+  --sky-low: #e8f7ff;
+  --land-hi: #9ede4a;
+  --land-lo: #276c17;
+}
+
+/* ============================================================
+   REUSABLE AQUA PRIMITIVES
+   ============================================================ */
+
+/* the specular sheen that defines the whole era: a hard-edged
+   highlight occupying the top ~48% of any surface */
+.sheen::before {
+  content: "";
+  position: absolute;
+  inset: 1px 1px auto 1px;
+  height: 48%;
+  border-radius: inherit;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.88),
+    rgba(255, 255, 255, 0.42) 62%,
+    rgba(255, 255, 255, 0.06)
+  );
+  pointer-events: none;
+}
+
+/* Aqua pinstripes — the brushed-linen texture of 10.0/10.1 */
+.pinstripe {
+  background-image: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.55) 0px,
+    rgba(255, 255, 255, 0.55) 1px,
+    rgba(0, 0, 0, 0.045) 1px,
+    rgba(0, 0, 0, 0.045) 2px
+  );
+}
+
+/* frosted panel */
+.frost {
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.66),
+    rgba(255, 255, 255, 0.34) 46%,
+    rgba(228, 240, 252, 0.42)
+  );
+  backdrop-filter: blur(22px) saturate(180%);
+  -webkit-backdrop-filter: blur(22px) saturate(180%);
+  border: 1px solid var(--glass-line);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.35),
+    0 18px 44px -12px var(--glass-shadow);
+}
+
+/* gel button — the jelly candy pill */
+.gel {
+  position: relative;
+  isolation: isolate;
+  border: 1px solid rgba(0, 0, 0, 0.24);
+  border-radius: var(--r-gel);
+  background: linear-gradient(
+    to bottom,
+    var(--accent-hi),
+    var(--accent) 46%,
+    var(--accent-lo)
+  );
+  color: #fff;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.35);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    inset 0 -6px 12px -6px rgba(0, 0, 0, 0.45),
+    0 2px 5px rgba(10, 40, 80, 0.3);
+  transition: transform 0.16s var(--ease-aqua), box-shadow 0.16s var(--ease-soft),
+    filter 0.16s var(--ease-soft);
+}
+.gel::after {
+  content: "";
+  position: absolute;
+  inset: 1px 6% auto 6%;
+  height: 44%;
+  border-radius: var(--r-gel);
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.95),
+    rgba(255, 255, 255, 0.25)
+  );
+  pointer-events: none;
+}
+.gel:hover { filter: brightness(1.08) saturate(1.1); }
+.gel:active { transform: translateY(1px) scale(0.985); filter: brightness(0.94); }
