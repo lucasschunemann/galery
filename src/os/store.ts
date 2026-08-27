@@ -1,144 +1,129 @@
 import { create } from "zustand";
 
-export type Theme = "aqua" | "graphite" | "sunset" | "bliss";
+export type Flavour = "graphite" | "mocha" | "nord" | "paper";
 export type Rect = { x: number; y: number; w: number; h: number };
 
-export interface WindowState extends Rect {
+export interface WindowState {
   id: string;
   appId: string;
   title: string;
+  workspace: number;
+  /** tiled windows are placed by the layout engine; floating ones carry geometry */
+  floating: boolean;
+  fx: number; fy: number; fw: number; fh: number;
   z: number;
-  minimized: boolean;
-  maximized: boolean;
-  restore?: Rect;
   props?: Record<string, unknown>;
-  /** genie-effect origin, set when minimizing to the dock */
-  genieX?: number;
 }
 
-interface OSState {
-  booted: boolean;
-  windows: WindowState[];
-  focusId: string | null;
-  zTop: number;
-  theme: Theme;
-  sound: boolean;
-  crt: boolean;
-  screensaver: boolean;
-  selection: string | null;
+export const WORKSPACES = [1, 2, 3, 4, 5] as const;
 
-  boot: () => void;
-  open: (appId: string, props?: Record<string, unknown>) => void;
-  close: (id: string) => void;
-  focus: (id: string) => void;
-  minimize: (id: string, genieX?: number) => void;
-  restore: (id: string) => void;
-  toggleZoom: (id: string) => void;
-  setRect: (id: string, rect: Partial<Rect>) => void;
-  setTheme: (t: Theme) => void;
-  toggleSound: () => void;
-  toggleCRT: () => void;
-  setScreensaver: (v: boolean) => void;
-  select: (id: string | null) => void;
-}
-
-/* ---- app registry metadata (kept here so the dock can read it) ---- */
 export interface AppMeta {
   id: string;
   name: string;
-  icon: string;
-  defaultSize: { w: number; h: number };
+  /** the mono glyph the rail and launcher draw */
+  glyph: string;
+  keywords: string;
+  size: { w: number; h: number };
   singleton?: boolean;
-  inDock?: boolean;
-  onDesktop?: boolean;
-  minSize?: { w: number; h: number };
+  inRail?: boolean;
 }
 
 export const APPS: Record<string, AppMeta> = {
-  finder:     { id: "finder",     name: "Galeria",     icon: "finder",     defaultSize: { w: 880, h: 560 }, singleton: true, inDock: true, onDesktop: true },
-  project:    { id: "project",    name: "Projeto",     icon: "project",    defaultSize: { w: 760, h: 600 } },
-  about:      { id: "about",      name: "Sobre Mim",   icon: "about",      defaultSize: { w: 620, h: 500 }, singleton: true, inDock: true, onDesktop: true },
-  playground: { id: "playground", name: "Playground",  icon: "playground", defaultSize: { w: 640, h: 520 }, singleton: true, inDock: true, onDesktop: true },
-  terminal:   { id: "terminal",   name: "Terminal",    icon: "terminal",   defaultSize: { w: 600, h: 400 }, singleton: true, inDock: true },
-  contact:    { id: "contact",    name: "Contato",     icon: "contact",    defaultSize: { w: 520, h: 470 }, singleton: true, inDock: true, onDesktop: true },
-  player:     { id: "player",     name: "AeroTunes",   icon: "player",     defaultSize: { w: 400, h: 330 }, singleton: true, inDock: true },
-  trash:      { id: "trash",      name: "Lixeira",     icon: "trash",      defaultSize: { w: 520, h: 380 }, singleton: true, onDesktop: true },
+  files:    { id: "files",    name: "Trabalho",  glyph: "▤", keywords: "galeria projetos work portfolio", size: { w: 980, h: 660 }, singleton: true, inRail: true },
+  project:  { id: "project",  name: "Projeto",   glyph: "◧", keywords: "caso case estudo",                size: { w: 880, h: 700 } },
+  about:    { id: "about",    name: "Sobre",     glyph: "◐", keywords: "sobre bio quem lucas",            size: { w: 660, h: 560 }, singleton: true, inRail: true },
+  tokens:   { id: "tokens",   name: "Tokens",    glyph: "◨", keywords: "tema cores paleta flavour",       size: { w: 700, h: 620 }, singleton: true, inRail: true },
+  terminal: { id: "terminal", name: "Terminal",  glyph: "▶", keywords: "shell console bash cli",          size: { w: 680, h: 460 }, singleton: true, inRail: true },
+  contact:  { id: "contact",  name: "Contato",   glyph: "◇", keywords: "contato email falar",             size: { w: 560, h: 540 }, singleton: true, inRail: true },
+  player:   { id: "player",   name: "Áudio",     glyph: "◉", keywords: "musica som player ambient",       size: { w: 440, h: 380 }, singleton: true, inRail: true },
+  archive:  { id: "archive",  name: "Arquivo",   glyph: "◫", keywords: "descartado lixo arquivo morto",   size: { w: 620, h: 460 }, singleton: true, inRail: true },
 };
+
+interface OSState {
+  phase: "boot" | "lock" | "live";
+  windows: WindowState[];
+  focusId: string | null;
+  workspace: number;
+  zTop: number;
+  flavour: Flavour;
+  sound: boolean;
+  grain: boolean;
+  launcher: boolean;
+
+  setPhase: (p: OSState["phase"]) => void;
+  lock: () => void;
+  unlock: () => void;
+
+  open: (appId: string, props?: Record<string, unknown>) => void;
+  close: (id: string) => void;
+  focus: (id: string) => void;
+  focusCycle: (dir: 1 | -1) => void;
+  toggleFloat: (id: string) => void;
+  setFloatRect: (id: string, r: Partial<Rect>) => void;
+  moveToWorkspace: (id: string, ws: number) => void;
+
+  setWorkspace: (n: number) => void;
+  setFlavour: (f: Flavour) => void;
+  toggleSound: () => void;
+  toggleGrain: () => void;
+  setLauncher: (v: boolean) => void;
+}
 
 let seq = 0;
 const uid = () => `w${++seq}`;
 
-/** cascade new windows so they never land exactly on top of each other */
-function place(w: number, h: number, count: number): Rect {
-  const vw = window.innerWidth;
-  const vh = window.innerHeight;
-  const width = Math.min(w, vw - 48);
-  const height = Math.min(h, vh - 140);
-  const step = 26 * (count % 6);
-  const x = Math.max(16, Math.round((vw - width) / 2) - 70 + step);
-  const y = Math.max(40, Math.round((vh - height) / 2) - 40 + step);
-  return { x, y, w: width, h: height };
-}
-
 export const useOS = create<OSState>((set, get) => ({
-  booted: false,
+  phase: "boot",
   windows: [],
   focusId: null,
+  workspace: 1,
   zTop: 100,
-  theme: "aqua",
+  flavour: "graphite",
   sound: true,
-  crt: false,
-  screensaver: false,
-  selection: null,
+  grain: true,
+  launcher: false,
 
-  boot: () => set({ booted: true }),
+  setPhase: (phase) => set({ phase }),
+  lock: () => set({ phase: "lock", launcher: false }),
+  unlock: () => set({ phase: "live" }),
 
   open: (appId, props) => {
     const meta = APPS[appId];
     if (!meta) return;
-    const { windows, zTop } = get();
+    const { windows, zTop, workspace } = get();
 
-    if (meta.singleton) {
-      const existing = windows.find((w) => w.appId === appId);
-      if (existing) {
-        set({
-          windows: windows.map((w) =>
-            w.id === existing.id
-              ? { ...w, minimized: false, z: zTop + 1, props: props ?? w.props }
-              : w
-          ),
-          focusId: existing.id,
-          zTop: zTop + 1,
-        });
-        return;
-      }
+    // singletons and the project viewer are reused, then pulled to this workspace
+    const reusable =
+      meta.singleton || appId === "project"
+        ? windows.find((w) => w.appId === appId)
+        : undefined;
+
+    if (reusable) {
+      set({
+        windows: windows.map((w) =>
+          w.id === reusable.id
+            ? {
+                ...w,
+                workspace,
+                z: zTop + 1,
+                props: props ?? w.props,
+                title: (props?.title as string) ?? w.title,
+              }
+            : w
+        ),
+        focusId: reusable.id,
+        zTop: zTop + 1,
+        launcher: false,
+      });
+      return;
     }
 
-    // reuse an open project window instead of stacking dozens of them
-    if (appId === "project") {
-      const existing = windows.find((w) => w.appId === "project");
-      if (existing) {
-        set({
-          windows: windows.map((w) =>
-            w.id === existing.id
-              ? {
-                  ...w,
-                  minimized: false,
-                  z: zTop + 1,
-                  props,
-                  title: (props?.title as string) ?? w.title,
-                }
-              : w
-          ),
-          focusId: existing.id,
-          zTop: zTop + 1,
-        });
-        return;
-      }
-    }
-
-    const rect = place(meta.defaultSize.w, meta.defaultSize.h, windows.length);
     const id = uid();
+    const vw = typeof window !== "undefined" ? window.innerWidth : 1440;
+    const vh = typeof window !== "undefined" ? window.innerHeight : 900;
+    const fw = Math.min(meta.size.w, vw - 160);
+    const fh = Math.min(meta.size.h, vh - 160);
+
     set({
       windows: [
         ...windows,
@@ -146,23 +131,31 @@ export const useOS = create<OSState>((set, get) => ({
           id,
           appId,
           title: (props?.title as string) ?? meta.name,
-          ...rect,
+          workspace,
+          floating: false,
+          fx: Math.round((vw - fw) / 2) + ((windows.length % 5) - 2) * 22,
+          fy: Math.round((vh - fh) / 2) + ((windows.length % 5) - 2) * 18,
+          fw,
+          fh,
           z: zTop + 1,
-          minimized: false,
-          maximized: false,
           props,
         },
       ],
       focusId: id,
       zTop: zTop + 1,
+      launcher: false,
     });
   },
 
   close: (id) =>
-    set((s) => ({
-      windows: s.windows.filter((w) => w.id !== id),
-      focusId: s.focusId === id ? null : s.focusId,
-    })),
+    set((s) => {
+      const rest = s.windows.filter((w) => w.id !== id);
+      const sameWs = rest.filter((w) => w.workspace === s.workspace);
+      return {
+        windows: rest,
+        focusId: s.focusId === id ? sameWs[sameWs.length - 1]?.id ?? null : s.focusId,
+      };
+    }),
 
   focus: (id) =>
     set((s) => {
@@ -175,53 +168,93 @@ export const useOS = create<OSState>((set, get) => ({
       };
     }),
 
-  minimize: (id, genieX) =>
+  /** alt-tab within the active workspace */
+  focusCycle: (dir) => {
+    const { windows, workspace, focusId } = get();
+    const list = windows.filter((w) => w.workspace === workspace);
+    if (!list.length) return;
+    const i = list.findIndex((w) => w.id === focusId);
+    const next = list[(i + dir + list.length) % list.length];
+    get().focus(next.id);
+  },
+
+  toggleFloat: (id) =>
     set((s) => ({
       windows: s.windows.map((w) =>
-        w.id === id ? { ...w, minimized: true, genieX } : w
+        w.id === id ? { ...w, floating: !w.floating, z: s.zTop + 1 } : w
       ),
-      focusId: s.focusId === id ? null : s.focusId,
+      zTop: s.zTop + 1,
+      focusId: id,
     })),
 
-  restore: (id) =>
+  setFloatRect: (id, r) =>
+    set((s) => ({
+      windows: s.windows.map((w) =>
+        w.id === id
+          ? { ...w, fx: r.x ?? w.fx, fy: r.y ?? w.fy, fw: r.w ?? w.fw, fh: r.h ?? w.fh }
+          : w
+      ),
+    })),
+
+  moveToWorkspace: (id, ws) =>
+    set((s) => ({
+      windows: s.windows.map((w) => (w.id === id ? { ...w, workspace: ws } : w)),
+    })),
+
+  setWorkspace: (workspace) =>
     set((s) => {
-      const z = s.zTop + 1;
-      return {
-        windows: s.windows.map((w) =>
-          w.id === id ? { ...w, minimized: false, z } : w
-        ),
-        focusId: id,
-        zTop: z,
-      };
+      const inWs = s.windows.filter((w) => w.workspace === workspace);
+      return { workspace, focusId: inWs[inWs.length - 1]?.id ?? null, launcher: false };
     }),
 
-  toggleZoom: (id) =>
-    set((s) => ({
-      windows: s.windows.map((w) => {
-        if (w.id !== id) return w;
-        if (w.maximized && w.restore) {
-          return { ...w, ...w.restore, maximized: false, restore: undefined };
-        }
-        return {
-          ...w,
-          maximized: true,
-          restore: { x: w.x, y: w.y, w: w.w, h: w.h },
-          x: 12,
-          y: 34,
-          w: window.innerWidth - 24,
-          h: window.innerHeight - 34 - 92,
-        };
-      }),
-    })),
-
-  setRect: (id, rect) =>
-    set((s) => ({
-      windows: s.windows.map((w) => (w.id === id ? { ...w, ...rect } : w)),
-    })),
-
-  setTheme: (theme) => set({ theme }),
+  setFlavour: (flavour) => set({ flavour }),
   toggleSound: () => set((s) => ({ sound: !s.sound })),
-  toggleCRT: () => set((s) => ({ crt: !s.crt })),
-  setScreensaver: (screensaver) => set({ screensaver }),
-  select: (selection) => set({ selection }),
+  toggleGrain: () => set((s) => ({ grain: !s.grain })),
+  setLauncher: (launcher) => set({ launcher }),
 }));
+
+/* ============================================================
+   LAYOUT — dwindle, the Hyprland default.
+
+   Each window takes half of what is left, splitting whichever
+   side of the remaining region is longer. The result is a
+   deterministic binary partition that stays balanced no matter
+   how many windows are open.
+   ============================================================ */
+
+export function dwindle(area: Rect, count: number, gap: number): Rect[] {
+  if (count <= 0) return [];
+  const out: Rect[] = [];
+
+  let region = { ...area };
+  for (let i = 0; i < count; i++) {
+    if (i === count - 1) {
+      out.push(region);
+      break;
+    }
+    // the first split favours the master pane; the rest halve evenly
+    const ratio = i === 0 ? 0.58 : 0.5;
+    const horizontal = region.w >= region.h;
+
+    if (horizontal) {
+      const wA = (region.w - gap) * ratio;
+      out.push({ x: region.x, y: region.y, w: wA, h: region.h });
+      region = {
+        x: region.x + wA + gap,
+        y: region.y,
+        w: region.w - wA - gap,
+        h: region.h,
+      };
+    } else {
+      const hA = (region.h - gap) * ratio;
+      out.push({ x: region.x, y: region.y, w: region.w, h: hA });
+      region = {
+        x: region.x,
+        y: region.y + hA + gap,
+        w: region.w,
+        h: region.h - hA - gap,
+      };
+    }
+  }
+  return out;
+}

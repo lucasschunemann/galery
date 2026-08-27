@@ -2,95 +2,24 @@ import { useEffect, useRef } from "react";
 import { useOS } from "../os/store";
 
 /* ============================================================
-   WALLPAPER — where the two languages meet.
+   WALLPAPER — "Signal".
 
-   Aero  : volumetric sky, lit clouds, sun with anamorphic flare,
-           iridescent soap bubbles.
-   Swiss : a fan of concentric arcs anchored off-canvas, stroke
-           weights following a geometric progression — one single
-           geometric gesture, rendered in chrome so it belongs to
-           the material world around it.
+   A Müller-Brockmann concentric system: rings in geometric
+   progression, a radiating wedge, a modular grid, two slow
+   colour blooms and film grain.
 
-   Everything is procedural and re-tints from CSS custom properties.
+   It has to work twice — crisp in the tiling gaps, and as a
+   pure field of colour once 30px of blur sits on top of it.
+   So: large soft masses for the blurred read, fine geometry
+   for the sharp one.
    ============================================================ */
-
-type Bubble = { x: number; y: number; r: number; speed: number; drift: number; phase: number; alpha: number };
-type Cloud = { sprite: HTMLCanvasElement; x: number; y: number; scale: number; layer: number; alpha: number };
-
-const rand = (a: number, b: number) => a + Math.random() * (b - a);
-
-/* ---------------------------------------------------------------
-   A cloud is baked once into its own sprite: a shadowed silhouette
-   with a lit cap composited on top. Blitting sprites is what buys
-   the volume — per-frame radial gradients cannot afford it.
-   --------------------------------------------------------------- */
-function makeCloud(w: number): HTMLCanvasElement {
-  const h = Math.round(w * 0.58);
-  const c = document.createElement("canvas");
-  c.width = w;
-  c.height = h;
-  const x = c.getContext("2d")!;
-
-  const blobs: { cx: number; cy: number; r: number }[] = [];
-  const n = 7 + Math.floor(rand(0, 5));
-  for (let i = 0; i < n; i++) {
-    const t = i / (n - 1);
-    blobs.push({
-      cx: w * (0.12 + t * 0.76) + rand(-1, 1) * w * 0.05,
-      cy: h * (0.62 - Math.sin(t * Math.PI) * 0.24) + rand(-1, 1) * h * 0.05,
-      r: h * rand(0.26, 0.46) * (0.62 + Math.sin(t * Math.PI) * 0.6),
-    });
-  }
-
-  // 1 — shadowed body, a cool grey-blue underside
-  for (const b of blobs) {
-    const g = x.createRadialGradient(b.cx, b.cy, b.r * 0.05, b.cx, b.cy, b.r);
-    g.addColorStop(0, "rgba(196,216,238,0.95)");
-    g.addColorStop(0.55, "rgba(196,216,238,0.62)");
-    g.addColorStop(1, "rgba(196,216,238,0)");
-    x.fillStyle = g;
-    x.beginPath();
-    x.arc(b.cx, b.cy, b.r, 0, Math.PI * 2);
-    x.fill();
-  }
-
-  // 2 — the lit cap, painted only where the body already is
-  x.globalCompositeOperation = "source-atop";
-  for (const b of blobs) {
-    const ly = b.cy - b.r * 0.34;
-    const g = x.createRadialGradient(b.cx, ly, b.r * 0.04, b.cx, ly, b.r * 0.92);
-    g.addColorStop(0, "rgba(255,255,255,1)");
-    g.addColorStop(0.5, "rgba(255,255,255,0.72)");
-    g.addColorStop(1, "rgba(255,255,255,0)");
-    x.fillStyle = g;
-    x.beginPath();
-    x.arc(b.cx, ly, b.r * 0.92, 0, Math.PI * 2);
-    x.fill();
-  }
-  x.globalCompositeOperation = "source-over";
-  return c;
-}
-
-/** a tiny noise tile, used as a repeating pattern for film grain */
-function makeGrain(size = 128): HTMLCanvasElement {
-  const c = document.createElement("canvas");
-  c.width = c.height = size;
-  const x = c.getContext("2d")!;
-  const img = x.createImageData(size, size);
-  for (let i = 0; i < img.data.length; i += 4) {
-    const v = 128 + (Math.random() * 2 - 1) * 26;
-    img.data[i] = img.data[i + 1] = img.data[i + 2] = v;
-    img.data[i + 3] = 255;
-  }
-  x.putImageData(img, 0, 0);
-  return c;
-}
 
 export default function Wallpaper() {
   const ref = useRef<HTMLCanvasElement>(null);
-  const theme = useOS((s) => s.theme);
-  const themeRef = useRef(theme);
-  themeRef.current = theme;
+  const flavour = useOS((s) => s.flavour);
+  const grain = useOS((s) => s.grain);
+  const grainRef = useRef(grain);
+  grainRef.current = grain;
 
   useEffect(() => {
     const cv = ref.current;
@@ -99,53 +28,37 @@ export default function Wallpaper() {
     if (!ctx) return;
 
     let w = 0, h = 0, dpr = 1, t = 0, raf = 0;
-    const mouse = { x: 0.5, y: 0.5, tx: 0.5, ty: 0.5 };
-    let bubbles: Bubble[] = [];
-    let clouds: Cloud[] = [];
-    let colors = readColors();
-    const grain = makeGrain();
-    let grainPattern: CanvasPattern | null = null;
+    const pointer = { x: 0.5, y: 0.5, tx: 0.5, ty: 0.5 };
+    let C = read();
+    let grainTile: CanvasPattern | null = null;
 
-    function readColors() {
+    function read() {
       const cs = getComputedStyle(document.documentElement);
       const g = (n: string, f: string) => cs.getPropertyValue(n).trim() || f;
       return {
-        top: g("--sky-top", "#1f6fd0"),
-        mid: g("--sky-mid", "#6fc0f7"),
-        low: g("--sky-low", "#cfeeff"),
-        landHi: g("--land-hi", "#9ddb4e"),
-        landLo: g("--land-lo", "#2f7d1f"),
+        a: g("--wall-a", "#0a0c10"),
+        b: g("--wall-b", "#14181f"),
+        c: g("--wall-c", "#242a34"),
+        accent: g("--accent", "#ff4d2e"),
+        line: g("--n-40", "#363c46"),
+        light: g("--n-80", "#a3aab5"),
       };
     }
 
-    function seed() {
-      bubbles = Array.from({ length: 16 }, () => ({
-        x: rand(0, w),
-        y: rand(0, h * 1.4),
-        r: rand(6, 58),
-        speed: rand(7, 24),
-        drift: rand(10, 32),
-        phase: rand(0, Math.PI * 2),
-        alpha: rand(0.28, 0.75),
-      }));
-
-      // three depth layers; near clouds are bigger, slower to parallax
-      clouds = [];
-      const perLayer = [3, 4, 5];
-      for (let layer = 0; layer < 3; layer++) {
-        for (let i = 0; i < perLayer[layer]; i++) {
-          const base = w * (0.34 - layer * 0.07);
-          clouds.push({
-            sprite: makeCloud(Math.round(rand(base * 0.7, base * 1.15))),
-            x: rand(-0.15, 1.15) * w,
-            y: h * (0.05 + layer * 0.11) + rand(-0.04, 0.06) * h,
-            scale: 1,
-            layer,
-            alpha: 0.9 - layer * 0.2,
-          });
-        }
+    function makeGrain(size = 140) {
+      const c = document.createElement("canvas");
+      c.width = c.height = size;
+      const x = c.getContext("2d")!;
+      const img = x.createImageData(size, size);
+      for (let i = 0; i < img.data.length; i += 4) {
+        const v = 128 + (Math.random() * 2 - 1) * 30;
+        img.data[i] = img.data[i + 1] = img.data[i + 2] = v;
+        img.data[i + 3] = 255;
       }
+      x.putImageData(img, 0, 0);
+      return c;
     }
+    const grainCanvas = makeGrain();
 
     function resize() {
       dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -156,255 +69,153 @@ export default function Wallpaper() {
       cv!.style.width = w + "px";
       cv!.style.height = h + "px";
       ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
-      grainPattern = ctx!.createPattern(grain, "repeat");
-      seed();
+      grainTile = ctx!.createPattern(grainCanvas, "repeat");
     }
 
-    /* ------------------------- passes ------------------------- */
+    /** the composition's anchor — everything radiates from here */
+    const origin = () => ({
+      x: w * 0.3 + (pointer.x - 0.5) * -26,
+      y: h * 0.46 + (pointer.y - 0.5) * -18,
+    });
 
-    function sky() {
-      const g = ctx!.createLinearGradient(0, 0, 0, h);
-      g.addColorStop(0, colors.top);
-      g.addColorStop(0.42, colors.mid);
-      g.addColorStop(0.78, colors.low);
-      g.addColorStop(1, colors.low);
+    function field() {
+      const g = ctx!.createLinearGradient(0, 0, w * 0.7, h);
+      g.addColorStop(0, C.a);
+      g.addColorStop(0.55, C.b);
+      g.addColorStop(1, C.a);
       ctx!.fillStyle = g;
+      ctx!.fillRect(0, 0, w, h);
+
+      // two slow blooms: one neutral light, one carrying the accent.
+      // These are what survive the blur.
+      const b1x = w * (0.72 + Math.sin(t * 0.06) * 0.06);
+      const b1y = h * (0.2 + Math.cos(t * 0.05) * 0.07);
+      const g1 = ctx!.createRadialGradient(b1x, b1y, 0, b1x, b1y, Math.max(w, h) * 0.62);
+      g1.addColorStop(0, hexA(C.c, 0.85));
+      g1.addColorStop(0.45, hexA(C.c, 0.25));
+      g1.addColorStop(1, hexA(C.c, 0));
+      ctx!.fillStyle = g1;
+      ctx!.fillRect(0, 0, w, h);
+
+      const o = origin();
+      const g2 = ctx!.createRadialGradient(o.x, o.y, 0, o.x, o.y, Math.max(w, h) * 0.5);
+      g2.addColorStop(0, hexA(C.accent, 0.13));
+      g2.addColorStop(0.4, hexA(C.accent, 0.04));
+      g2.addColorStop(1, hexA(C.accent, 0));
+      ctx!.fillStyle = g2;
       ctx!.fillRect(0, 0, w, h);
     }
 
-    function sun() {
-      const sx = w * 0.79 + (mouse.x - 0.5) * -20;
-      const sy = h * 0.15 + (mouse.y - 0.5) * -12;
-      const pulse = 1 + Math.sin(t * 0.55) * 0.025;
-
-      const glow = ctx!.createRadialGradient(sx, sy, 0, sx, sy, 380 * pulse);
-      glow.addColorStop(0, "rgba(255,255,255,0.96)");
-      glow.addColorStop(0.11, "rgba(255,255,248,0.5)");
-      glow.addColorStop(0.4, "rgba(255,250,224,0.14)");
-      glow.addColorStop(1, "rgba(255,255,255,0)");
-      ctx!.fillStyle = glow;
-      ctx!.fillRect(sx - 400, sy - 400, 800, 800);
-
+    /** modular grid — 12 columns and a matching horizontal rhythm */
+    function grid() {
+      const m = 0;
       ctx!.save();
-      ctx!.globalCompositeOperation = "lighter";
-      const streak = ctx!.createLinearGradient(sx - 460, sy, sx + 460, sy);
-      streak.addColorStop(0, "rgba(255,255,255,0)");
-      streak.addColorStop(0.5, "rgba(206,238,255,0.26)");
-      streak.addColorStop(1, "rgba(255,255,255,0)");
-      ctx!.fillStyle = streak;
-      ctx!.fillRect(sx - 460, sy - 2, 920, 4);
-      ctx!.restore();
-    }
-
-    /* --- the Swiss gesture: one fan of concentric arcs, in chrome --- */
-    function arcs() {
-      const ox = w * 1.04;
-      const oy = h * -0.14;
-      const spin = t * 0.011;
-
-      ctx!.save();
-      ctx!.translate(ox, oy);
-      ctx!.rotate(spin + (mouse.x - 0.5) * 0.045);
-      ctx!.lineCap = "butt";
-
-      const base = Math.max(w, h) * 0.19;
-      const K = 1.185;                      // geometric progression of radii
-      const A0 = Math.PI * 0.5;
-      const A1 = Math.PI * 1.06;
-
-      for (let i = 0; i < 10; i++) {
-        const r = base * Math.pow(K, i);
-        // stroke weight rides its own progression — the Basel cadence
-        const lw = 1.5 + Math.pow(i / 9, 2) * 30;
-        const breathe = Math.sin(t * 0.35 + i * 0.55) * 0.035;
-        const a = Math.max(0, 0.3 - i * 0.017 + breathe);
-        if (a <= 0.005) continue;
-
-        // the band: brushed chrome, brightest where the light would catch
-        const g = ctx!.createLinearGradient(-r, 0, r * 0.15, r);
-        g.addColorStop(0, `rgba(255,255,255,${a * 0.35})`);
-        g.addColorStop(0.34, `rgba(236,250,255,${a})`);
-        g.addColorStop(0.52, `rgba(255,255,255,${a * 1.5})`);
-        g.addColorStop(0.68, `rgba(170,208,246,${a * 0.75})`);
-        g.addColorStop(1, `rgba(214,238,255,${a * 0.3})`);
-        ctx!.strokeStyle = g;
-        ctx!.lineWidth = lw;
-        ctx!.beginPath();
-        ctx!.arc(0, 0, r, A0, A1);
-        ctx!.stroke();
-
-        // the specular edge that turns a band into polished metal
-        if (lw > 4) {
-          ctx!.strokeStyle = `rgba(255,255,255,${a * 1.25})`;
-          ctx!.lineWidth = 1;
-          ctx!.beginPath();
-          ctx!.arc(0, 0, r - lw / 2 + 0.5, A0, A1);
-          ctx!.stroke();
-          ctx!.strokeStyle = `rgba(96,150,210,${a * 0.5})`;
-          ctx!.beginPath();
-          ctx!.arc(0, 0, r + lw / 2 - 0.5, A0, A1);
-          ctx!.stroke();
-        }
-      }
-      ctx!.restore();
-    }
-
-    function drawClouds() {
-      for (const c of clouds) {
-        const par = 1 + c.layer * 0.9;
-        const speed = 5 + c.layer * 7;
-        const span = w + c.sprite.width * 2;
-        let x = (c.x + t * speed - (mouse.x - 0.5) * 14 * par) % span;
-        if (x < -c.sprite.width) x += span;
-        x -= c.sprite.width;
-        const y = c.y - (mouse.y - 0.5) * 9 * par;
-
-        ctx!.globalAlpha = c.alpha;
-        ctx!.drawImage(c.sprite, x, y);
-        ctx!.globalAlpha = 1;
-      }
-    }
-
-    function hill() {
-      const base = h * 0.76;
-      const sway = Math.sin(t * 0.1) * 3;
-
-      // atmospheric haze sitting on the horizon
-      const haze = ctx!.createLinearGradient(0, base - 150, 0, base + 24);
-      haze.addColorStop(0, "rgba(255,255,255,0)");
-      haze.addColorStop(1, "rgba(255,255,255,0.3)");
-      ctx!.fillStyle = haze;
-      ctx!.fillRect(0, base - 150, w, 174);
-
-      ctx!.save();
+      ctx!.strokeStyle = hexA(C.light, 0.05);
+      ctx!.lineWidth = 1;
       ctx!.beginPath();
-      ctx!.moveTo(-10, h + 10);
-      ctx!.lineTo(-10, base + 42);
-      ctx!.bezierCurveTo(w * 0.2, base - 66 + sway, w * 0.44, base - 92 - sway, w * 0.68, base - 22);
-      ctx!.bezierCurveTo(w * 0.84, base + 16, w * 0.93, base + 6, w + 10, base + 32);
-      ctx!.lineTo(w + 10, h + 10);
-      ctx!.closePath();
-
-      const g = ctx!.createLinearGradient(0, base - 90, 0, h);
-      g.addColorStop(0, colors.landHi);
-      g.addColorStop(0.4, colors.landHi);
-      g.addColorStop(1, colors.landLo);
-      ctx!.fillStyle = g;
-      ctx!.fill();
-
-      ctx!.clip();
-      const rim = ctx!.createLinearGradient(0, base - 100, 0, base + 40);
-      rim.addColorStop(0, "rgba(255,255,255,0.5)");
-      rim.addColorStop(1, "rgba(255,255,255,0)");
-      ctx!.fillStyle = rim;
-      ctx!.fillRect(0, base - 110, w, 160);
-      ctx!.restore();
-    }
-
-    function bubble(b: Bubble) {
-      const x = b.x + Math.sin(t * 0.45 + b.phase) * b.drift + (mouse.x - 0.5) * -26;
-      const y = b.y + (mouse.y - 0.5) * -14;
-      const r = b.r;
-
-      ctx!.save();
-      ctx!.globalAlpha = b.alpha;
-
-      const body = ctx!.createRadialGradient(x - r * 0.3, y - r * 0.34, r * 0.05, x, y, r);
-      body.addColorStop(0, "rgba(255,255,255,0.4)");
-      body.addColorStop(0.62, "rgba(190,235,255,0.09)");
-      body.addColorStop(1, "rgba(255,255,255,0.04)");
-      ctx!.fillStyle = body;
-      ctx!.beginPath();
-      ctx!.arc(x, y, r, 0, Math.PI * 2);
-      ctx!.fill();
-
-      ctx!.globalCompositeOperation = "lighter";
-      const anyCtx = ctx as unknown as {
-        createConicGradient?: (a: number, x: number, y: number) => CanvasGradient;
-      };
-      let rim: CanvasGradient;
-      if (anyCtx.createConicGradient) {
-        rim = anyCtx.createConicGradient(t * 0.3 + b.phase, x, y);
-        rim.addColorStop(0, "rgba(255,120,220,0.5)");
-        rim.addColorStop(0.22, "rgba(120,240,255,0.5)");
-        rim.addColorStop(0.48, "rgba(170,255,150,0.45)");
-        rim.addColorStop(0.72, "rgba(255,235,130,0.5)");
-        rim.addColorStop(1, "rgba(255,120,220,0.5)");
-      } else {
-        rim = ctx!.createLinearGradient(x - r, y - r, x + r, y + r);
-        rim.addColorStop(0, "rgba(255,120,220,0.45)");
-        rim.addColorStop(0.5, "rgba(120,240,255,0.45)");
-        rim.addColorStop(1, "rgba(255,235,130,0.45)");
+      for (let i = 1; i < 12; i++) {
+        const x = Math.round(m + ((w - m * 2) / 12) * i) + 0.5;
+        ctx!.moveTo(x, 0);
+        ctx!.lineTo(x, h);
       }
-      ctx!.strokeStyle = rim;
-      ctx!.lineWidth = Math.max(1, r * 0.085);
-      ctx!.beginPath();
-      ctx!.arc(x, y, r * 0.95, 0, Math.PI * 2);
+      const rows = Math.max(4, Math.round(h / ((w - m * 2) / 12)));
+      for (let i = 1; i < rows; i++) {
+        const y = Math.round((h / rows) * i) + 0.5;
+        ctx!.moveTo(0, y);
+        ctx!.lineTo(w, y);
+      }
       ctx!.stroke();
-
-      ctx!.globalCompositeOperation = "source-over";
-      ctx!.fillStyle = "rgba(255,255,255,0.85)";
-      ctx!.beginPath();
-      ctx!.ellipse(x - r * 0.34, y - r * 0.4, r * 0.23, r * 0.15, -0.6, 0, Math.PI * 2);
-      ctx!.fill();
-      ctx!.fillStyle = "rgba(255,255,255,0.45)";
-      ctx!.beginPath();
-      ctx!.arc(x + r * 0.36, y + r * 0.42, r * 0.085, 0, Math.PI * 2);
-      ctx!.fill();
-
       ctx!.restore();
+    }
+
+    /** the concentric system */
+    function rings() {
+      const o = origin();
+      const base = Math.min(w, h) * 0.085;
+      const K = 1.27;
+
+      ctx!.save();
+      for (let i = 0; i < 15; i++) {
+        const r = base * Math.pow(K, i);
+        if (r > Math.max(w, h) * 1.3) break;
+        const breathe = Math.sin(t * 0.25 + i * 0.42) * 0.5 + 0.5;
+        // weights ride their own progression: the Basel cadence
+        const lw = 0.6 + Math.pow(i / 14, 2.4) * 9;
+        const isSignal = i === 6;
+
+        ctx!.lineWidth = lw;
+        ctx!.strokeStyle = isSignal
+          ? hexA(C.accent, 0.42 + breathe * 0.2)
+          : hexA(C.light, 0.05 + breathe * 0.05);
+        ctx!.beginPath();
+        ctx!.arc(o.x, o.y, r, 0, Math.PI * 2);
+        ctx!.stroke();
+      }
+      ctx!.restore();
+    }
+
+    /** a radiating wedge — the poster's burst of energy */
+    function wedge() {
+      const o = origin();
+      const spin = t * 0.028;
+      const N = 46;
+      const R = Math.max(w, h) * 1.15;
+
+      ctx!.save();
+      ctx!.translate(o.x, o.y);
+      ctx!.rotate(spin);
+      ctx!.lineWidth = 1;
+      for (let i = 0; i < N; i++) {
+        const p = i / (N - 1);
+        const ang = -0.42 + p * 0.9;                 // a ~50° fan
+        const len = R * (0.34 + Math.pow(Math.sin(p * Math.PI), 0.6) * 0.66);
+        const a = 0.035 + Math.sin(t * 0.5 + p * 7) * 0.02;
+        ctx!.strokeStyle = hexA(p > 0.52 && p < 0.58 ? C.accent : C.light, Math.max(0, a) * (p > 0.52 && p < 0.58 ? 6 : 1));
+        ctx!.beginPath();
+        ctx!.moveTo(Math.cos(ang) * base(R), Math.sin(ang) * base(R));
+        ctx!.lineTo(Math.cos(ang) * len, Math.sin(ang) * len);
+        ctx!.stroke();
+      }
+      ctx!.restore();
+
+      function base(r: number) { return r * 0.12; }
     }
 
     function finish() {
-      // film grain — the one modern texture that makes gradients feel printed
-      if (grainPattern) {
+      if (grainRef.current && grainTile) {
         ctx!.save();
         ctx!.globalCompositeOperation = "overlay";
-        ctx!.globalAlpha = 0.055;
-        ctx!.fillStyle = grainPattern;
+        ctx!.globalAlpha = 0.08;
+        ctx!.fillStyle = grainTile;
         ctx!.fillRect(0, 0, w, h);
         ctx!.restore();
       }
-      const vig = ctx!.createRadialGradient(w / 2, h * 0.44, Math.min(w, h) * 0.32, w / 2, h * 0.44, Math.max(w, h) * 0.78);
-      vig.addColorStop(0, "rgba(0,10,30,0)");
-      vig.addColorStop(1, "rgba(0,12,34,0.3)");
-      ctx!.fillStyle = vig;
+      const v = ctx!.createRadialGradient(w / 2, h / 2, Math.min(w, h) * 0.28, w / 2, h / 2, Math.max(w, h) * 0.8);
+      v.addColorStop(0, "rgba(0,0,0,0)");
+      v.addColorStop(1, "rgba(0,0,0,0.42)");
+      ctx!.fillStyle = v;
       ctx!.fillRect(0, 0, w, h);
     }
-
-    /* ------------------------- loop ------------------------- */
 
     let last = performance.now();
     function frame(now: number) {
       const dt = Math.min((now - last) / 1000, 0.05);
       last = now;
       t += dt;
+      pointer.x += (pointer.tx - pointer.x) * 0.05;
+      pointer.y += (pointer.ty - pointer.y) * 0.05;
 
-      mouse.x += (mouse.tx - mouse.x) * 0.055;
-      mouse.y += (mouse.ty - mouse.y) * 0.055;
-
-      sky();
-      sun();
-      arcs();
-      drawClouds();
-      hill();
-      for (const b of bubbles) {
-        b.y -= b.speed * dt;
-        if (b.y < -b.r * 2) {
-          b.y = h + b.r * 2;
-          b.x = rand(0, w);
-          b.r = rand(6, 58);
-        }
-        bubble(b);
-      }
+      field();
+      grid();
+      wedge();
+      rings();
       finish();
-
       raf = requestAnimationFrame(frame);
     }
 
     const onMove = (e: PointerEvent) => {
-      mouse.tx = e.clientX / window.innerWidth;
-      mouse.ty = e.clientY / window.innerHeight;
+      pointer.tx = e.clientX / window.innerWidth;
+      pointer.ty = e.clientY / window.innerHeight;
     };
 
     resize();
@@ -412,8 +223,8 @@ export default function Wallpaper() {
     window.addEventListener("pointermove", onMove, { passive: true });
     raf = requestAnimationFrame(frame);
 
-    const obs = new MutationObserver(() => { colors = readColors(); });
-    obs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme"] });
+    const obs = new MutationObserver(() => { C = read(); });
+    obs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-flavour"] });
 
     return () => {
       cancelAnimationFrame(raf);
@@ -423,5 +234,14 @@ export default function Wallpaper() {
     };
   }, []);
 
-  return <canvas ref={ref} className="wallpaper" aria-hidden />;
+  return <canvas ref={ref} className="wall" data-flavour={flavour} aria-hidden />;
+}
+
+/* hex (#rgb/#rrggbb) → rgba() at a given alpha */
+function hexA(hex: string, a: number): string {
+  let s = hex.trim().replace("#", "");
+  if (s.length === 3) s = s.split("").map((c) => c + c).join("");
+  const n = parseInt(s, 16);
+  if (Number.isNaN(n)) return `rgba(255,255,255,${a})`;
+  return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${a})`;
 }

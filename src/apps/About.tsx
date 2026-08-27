@@ -3,13 +3,13 @@ import { useOS } from "../os/store";
 import { useSfx } from "../os/useSfx";
 
 const SPECS = [
-  ["Modelo", "Lucas Schünemann"],
-  ["Função", "UX/UI Designer & Web Developer"],
-  ["Processador", "Dual-core: Design 3.2 GHz / Código 3.0 GHz"],
-  ["Memória", "8 anos de projeto em produção"],
-  ["Placa gráfica", "Motion & WebGL, 24-bit"],
-  ["Localização", "Brasil — remoto, GMT-3"],
-  ["Disponibilidade", "Aberto a projetos"],
+  ["host", "lucas schünemann"],
+  ["role", "ux/ui designer & web developer"],
+  ["shell", "design 3.2 GHz · código 3.0 GHz"],
+  ["uptime", "8 anos em produção"],
+  ["render", "motion · webgl · canvas"],
+  ["locale", "brasil — remoto, gmt-3"],
+  ["status", "aberto a projetos"],
 ];
 
 export default function About() {
@@ -26,7 +26,7 @@ export default function About() {
         />
         <div>
           <h1 className="about__name">Lucas Schünemann</h1>
-          <p className="about__ver">AERO OS versão 10.1 “Puma” · build 2026</p>
+          <p className="about__ver">helvetia 1.0 · international style · build 2026</p>
         </div>
       </div>
 
@@ -37,9 +37,9 @@ export default function About() {
         deploy — tudo junto, tudo coerente.
       </p>
       <p className="about__bio">
-        Este site é um exercício sério disfarçado de brincadeira. Cada superfície aqui —
-        cada botão de gel, cada nuvem, cada capa de projeto — é gerada em código, sem
-        nenhuma imagem. É a forma mais honesta que eu conheço de mostrar como eu trabalho.
+        Este site é um sistema operacional. Janelas tiladas, paletas tonais, um acento
+        por tema, tudo desenhado em código — não existe uma única imagem no projeto.
+        É a forma mais honesta que eu conheço de mostrar como eu trabalho.
       </p>
 
       <table className="specs">
@@ -59,7 +59,7 @@ export default function About() {
       </table>
 
       <div className="about__actions">
-        <button className="gel btn" onClick={() => { sfx("open"); open("finder"); }}>Ver o trabalho</button>
+        <button className="gel btn" onClick={() => { sfx("open"); open("files"); }}>Ver o trabalho</button>
         <button className="btn btn--ghost" onClick={() => { sfx("open"); open("contact"); }}>Entrar em contato</button>
       </div>
     </div>

@@ -94,7 +94,15 @@ function noise(opts: { t?: number; dur?: number; gain?: number; from?: number; t
 }
 
 export const SFX = {
-  /** the startup chime: a big, wide, reverberant major chord */
+  /** boot: two dry notes and a low swell — no cathedral reverb here */
+  boot() {
+    voice(196, { dur: 1.5, wave: "sine", gain: 0.16, attack: 0.06, filter: 900 });
+    voice(587.33, { t: 0.06, dur: 0.5, wave: "sine", gain: 0.16, filter: 4000 });
+    voice(880, { t: 0.2, dur: 0.7, wave: "sine", gain: 0.12, filter: 5000 });
+    noise({ t: 0, dur: 0.9, gain: 0.03, from: 2600, to: 300 });
+  },
+
+  /** kept for reference; the old Aqua chord */
   startup() {
     // F#/Gb major-ish stack, detuned & staggered like the real thing
     const stack = [92.5, 185, 277.2, 370, 554.4, 740];

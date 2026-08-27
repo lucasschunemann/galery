@@ -1,30 +1,30 @@
 import { useEffect, useRef, useState } from "react";
-import { useOS, APPS, type Theme } from "../os/store";
+import { useOS, APPS, type Flavour } from "../os/store";
 import { PROJECTS } from "../data/projects";
 import { useSfx } from "../os/useSfx";
 
 type Line = { kind: "in" | "out" | "err"; text: string };
 
 const BANNER = [
-  "AERO OS 10.1 (build 2026.08) — bash 2.05b",
+  "helvetia 1.0.0 — sh",
   'Digite "help" para ver os comandos disponíveis.',
 ];
 
 const NEOFETCH = String.raw`
-        .-"""-.        lucas@aero-os
-       /  o o  \       ---------------
-      |    ^    |      OS      AERO OS 10.1 "Puma"
-       \  '-'  /       Shell   bash 2.05b
-        '-----'        DE      Aqua
-                       Theme   {theme}
-                       Uptime  {uptime}
-                       Apps    {apps} instalados
-                       Design  100% gerado em código
+     ┌───────┐       lucas@helvetia
+     │  ▘ ▘  │       ───────────────
+     │   ─   │       OS      HELVETIA 1.0
+     │  ───  │       WM      dwindle
+     └───────┘       BAR     helvetia-bar
+                     PALETTE {theme}
+                     UPTIME  {uptime}
+                     APPS    {apps}
+                     DESIGN  gerado em código
 `;
 
 export default function Terminal() {
-  const { open, setTheme } = useOS();
-  const theme = useOS((s) => s.theme);
+  const { open, setFlavour } = useOS();
+  const theme = useOS((s) => s.flavour);
   const sfx = useSfx();
   const [lines, setLines] = useState<Line[]>(BANNER.map((t) => ({ kind: "out", text: t })));
   const [value, setValue] = useState("");
@@ -54,7 +54,7 @@ export default function Terminal() {
         out("comandos disponíveis:");
         out("  ls                lista os projetos");
         out("  open <alvo>       abre um app ou projeto");
-        out("  theme <nome>      aqua | graphite | bliss | sunset");
+        out("  flavour <nome>    graphite | mocha | nord | paper");
         out("  whoami            quem escreveu isto");
         out("  neofetch          informações do sistema");
         out("  date              data e hora");
@@ -80,11 +80,12 @@ export default function Terminal() {
         break;
       }
 
-      case "theme": {
-        const t = arg.toLowerCase() as Theme;
-        if (["aqua", "graphite", "bliss", "sunset"].includes(t)) {
-          setTheme(t); sfx("chime"); out(`aparência alterada para ${t}`);
-        } else push({ kind: "err", text: "theme: use aqua, graphite, bliss ou sunset" });
+      case "theme":
+      case "flavour": {
+        const t = arg.toLowerCase() as Flavour;
+        if (["graphite", "mocha", "nord", "paper"].includes(t)) {
+          setFlavour(t); sfx("chime"); out(`paleta alterada para ${t}`);
+        } else push({ kind: "err", text: "flavour: use graphite, mocha, nord ou paper" });
         break;
       }
 
@@ -137,7 +138,7 @@ export default function Terminal() {
       <div className="term__body" ref={bodyRef}>
         {lines.map((l, i) => (
           <p key={i} className={`term__line term__line--${l.kind}`}>
-            {l.kind === "in" && <span className="term__ps">lucas@aero ~ %</span>}
+            {l.kind === "in" && <span className="term__ps">lucas@helvetia ~ $</span>}
             {l.text}
           </p>
         ))}
@@ -151,7 +152,7 @@ export default function Terminal() {
             setValue("");
           }}
         >
-          <span className="term__ps">lucas@aero ~ %</span>
+          <span className="term__ps">lucas@helvetia ~ $</span>
           <input
             ref={inputRef}
             autoFocus

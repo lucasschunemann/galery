@@ -1,81 +1,95 @@
 import { useEffect } from "react";
-import { AnimatePresence } from "motion/react";
-import { useOS } from "./os/store";
+import { useOS, WORKSPACES } from "./os/store";
 import { useSfx } from "./os/useSfx";
-import Boot from "./components/Boot";
+import { useCompact } from "./os/useViewport";
 import Wallpaper from "./components/Wallpaper";
-import MenuBar from "./components/MenuBar";
-import DesktopIcons from "./components/DesktopIcons";
-import DesktopGrid from "./components/DesktopGrid";
-import Dock from "./components/Dock";
-import Window from "./components/Window";
-import Screensaver from "./components/Screensaver";
+import Bar from "./components/Bar";
+import Rail from "./components/Rail";
+import Windows from "./components/Windows";
+import Launcher from "./components/Launcher";
+import Lock from "./components/Lock";
+import Boot from "./components/Boot";
 import Cursor from "./components/Cursor";
-import AppHost from "./os/AppHost";
+import Desk from "./components/Desk";
 
 export default function App() {
-  const booted = useOS((s) => s.booted);
-  const theme = useOS((s) => s.theme);
-  const crt = useOS((s) => s.crt);
-  const windows = useOS((s) => s.windows);
-  const { open, close, select } = useOS();
+  const phase = useOS((s) => s.phase);
+  const flavour = useOS((s) => s.flavour);
+  const launcher = useOS((s) => s.launcher);
   const focusId = useOS((s) => s.focusId);
+  const store = useOS();
   const sfx = useSfx();
+  const compact = useCompact();
 
-  /* the appearance drives every colour in the OS, wallpaper included */
   useEffect(() => {
-    document.documentElement.dataset.theme = theme;
-  }, [theme]);
+    document.documentElement.dataset.flavour = flavour;
+  }, [flavour]);
 
-  /* open the gallery once the machine finishes booting */
+  /* open the work gallery once the session starts */
   useEffect(() => {
-    if (!booted) return;
-    const t = setTimeout(() => { open("finder"); sfx("open"); }, 620);
+    if (phase !== "live") return;
+    if (useOS.getState().windows.length) return;
+    const t = setTimeout(() => { store.open("files"); sfx("open"); }, 420);
     return () => clearTimeout(t);
-  }, [booted, open, sfx]);
+  }, [phase, store, sfx]);
 
-  /* keyboard shortcuts */
+  /* ---------------- keyboard: the OS is driven from here ---------------- */
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      const meta = e.metaKey || e.ctrlKey;
-      if (!meta) return;
-      if (e.key === "w" && focusId) { e.preventDefault(); sfx("close"); close(focusId); }
-      if (e.key === "1") { e.preventDefault(); open("finder"); sfx("open"); }
-      if (e.key === "2") { e.preventDefault(); open("terminal"); sfx("open"); }
-      if (e.key === "3") { e.preventDefault(); open("player"); sfx("open"); }
+      const mod = e.metaKey || e.ctrlKey;
+      const typing =
+        e.target instanceof HTMLElement &&
+        e.target.closest("input, textarea, [contenteditable]");
+
+      if (phase === "boot") {
+        if (e.key === "Enter") document.querySelector<HTMLElement>(".boot__power")?.click();
+        return;
+      }
+      if (phase === "lock") return;
+
+      if (e.key === "Escape" && launcher) { store.setLauncher(false); return; }
+
+      if (mod && e.key.toLowerCase() === "k") { e.preventDefault(); store.setLauncher(!launcher); sfx("open"); return; }
+      if (!mod && e.key === " " && !typing) { e.preventDefault(); store.setLauncher(true); sfx("open"); return; }
+
+      if (!mod) return;
+
+      const k = e.key.toLowerCase();
+      if (WORKSPACES.map(String).includes(e.key)) {
+        e.preventDefault();
+        store.setWorkspace(Number(e.key));
+        sfx("click");
+      } else if (k === "w" && focusId) {
+        e.preventDefault(); sfx("close"); store.close(focusId);
+      } else if (k === "f" && focusId) {
+        e.preventDefault(); sfx("click"); store.toggleFloat(focusId);
+      } else if (k === "l") {
+        e.preventDefault(); sfx("close"); store.lock();
+      } else if (k === "j") {
+        e.preventDefault(); store.focusCycle(1); sfx("hover");
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [focusId, close, open, sfx]);
+  }, [phase, launcher, focusId, store, sfx]);
 
   return (
-    <div className="os" data-crt={crt ? "on" : "off"}>
+    <div className="os" data-phase={phase}>
       <Wallpaper />
 
-      {booted && (
+      {phase === "live" && (
         <>
-          <MenuBar />
-          <DesktopGrid />
-          <div className="desktop" onPointerDown={() => select(null)}>
-            <DesktopIcons />
-          </div>
-
-          <AnimatePresence>
-            {windows.map((w) => (
-              <Window key={w.id} win={w}>
-                <AppHost win={w} />
-              </Window>
-            ))}
-          </AnimatePresence>
-
-          <Dock />
-          <Screensaver />
+          <Desk />
+          <Bar />
+          {!compact && <Rail />}
+          <Windows />
+          <Launcher />
         </>
       )}
 
-      <Cursor />
-      <div className="crt-overlay" aria-hidden />
+      <Lock />
       <Boot />
+      <Cursor />
     </div>
   );
 }

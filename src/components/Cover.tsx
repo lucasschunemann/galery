@@ -1,259 +1,200 @@
 import { useId } from "react";
-import type { ArtVariant } from "../data/projects";
 
 /* ============================================================
-   Generative project covers. No image files — every cover is an
-   SVG composition parameterised by hue, so thumbnails and hero
-   art are the same artwork at different sizes.
+   Project covers as Swiss compositions.
+
+   Colour comes from the OS palette via CSS variables, so every
+   cover re-tints when the flavour changes. Variation across the
+   grid comes from composition and tonal weight — never from hue.
+   `accent` sets how loudly a cover speaks: 0 is nearly silent,
+   2 is accent-dominant. Rhythm across the grid is the point.
    ============================================================ */
 
-type Props = { variant: ArtVariant; hue: number; title: string; className?: string };
+export type ArtVariant =
+  | "arcs" | "modular" | "wedge" | "bars"
+  | "split" | "numeral" | "orbit" | "mesh";
 
-const hsl = (h: number, s: number, l: number, a = 1) =>
-  `hsl(${h} ${s}% ${l}% / ${a})`;
+type Props = {
+  variant: ArtVariant;
+  index: number;
+  title: string;
+  accent?: 0 | 1 | 2;
+  className?: string;
+};
 
-export default function Cover({ variant, hue, title, className }: Props) {
-  const uid = useId().replace(/[:]/g, "");
-  const id = (n: string) => `${n}-${uid}`;
+export default function Cover({ variant, index, title, accent = 1, className }: Props) {
+  const raw = useId().replace(/:/g, "");
+  const id = (n: string) => `${n}-${raw}`;
 
-  const Sky = (
-    <>
-      <linearGradient id={id("sky")} x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0" stopColor={hsl(hue, 78, 42)} />
-        <stop offset="0.55" stopColor={hsl(hue, 82, 68)} />
-        <stop offset="1" stopColor={hsl(hue, 90, 90)} />
-      </linearGradient>
-      <linearGradient id={id("grass")} x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0" stopColor="hsl(96 66% 56%)" />
-        <stop offset="1" stopColor="hsl(112 58% 26%)" />
-      </linearGradient>
-      <radialGradient id={id("chrome")} cx="34%" cy="26%">
-        <stop offset="0" stopColor="#ffffff" />
-        <stop offset="0.28" stopColor="#e8f1f8" />
-        <stop offset="0.52" stopColor="#93a9bd" />
-        <stop offset="0.74" stopColor="#dfe9f2" />
-        <stop offset="1" stopColor="#5c7086" />
-      </radialGradient>
-    </>
-  );
-
-  const clouds = (y = 26, o = 0.85) => (
-    <g opacity={o} fill="#fff">
-      <ellipse cx="22" cy={y} rx="15" ry="6" />
-      <ellipse cx="32" cy={y - 4} rx="11" ry="7" />
-      <ellipse cx="44" cy={y} rx="13" ry="5.5" />
-      <ellipse cx="74" cy={y + 10} rx="17" ry="6" />
-      <ellipse cx="86" cy={y + 6} rx="12" ry="7" />
-    </g>
-  );
+  const bg = accent === 2 ? "var(--accent)" : "var(--n-10)";
+  const ink = accent === 2 ? "var(--n-0)" : "var(--n-80)";
+  const hair = accent === 2 ? "rgba(0,0,0,.28)" : "var(--line-strong)";
+  const sig = accent === 2 ? "var(--n-0)" : "var(--accent)";
+  const quiet = accent === 0 ? 0.35 : 1;
 
   const body = () => {
     switch (variant) {
-      /* --- chrome star on a hill: the album-cover archetype --- */
-      case "chromestar":
+      /* concentric arcs off a corner — the Beethoven move */
+      case "arcs":
         return (
           <>
-            <rect width="100" height="100" fill={`url(#${id("sky")})`} />
-            {clouds(20, 0.7)}
-            <path d="M0 78 Q 50 62 100 80 L100 100 L0 100Z" fill={`url(#${id("grass")})`} />
-            <g transform="translate(50 52)">
-              <path
-                d="M0 -40 C 5 -12 12 -6 40 0 C 12 5 6 12 0 40 C -5 12 -12 6 -40 0 C -12 -5 -6 -12 0 -40Z"
-                fill={`url(#${id("chrome")})`}
-              />
-              <path
-                d="M0 -26 C 3 -9 8 -4 26 0 C 8 3 4 8 0 26 C -3 8 -8 4 -26 0 C -8 -3 -4 -8 0 -26Z"
-                fill="#fff" opacity=".55" transform="rotate(45)"
-              />
-            </g>
-            <g fill="#fff" opacity=".55" fontFamily="monospace" fontSize="2.4">
-              {Array.from({ length: 16 }, (_, i) => (
-                <text key={i} x="66" y={12 + i * 4}>
-                  {["def x(a,b):", "  return a*b", "canvas.draw()", "for i in r(9):", "  p = shape(i)"][i % 5]}
-                </text>
+            <g stroke={ink} fill="none" opacity={0.55 * quiet}>
+              {Array.from({ length: 9 }, (_, i) => (
+                <circle key={i} cx="14" cy="86" r={12 + i * 11} strokeWidth={0.4 + i * 0.34} />
               ))}
             </g>
-            <rect x="6" y="6" width="42" height="0.7" fill="#fff" opacity=".8" />
+            <circle cx="14" cy="86" r="45" fill="none" stroke={sig} strokeWidth="1.6" />
+            <path d="M8 12h44" stroke={ink} strokeWidth="1" opacity={quiet} />
           </>
         );
 
-      /* --- rolling hills, clouds, nothing else --- */
-      case "bliss":
+      /* modular grid with a few cells struck */
+      case "modular": {
+        const cells = [3, 6, 9, 12, 17, 22];
         return (
           <>
-            <rect width="100" height="100" fill={`url(#${id("sky")})`} />
-            {clouds(24, 0.9)}
-            {clouds(40, 0.4)}
-            <path d="M0 72 Q 30 52 62 66 T 100 62 L100 100 L0 100Z" fill={`url(#${id("grass")})`} />
-            <path d="M0 84 Q 40 70 100 82 L100 100 L0 100Z" fill="hsl(112 52% 22%)" opacity=".55" />
-            <ellipse cx="78" cy="18" rx="9" ry="9" fill="#fff" opacity=".9" />
-          </>
-        );
-
-      /* --- the XP-era modal on grass --- */
-      case "dialog":
-        return (
-          <>
-            <rect width="100" height="100" fill={`url(#${id("sky")})`} />
-            {clouds(18, 0.75)}
-            <path d="M0 58 Q 50 48 100 58 L100 100 L0 100Z" fill={`url(#${id("grass")})`} />
-            <g transform="translate(18 34)">
-              <rect x="0" y="0" width="64" height="40" rx="2.5" fill="#e9ecef" stroke="#7d8794" strokeWidth=".7" />
-              <rect x="0.8" y="0.8" width="62.4" height="7" rx="2" fill={hsl(hue, 72, 44)} />
-              <text x="4" y="6" fontSize="4" fill="#fff" fontFamily="sans-serif">System Warning</text>
-              <rect x="6" y="13" width="46" height="2.4" rx="1.2" fill="#9aa4b0" />
-              <rect x="6" y="18" width="34" height="2.4" rx="1.2" fill="#b9c2cc" />
-              <rect x="16" y="28" width="14" height="7" rx="1.6" fill="#f4f6f8" stroke="#8b95a1" strokeWidth=".6" />
-              <rect x="34" y="28" width="14" height="7" rx="1.6" fill="#f4f6f8" stroke="#8b95a1" strokeWidth=".6" />
-            </g>
-            <path d="M64 66 l0 11 l3-3 l2.4 5 l2.2-1.1 l-2.4-4.8 l4.2-0.4Z" fill="#fff" stroke="#111" strokeWidth=".6" />
-          </>
-        );
-
-      /* --- oversized display type over hills --- */
-      case "typeposter":
-        return (
-          <>
-            <rect width="100" height="100" fill={`url(#${id("sky")})`} />
-            {clouds(16, 0.8)}
-            <path d="M0 46 Q 34 26 66 44 T 100 40 L100 100 L0 100Z" fill={`url(#${id("grass")})`} />
-            <path d="M0 66 Q 44 50 100 66 L100 100 L0 100Z" fill="hsl(120 46% 20%)" opacity=".5" />
-            <text
-              x="6" y="56" fontSize="21" fontWeight="800" letterSpacing="-1.4"
-              fontFamily="Helvetica, Arial, sans-serif" fill="hsl(150 62% 16%)"
-            >
-              {title.split(" ")[0]?.slice(0, 7).toLowerCase()}
-            </text>
-            <text
-              x="14" y="74" fontSize="21" fontWeight="800" letterSpacing="-1.4"
-              fontFamily="Helvetica, Arial, sans-serif" fill="hsl(150 62% 16%)"
-            >
-              {(title.split(" ")[1] ?? "grass").slice(0, 7).toLowerCase()}
-            </text>
-            <circle cx="70" cy="49" r="7" fill="#ffd93d" stroke="#1d1d1d" strokeWidth=".8" />
-            <circle cx="67.6" cy="47" r="1" fill="#1d1d1d" />
-            <circle cx="72.4" cy="47" r="1" fill="#1d1d1d" />
-            <path d="M67 51.6 q3 3 6 0" stroke="#1d1d1d" strokeWidth=".9" fill="none" strokeLinecap="round" />
-            <g stroke="#fff" strokeOpacity=".35" strokeWidth=".4">
-              <path d="M0 12h100M0 24h100M25 0v100M75 0v100" />
-            </g>
-          </>
-        );
-
-      /* --- a single glossy sphere --- */
-      case "orb":
-        return (
-          <>
-            <defs>
-              <radialGradient id={id("orb")} cx="34%" cy="28%">
-                <stop offset="0" stopColor="#fff" />
-                <stop offset="0.3" stopColor={hsl(hue, 95, 78)} />
-                <stop offset="0.68" stopColor={hsl(hue, 88, 50)} />
-                <stop offset="1" stopColor={hsl(hue - 30, 78, 26)} />
-              </radialGradient>
-              <linearGradient id={id("orbbg")} x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0" stopColor={hsl(hue + 24, 60, 92)} />
-                <stop offset="1" stopColor={hsl(hue - 18, 52, 70)} />
-              </linearGradient>
-            </defs>
-            <rect width="100" height="100" fill={`url(#${id("orbbg")})`} />
-            <circle cx="50" cy="46" r="30" fill={`url(#${id("orb")})`} />
-            <ellipse cx="40" cy="28" rx="16" ry="8.5" fill="#fff" opacity=".8" transform="rotate(-20 40 28)" />
-            <ellipse cx="62" cy="62" rx="7" ry="4" fill="#fff" opacity=".35" transform="rotate(-20 62 62)" />
-            <ellipse cx="50" cy="84" rx="26" ry="4.5" fill={hsl(hue, 60, 30, 0.28)} />
-            <path d="M20 90 Q 50 78 80 90" stroke="#fff" strokeOpacity=".5" fill="none" strokeWidth=".8" />
-          </>
-        );
-
-      /* --- perspective grid + data waves --- */
-      case "gridwave":
-        return (
-          <>
-            <defs>
-              <linearGradient id={id("gw")} x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0" stopColor={hsl(hue, 70, 18)} />
-                <stop offset="1" stopColor={hsl(hue, 78, 40)} />
-              </linearGradient>
-            </defs>
-            <rect width="100" height="100" fill={`url(#${id("gw")})`} />
-            <g stroke={hsl(hue + 20, 90, 72)} strokeOpacity=".5" strokeWidth=".4" fill="none">
-              {Array.from({ length: 12 }, (_, i) => (
-                <path key={i} d={`M${-20 + i * 14} 100 L${38 + i * 2} 46`} />
+            <g stroke={hair} strokeWidth="0.5">
+              {Array.from({ length: 5 }, (_, i) => (
+                <path key={"v" + i} d={`M${16 + i * 17} 8V92`} />
               ))}
-              {Array.from({ length: 8 }, (_, i) => {
-                const y = 46 + Math.pow(i, 1.9) * 1.4;
-                return <path key={"h" + i} d={`M0 ${y} H100`} />;
+              {Array.from({ length: 5 }, (_, i) => (
+                <path key={"h" + i} d={`M8 ${16 + i * 17}H92`} />
+              ))}
+            </g>
+            {cells.map((c) => {
+              const col = c % 5;
+              const row = Math.floor(c / 5);
+              return (
+                <rect
+                  key={c}
+                  x={16 + col * 17} y={16 + row * 17}
+                  width="17" height="17"
+                  fill={c === 9 ? sig : ink}
+                  opacity={c === 9 ? 1 : 0.14 * quiet}
+                />
+              );
+            })}
+          </>
+        );
+      }
+
+      /* a fan of rays */
+      case "wedge":
+        return (
+          <>
+            <g stroke={ink} opacity={0.5 * quiet}>
+              {Array.from({ length: 26 }, (_, i) => {
+                const a = (-50 + (i / 25) * 100) * (Math.PI / 180);
+                return (
+                  <path
+                    key={i}
+                    d={`M50 96 L${50 + Math.sin(a) * 120} ${96 - Math.cos(a) * 120}`}
+                    strokeWidth={i === 13 ? 0 : 0.45}
+                  />
+                );
               })}
             </g>
-            <g fill="none" strokeWidth="1.4" strokeLinecap="round">
-              <path d="M4 34 Q 20 14 34 30 T 62 24 T 96 34" stroke={hsl(hue + 40, 100, 78)} />
-              <path d="M4 42 Q 22 26 38 38 T 66 32 T 96 40" stroke="#fff" strokeOpacity=".7" />
-            </g>
-            {[18, 34, 50, 66, 82].map((x, i) => (
-              <circle key={i} cx={x} cy={30 + Math.sin(i) * 6} r="1.7" fill="#fff" />
-            ))}
+            <path d="M50 96 L50 -18" stroke={sig} strokeWidth="1.8" />
+            <circle cx="50" cy="96" r="3.4" fill={sig} />
           </>
         );
 
-      /* --- lens flare / floating discs --- */
-      case "flare":
+      /* rhythmic bars — a Musica Viva cadence */
+      case "bars": {
+        const seq = [14, 26, 20, 46, 32, 62, 40, 24, 12];
         return (
           <>
-            <defs>
-              <radialGradient id={id("fl")} cx="30%" cy="26%">
-                <stop offset="0" stopColor="#fff" />
-                <stop offset="0.35" stopColor={hsl(hue, 92, 72)} />
-                <stop offset="1" stopColor={hsl(hue + 40, 76, 32)} />
-              </radialGradient>
-              <linearGradient id={id("disc")} x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0" stopColor="#fff" />
-                <stop offset="0.5" stopColor={hsl(hue + 60, 80, 70)} />
-                <stop offset="1" stopColor={hsl(hue, 70, 40)} />
-              </linearGradient>
-            </defs>
-            <rect width="100" height="100" fill={`url(#${id("fl")})`} />
-            <g opacity=".9">
-              <ellipse cx="34" cy="40" rx="19" ry="7" fill={`url(#${id("disc")})`} transform="rotate(-16 34 40)" />
-              <ellipse cx="64" cy="30" rx="13" ry="5" fill={`url(#${id("disc")})`} transform="rotate(-24 64 30)" opacity=".85" />
-              <ellipse cx="70" cy="58" rx="16" ry="6" fill={`url(#${id("disc")})`} transform="rotate(-8 70 58)" opacity=".8" />
-              <circle cx="48" cy="66" r="6" fill="#fff" opacity=".95" />
+            <path d="M8 78H92" stroke={hair} strokeWidth="0.6" />
+            {seq.map((v, i) => (
+              <rect
+                key={i}
+                x={10 + i * 9.2} y={78 - v}
+                width="6" height={v}
+                fill={i === 5 ? sig : ink}
+                opacity={i === 5 ? 1 : 0.3 * quiet}
+              />
+            ))}
+            <text x="8" y="90" fill={ink} opacity={0.6 * quiet} fontFamily="monospace" fontSize="4.4" letterSpacing="0.6">
+              {title.slice(0, 22).toUpperCase()}
+            </text>
+          </>
+        );
+      }
+
+      /* a diagonal cut with a disc riding it */
+      case "split":
+        return (
+          <>
+            <clipPath id={id("cp")}>
+              <path d="M0 0H100V100H0Z" />
+            </clipPath>
+            <g clipPath={`url(#${id("cp")})`}>
+              <path d="M-10 74 L110 26 L110 110 L-10 110Z" fill={ink} opacity={0.12 * quiet} />
+              <path d="M-10 74 L110 26" stroke={sig} strokeWidth="1.4" />
+              <circle cx="66" cy="42" r="17" fill="none" stroke={ink} strokeWidth="0.8" opacity={quiet} />
+              <circle cx="66" cy="42" r="6" fill={sig} />
             </g>
-            <g stroke="#fff" strokeOpacity=".8" strokeWidth=".5" fill="none">
-              <path d="M0 20 H100M0 82 H100" />
-            </g>
-            <circle cx="22" cy="20" r="14" fill="#fff" opacity=".25" />
           </>
         );
 
-      /* --- stacked gel lozenges --- */
-      case "aquapill":
+      /* an oversized cropped numeral */
+      case "numeral":
+        return (
+          <>
+            <text
+              x="50" y="86" textAnchor="middle"
+              fill={ink} opacity={0.9 * quiet}
+              fontFamily="Helvetica, Arial, sans-serif"
+              fontWeight="700" fontSize="98" letterSpacing="-6"
+            >
+              {String(index + 1).padStart(2, "0")}
+            </text>
+            <path d="M8 22H92" stroke={sig} strokeWidth="1.6" />
+            <path d="M8 30H52" stroke={ink} strokeWidth="0.6" opacity={quiet} />
+          </>
+        );
+
+      /* discs in geometric progression along an axis */
+      case "orbit": {
+        const rs = [3, 4.4, 6.4, 9.4, 13.8, 20.2];
+        let x = 12;
+        return (
+          <>
+            <path d="M4 54H96" stroke={hair} strokeWidth="0.5" />
+            {rs.map((r, i) => {
+              const cx = x + r;
+              x = cx + r + 3;
+              return (
+                <circle
+                  key={i}
+                  cx={cx} cy="54" r={r}
+                  fill={i === rs.length - 1 ? sig : "none"}
+                  stroke={i === rs.length - 1 ? "none" : ink}
+                  strokeWidth="0.8"
+                  opacity={i === rs.length - 1 ? 1 : quiet}
+                />
+              );
+            })}
+          </>
+        );
+      }
+
+      /* a perspective mesh */
+      case "mesh":
       default:
         return (
           <>
-            <defs>
-              <linearGradient id={id("bg2")} x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0" stopColor={hsl(hue, 40, 96)} />
-                <stop offset="1" stopColor={hsl(hue, 42, 76)} />
-              </linearGradient>
-              {[0, 1, 2].map((i) => (
-                <linearGradient key={i} id={id("pill" + i)} x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0" stopColor={hsl(hue + i * 38, 96, 84)} />
-                  <stop offset="0.5" stopColor={hsl(hue + i * 38, 92, 58)} />
-                  <stop offset="1" stopColor={hsl(hue + i * 38, 84, 34)} />
-                </linearGradient>
+            <g stroke={ink} fill="none" opacity={0.4 * quiet} strokeWidth="0.5">
+              {Array.from({ length: 13 }, (_, i) => (
+                <path key={"v" + i} d={`M${-30 + i * 13} 100 L${34 + i * 2.6} 40`} />
               ))}
-            </defs>
-            <rect width="100" height="100" fill={`url(#${id("bg2")})`} />
-            {[0, 1, 2].map((i) => (
-              <g key={i}>
-                <rect
-                  x={14} y={22 + i * 22} width={72} height={16} rx={8}
-                  fill={`url(#${id("pill" + i)})`} stroke={hsl(hue + i * 38, 60, 28, 0.5)} strokeWidth=".5"
-                />
-                <rect x={18} y={23.4} width={64} height={6} rx={3} fill="#fff" opacity=".75"
-                  transform={`translate(0 ${i * 22})`} />
-              </g>
-            ))}
+              {Array.from({ length: 8 }, (_, i) => {
+                const y = 40 + Math.pow(i, 1.95) * 1.35;
+                return <path key={"h" + i} d={`M0 ${y}H100`} />;
+              })}
+            </g>
+            <path d="M4 30 Q 26 12 48 28 T 96 22" fill="none" stroke={sig} strokeWidth="1.6" />
+            <circle cx="48" cy="28" r="2.6" fill={sig} />
           </>
         );
     }
@@ -261,8 +202,16 @@ export default function Cover({ variant, hue, title, className }: Props) {
 
   return (
     <svg viewBox="0 0 100 100" className={className} preserveAspectRatio="xMidYMid slice" aria-hidden>
-      <defs>{Sky}</defs>
+      <rect width="100" height="100" fill={bg} />
       {body()}
+      {/* every cover carries its index, printed */}
+      <text
+        x="92" y="93" textAnchor="end"
+        fill={ink} opacity={0.5 * quiet}
+        fontFamily="monospace" fontSize="4.6" letterSpacing="0.5"
+      >
+        {String(index + 1).padStart(2, "0")}
+      </text>
     </svg>
   );
 }

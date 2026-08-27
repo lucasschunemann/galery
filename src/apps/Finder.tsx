@@ -1,6 +1,8 @@
 import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { PROJECTS } from "../data/projects";
+
+const globalIndex = (id: string) => PROJECTS.findIndex((x) => x.id === id);
 import Cover from "../components/Cover";
 import { useOS } from "../os/store";
 import { useSfx } from "../os/useSfx";
@@ -132,13 +134,13 @@ export default function Finder() {
                     onClick={() => openProject(p.id, p.title)}
                   >
                     <span className="card__head">
-                      <span className="t-index card__no">{pad(i)}</span>
+                      <span className="t-index card__no">{pad(globalIndex(p.id))}</span>
                       <span className="card__line" />
                       <span className="t-mono card__year">{p.year}</span>
                     </span>
 
                     <span className="card__art">
-                      <Cover variant={p.art} hue={p.hue} title={p.title} />
+                      <Cover variant={p.art} index={globalIndex(p.id)} accent={p.accent} title={p.title} />
                       <span className="card__sweep" aria-hidden />
                     </span>
 
@@ -174,10 +176,10 @@ export default function Finder() {
                         aria-label={p.title}
                       >
                         <span className="flow__art">
-                          <Cover variant={p.art} hue={p.hue} title={p.title} />
+                          <Cover variant={p.art} index={globalIndex(p.id)} accent={p.accent} title={p.title} />
                         </span>
                         <span className="flow__reflect" aria-hidden>
-                          <Cover variant={p.art} hue={p.hue} title={p.title} />
+                          <Cover variant={p.art} index={globalIndex(p.id)} accent={p.accent} title={p.title} />
                         </span>
                       </button>
                     );
@@ -223,9 +225,9 @@ export default function Finder() {
                       transition={{ delay: i * 0.03, duration: 0.35 }}
                       onClick={() => openProject(p.id, p.title)}
                     >
-                      <td className="t-index list__no">{pad(i)}</td>
+                      <td className="t-index list__no">{pad(globalIndex(p.id))}</td>
                       <td className="list__name">
-                        <span className="list__ico"><Cover variant={p.art} hue={p.hue} title={p.title} /></span>
+                        <span className="list__ico"><Cover variant={p.art} index={globalIndex(p.id)} accent={p.accent} title={p.title} /></span>
                         {p.title}
                       </td>
                       <td>{p.kind}</td>

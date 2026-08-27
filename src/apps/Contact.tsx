@@ -26,7 +26,7 @@ export default function Contact() {
 
   return (
     <div className="contact">
-      <h1 className="contact__h">Nova Mensagem</h1>
+      <h1 className="contact__h">Nova mensagem</h1>
 
       <AnimatePresence mode="wait">
         {state !== "sent" ? (

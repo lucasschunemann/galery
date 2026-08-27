@@ -1,6 +1,4 @@
-export type ArtVariant =
-  | "chromestar" | "bliss" | "dialog" | "typeposter"
-  | "orb" | "gridwave" | "flare" | "aquapill";
+import type { ArtVariant } from "../components/Cover";
 
 export interface Project {
   id: string;
@@ -12,7 +10,8 @@ export interface Project {
   role: string;
   stack: string[];
   art: ArtVariant;
-  hue: number;          // drives the generated cover palette
+  /** how loudly the cover speaks: 0 quiet, 1 normal, 2 accent-dominant */
+  accent: 0 | 1 | 2;
   metrics: { label: string; value: string }[];
   link?: string;
 }
@@ -30,8 +29,8 @@ export const PROJECTS: Project[] = [
     ],
     role: "Direção de arte, design de sistema, front-end",
     stack: ["WebGL", "GLSL", "React", "Motion"],
-    art: "chromestar",
-    hue: 208,
+    art: "arcs",
+    accent: 1,
     metrics: [
       { label: "Tempo médio na página", value: "4m 12s" },
       { label: "Capas geradas", value: "18.4k" },
@@ -50,8 +49,8 @@ export const PROJECTS: Project[] = [
     ],
     role: "Conceito, shaders, direção",
     stack: ["Three.js", "GLSL", "TypeScript"],
-    art: "bliss",
-    hue: 120,
+    art: "mesh",
+    accent: 0,
     metrics: [
       { label: "Frames por segundo", value: "60" },
       { label: "Assets de textura", value: "0" },
@@ -70,8 +69,8 @@ export const PROJECTS: Project[] = [
     ],
     role: "Lead de design system, documentação",
     stack: ["React", "Radix", "Style Dictionary", "Figma"],
-    art: "dialog",
-    hue: 202,
+    art: "modular",
+    accent: 2,
     metrics: [
       { label: "Componentes", value: "84" },
       { label: "Redução de tickets", value: "−63%" },
@@ -90,8 +89,8 @@ export const PROJECTS: Project[] = [
     ],
     role: "Direção de arte, tipografia, front-end",
     stack: ["Astro", "CSS Houdini", "Variable Fonts"],
-    art: "typeposter",
-    hue: 146,
+    art: "numeral",
+    accent: 0,
     metrics: [
       { label: "Sessões", value: "1.2M" },
       { label: "Duração média", value: "7m 51s" },
@@ -110,8 +109,8 @@ export const PROJECTS: Project[] = [
     ],
     role: "Produto, design, engenharia",
     stack: ["Svelte", "OKLCH", "WASM"],
-    art: "orb",
-    hue: 190,
+    art: "orbit",
+    accent: 1,
     metrics: [
       { label: "Usuários ativos", value: "27k" },
       { label: "Paletas exportadas", value: "310k" },
@@ -130,8 +129,8 @@ export const PROJECTS: Project[] = [
     ],
     role: "UX lead, pesquisa, protótipo",
     stack: ["React", "D3", "WebSocket"],
-    art: "gridwave",
-    hue: 220,
+    art: "wedge",
+    accent: 1,
     metrics: [
       { label: "Tempo até decisão", value: "−78%" },
       { label: "Elementos removidos", value: "71%" },
@@ -150,8 +149,8 @@ export const PROJECTS: Project[] = [
     ],
     role: "Sistema generativo, direção de motion",
     stack: ["Cavalry", "p5.js", "Node"],
-    art: "flare",
-    hue: 250,
+    art: "split",
+    accent: 2,
     metrics: [
       { label: "Peças geradas", value: "2.4k" },
       { label: "Equipe", value: "2 pessoas" },
@@ -170,8 +169,8 @@ export const PROJECTS: Project[] = [
     ],
     role: "Design de interação, prototipagem",
     stack: ["SwiftUI", "Metal", "Core Haptics"],
-    art: "aquapill",
-    hue: 285,
+    art: "bars",
+    accent: 1,
     metrics: [
       { label: "Rating", value: "4.8 ★" },
       { label: "Retenção D30", value: "41%" },
@@ -181,3 +180,4 @@ export const PROJECTS: Project[] = [
 ];
 
 export const byId = (id: string) => PROJECTS.find((p) => p.id === id);
+export type { ArtVariant };

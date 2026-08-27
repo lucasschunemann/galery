@@ -10,7 +10,7 @@ import { useSfx } from "../os/useSfx";
 
 const SCALE = [0, 2, 4, 7, 9, 12, 14, 16, 19, 21];
 const ROOT = 110; // A2
-const TRACKS = ["Hillside.aif", "Bubble Chamber.aif", "Blue Screen Sunrise.aif"];
+const TRACKS = ["grid.001", "signal.002", "helvetica.003"];
 
 export default function Player() {
   const [playing, setPlaying] = useState(false);
@@ -148,6 +148,10 @@ export default function Player() {
       if (an) an.getByteFrequencyData(data as Uint8Array<ArrayBuffer>);
       else data.fill(0);
 
+      const css = getComputedStyle(document.documentElement);
+      const accent = css.getPropertyValue("--accent").trim() || "#ff4d2e";
+      const dim = css.getPropertyValue("--n-40").trim() || "#363c46";
+
       const bars = 28;
       const gap = 3;
       const bw = (w - gap * (bars - 1)) / bars;
@@ -159,19 +163,15 @@ export default function Player() {
         const y = h * 0.8 - bh;
 
         const g = ctx2d.createLinearGradient(0, y, 0, y + bh);
-        g.addColorStop(0, "#cdefff");
-        g.addColorStop(0.4, "#3fa9f5");
-        g.addColorStop(1, "#0b4f9e");
+        g.addColorStop(0, accent);
+        g.addColorStop(1, dim);
         ctx2d.fillStyle = g;
         roundRect(ctx2d, x, y, bw, bh, Math.min(3, bw / 2));
         ctx2d.fill();
 
         // reflection
-        ctx2d.globalAlpha = 0.24;
-        const g2 = ctx2d.createLinearGradient(0, h * 0.8, 0, h * 0.8 + bh * 0.5);
-        g2.addColorStop(0, "#5fb6f7");
-        g2.addColorStop(1, "rgba(95,182,247,0)");
-        ctx2d.fillStyle = g2;
+        ctx2d.globalAlpha = 0.18;
+        ctx2d.fillStyle = accent;
         roundRect(ctx2d, x, h * 0.8 + 1, bw, bh * 0.5, Math.min(3, bw / 2));
         ctx2d.fill();
         ctx2d.globalAlpha = 1;
@@ -189,7 +189,7 @@ export default function Player() {
         <div className="tunes__meta">
           <span className="tunes__title">{TRACKS[track]}</span>
           <span className="tunes__artist">
-            {playing ? "gerando em tempo real" : "parado"} · AERO OS
+            {playing ? "gerando em tempo real" : "parado"} · helvetia
           </span>
         </div>
       </div>

@@ -1,60 +1,64 @@
-# AERO OS — International Edition
+# HELVETIA
 
-Um portfólio construído como um sistema operacional fictício do início dos anos
-2000, cruzado com o minimalismo tipográfico da Escola Suíça.
+Um portfólio construído como um sistema operacional — tiling window
+manager, paletas tonais e disciplina tipográfica suíça.
 
-Não há um único arquivo de imagem no projeto. O papel de parede, os ícones, as
-capas dos projetos e até os sons da interface são gerados em código.
+Não existe uma única imagem no projeto. Papel de parede, capas de projeto,
+ícones e sons são gerados em código.
 
 ## O princípio
 
-As duas linguagens brigam por natureza: uma é profundidade e ornamento, a outra
-é superfície e grade. Em vez de misturá-las em cada elemento, cada uma governa
-uma camada:
+Três linhagens, uma superfície:
 
-> **O suíço governa a estrutura. O Aero governa o material.**
+| Linhagem | O que ela governa |
+|---|---|
+| **Tiling WM** (Hyprland) | Estrutura: gaps, workspaces, layout `dwindle`, foco por anel |
+| **Material 3** | Elevação: tom, nunca sombra. Rampa neutra de 10 passos + um acento |
+| **Suíço / Apple** | Ordem: grade, fio de cabelo, um acento só, vidro, contenção |
 
-Na prática isso vira uma regra tipográfica dura — **chrome em Lucida Grande**
-(janelas, dock, menus: o âncora de 2001), **conteúdo em Helvetica** (grade,
-fios de cabelo, numeração, uma única cor de destaque: o âncora de Basileia).
-Vidro e gel não entram no conteúdo; grade e hairline não entram no chrome.
+A regra dura: **elevação é expressa por tom, nunca por sombra**. A
+profundidade vem de blur e luz — não existe um bevel no sistema inteiro.
+E existe **um acento por paleta**; todo o resto é neutro.
 
 ## Rodando
 
 ```bash
 npm install
 npm run dev      # http://localhost:5173
-npm run build    # produção em dist/
+npm run build
 ```
 
-## O que tem aqui
+## Fluxo
 
-| Peça | Onde | O que é |
-|---|---|---|
-| Boot | `src/components/Boot.tsx` | Power gate (necessário para liberar o áudio) + sequência de inicialização |
-| Papel de parede | `src/components/Wallpaper.tsx` | Canvas 2D: céu, nuvens com volume real (sprites com face iluminada e face sombreada), colina Bliss, sol com flare, bolhas iridescentes, grão de filme — e um leque de arcos concêntricos em cromo com progressão geométrica de espessura: o único gesto suíço da camada material |
-| Camada suíça | `src/components/DesktopGrid.tsx` | Grade modular de 12 colunas, marcas de registro, trilho tipográfico vertical e um ritmo de barras com o único acento vermelho |
-| Sistema tipográfico | `src/styles/type.css` | Escala modular, papéis de texto, fios, blocos de dados |
-| Window manager | `src/os/store.ts` | Zustand: z-order, foco, minimizar/zoom, cascata, singletons |
-| Janelas | `src/components/Window.tsx` | Arrasto, resize, semáforo em gel, minimizar com genie até o ícone certo do dock |
-| Dock | `src/components/Dock.tsx` | Magnificação gaussiana real, com mola, indicador de app aberto |
-| Áudio | `src/os/sound.ts` | Web Audio: chime de boot, pops, whooshes — tudo sintetizado |
-| Galeria | `src/apps/Finder.tsx` | Grade, Cover Flow 3D com reflexo, e lista |
-| Capas | `src/components/Cover.tsx` | 8 variantes de arte generativa em SVG, parametrizadas por matiz |
-| AeroTunes | `src/apps/Player.tsx` | Patch ambiente generativo com visualizador via `AnalyserNode` |
-| Terminal | `src/apps/Terminal.tsx` | Shell funcional: `ls`, `open`, `theme`, `neofetch`, histórico |
-| Playground | `src/apps/Playground.tsx` | Laboratório de materiais que emite o CSS do gel |
+`boot` → `lock` → sessão. Uma área de trabalho vazia não é um vazio: é a
+**tela inicial**, com a composição do wallpaper aparecendo por trás.
 
 ## Atalhos
 
-- `⌘1` galeria · `⌘2` terminal · `⌘3` AeroTunes · `⌘W` fecha a janela
-- Clique duplo na barra de título maximiza
-- Menu **Aparência**: Aqua, Grafite, Bliss, Pôr do Sol — retinge o wallpaper inteiro
-- 75s parado aciona o protetor de tela
+| | |
+|---|---|
+| `⌘K` ou `espaço` | launcher (apps, projetos e comandos) |
+| `⌘1…5` | trocar de área de trabalho |
+| `⌘W` | fechar janela |
+| `⌘F` | soltar / encaixar a janela (float ↔ tile) |
+| `⌘J` | alternar o foco |
+| `⌘L` | bloquear |
+
+## Peças
+
+| Peça | Onde | O que é |
+|---|---|---|
+| Layout | `src/os/store.ts` | `dwindle`: cada janela toma metade do que sobrou, dividindo sempre o lado mais longo da região restante |
+| Wallpaper | `src/components/Wallpaper.tsx` | Composição "Signal": anéis concêntricos em progressão geométrica, leque radiante, grade modular, dois blooms lentos e grão. Precisa funcionar nítido nos gaps e como campo de cor sob 30px de blur |
+| Paletas | `src/styles/os.css` | Quatro flavours — graphite, mocha, nord, paper — cada uma com rampa neutra e um acento |
+| Capas | `src/components/Cover.tsx` | Oito composições suíças que herdam a paleta via CSS vars. Variação vem de forma e peso tonal, nunca de matiz |
+| Launcher | `src/components/Launcher.tsx` | rofi: apps, projetos e comandos numa lista só, teclado primeiro |
+| Bloqueio | `src/components/Lock.tsx` | hyprlock: o wallpaper segue vivo sob o blur |
+| Tokens | `src/apps/Tokens.tsx` | A folha de tokens do sistema, ao vivo — mexer aqui muda o OS que você está olhando |
 
 ## Stack
 
-React 19 · TypeScript · Vite · Zustand · Motion · Canvas 2D · Web Audio API · CSS puro
+React 19 · TypeScript · Vite · Zustand · Motion · Canvas 2D · Web Audio · CSS puro
 
-Abaixo de 720px o sistema abandona o gerenciamento de janelas e vira uma pilha
-de painéis em tela cheia — o dock e a barra de menu continuam.
+Abaixo de 820px o tiling colapsa para uma janela por vez e o rail sai —
+a metáfora de mosaico não sobrevive a 390px, e fingir que sobrevive seria pior.

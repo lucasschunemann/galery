@@ -5,6 +5,7 @@ const DISCARDED = [
   ["scroll-hijack.js", "Devolva o scroll para quem é dono dele."],
   ["loader-de-6-segundos.json", "O site carregava em 400ms. A animação, em 6s."],
   ["dark-mode-as-pressas.css", "Inverter as cores não é um tema."],
+  ["glass-em-tudo.css", "Vidro sobre vidro sobre vidro. Nada legível sobrou."],
 ];
 
 export default function Trash() {

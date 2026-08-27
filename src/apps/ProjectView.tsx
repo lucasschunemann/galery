@@ -22,7 +22,7 @@ export default function ProjectView({ id }: { id?: string }) {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5, ease: EASE }}
       >
-        <Cover variant={p.art} hue={p.hue} title={p.title} className="proj__herobed" />
+        <Cover variant={p.art} index={idx} accent={p.accent} title={p.title} className="proj__herobed" />
         <div className="proj__heroveil" />
 
         <motion.div
@@ -31,7 +31,7 @@ export default function ProjectView({ id }: { id?: string }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: EASE, delay: 0.06 }}
         >
-          <Cover variant={p.art} hue={p.hue} title={p.title} />
+          <Cover variant={p.art} index={idx} accent={p.accent} title={p.title} />
         </motion.div>
 
         <span className="proj__no t-index">
@@ -108,7 +108,7 @@ export default function ProjectView({ id }: { id?: string }) {
         </div>
 
         <footer className="proj__foot">
-          <button className="gel btn" onClick={() => { sfx("open"); open("finder"); }}>
+          <button className="gel btn" onClick={() => { sfx("open"); open("files"); }}>
             ← Voltar à galeria
           </button>
           <button
