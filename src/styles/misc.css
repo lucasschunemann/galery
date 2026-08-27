@@ -39,7 +39,9 @@
   pointer-events: none;
   filter: drop-shadow(0 2px 2px rgba(0, 20, 50, 0.45));
   will-change: transform;
+  opacity: 0;
 }
+.cursor[data-visible="true"] { opacity: 1; }
 .cursor[data-shape="text"] { margin: -10px -6px; }
 .cursor[data-shape="grab"] { rotate: -8deg; }
 
@@ -47,14 +49,16 @@
   position: fixed;
   top: 0; left: 0;
   z-index: calc(var(--z-cursor) - 1);
+  opacity: 0;
   width: 34px; height: 34px;
   margin: -17px 0 0 -17px;
   border-radius: 50%;
   pointer-events: none;
   background: radial-gradient(circle, var(--accent-glow), transparent 68%);
-  opacity: 0.5;
   will-change: transform;
+  transition: opacity 0.2s var(--ease-soft);
 }
+.cursor-aura[data-visible="true"] { opacity: 0.5; }
 
 .cursor-ripple {
   position: fixed;
@@ -78,7 +82,7 @@
 .saver {
   position: fixed;
   inset: 0;
-  z-index: 15000;
+  z-index: var(--z-saver);
   overflow: hidden;
   background:
     radial-gradient(90% 70% at 50% 30%, rgba(20, 70, 140, 0.75), rgba(2, 8, 22, 0.96));

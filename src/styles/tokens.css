@@ -55,7 +55,12 @@
   --z-dock: 9000;
   --z-menubar: 9500;
   --z-overlay: 9800;
-  --z-cursor: 10000;
+  --z-saver: 15000;
+  --z-boot: 20000;
+  /* the pointer is drawn above everything, including boot and the
+     screensaver — hiding the native cursor under an overlay leaves the
+     user with no pointer at all */
+  --z-cursor: 30000;
 }
 
 /* -------- theme: graphite (Mac OS X "Graphite" appearance) -------- */
