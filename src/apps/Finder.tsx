@@ -17,6 +17,11 @@ const groupOf = (kind: string) => {
   return "Produto";
 };
 
+const pad = (n: number) => String(n + 1).padStart(2, "0");
+
+/* the whole gallery moves on one curve */
+const EASE = [0.16, 1, 0.3, 1] as const;
+
 export default function Finder() {
   const [view, setView] = useState<View>("grid");
   const [group, setGroup] = useState<string>("Todos");
@@ -41,9 +46,12 @@ export default function Finder() {
     open("project", { id, title });
   };
 
+  const years = PROJECTS.map((p) => +p.year);
+  const span = `${Math.min(...years)}—${Math.max(...years)}`;
+
   return (
     <div className="finder">
-      {/* ---------------- toolbar ---------------- */}
+      {/* ---------------- toolbar (chrome stays Aqua) ---------------- */}
       <div className="toolbar">
         <div className="seg">
           <button aria-pressed={view === "grid"} onClick={() => { setView("grid"); sfx("click"); }}>Grade</button>
@@ -66,14 +74,11 @@ export default function Finder() {
       <div className="finder__main">
         {/* ---------------- source list ---------------- */}
         <aside className="sourcelist">
-          <p className="sourcelist__head">Coleções</p>
+          <p className="sourcelist__head t-label">Coleções</p>
           <ul>
             {GROUPS.map((g) => (
               <li key={g}>
-                <button
-                  data-active={group === g}
-                  onClick={() => { setGroup(g); sfx("click"); }}
-                >
+                <button data-active={group === g} onClick={() => { setGroup(g); sfx("click"); }}>
                   <span className="sourcelist__ico" aria-hidden />
                   {g}
                   <span className="sourcelist__count">
@@ -83,7 +88,7 @@ export default function Finder() {
               </li>
             ))}
           </ul>
-          <p className="sourcelist__head">Atalhos</p>
+          <p className="sourcelist__head t-label">Atalhos</p>
           <ul>
             <li><button onClick={() => { sfx("open"); open("about"); }}><span className="sourcelist__ico" />Sobre Mim</button></li>
             <li><button onClick={() => { sfx("open"); open("contact"); }}><span className="sourcelist__ico" />Contato</button></li>
@@ -92,32 +97,54 @@ export default function Finder() {
 
         {/* ---------------- content ---------------- */}
         <div className="finder__content" data-view={view}>
+          {/* editorial masthead — the Swiss layer starts here */}
+          {view !== "flow" && (
+            <header className="masthead">
+              <div className="masthead__rule" />
+              <div className="masthead__row">
+                <span className="t-index masthead__no">{pad(0)}—{pad(items.length - 1)}</span>
+                <h1 className="masthead__title t-display">Trabalho<br />selecionado</h1>
+                <dl className="masthead__meta">
+                  <div><dt className="t-label">Período</dt><dd className="t-mono">{span}</dd></div>
+                  <div><dt className="t-label">Coleção</dt><dd className="t-mono">{group.toUpperCase()}</dd></div>
+                  <div><dt className="t-label">Itens</dt><dd className="t-mono">{String(items.length).padStart(2, "0")}</dd></div>
+                </dl>
+              </div>
+              <div className="masthead__rule masthead__rule--strong" />
+            </header>
+          )}
+
           <AnimatePresence mode="wait">
             {view === "grid" && (
               <motion.div
                 key="grid" className="grid"
-                initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -6 }}
-                transition={{ duration: 0.22 }}
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
               >
                 {items.map((p, i) => (
                   <motion.button
                     key={p.id}
                     className="card"
-                    initial={{ opacity: 0, y: 16, scale: 0.96 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    transition={{ delay: i * 0.045, type: "spring", stiffness: 320, damping: 26 }}
-                    whileHover={{ y: -6 }}
-                    whileTap={{ scale: 0.98 }}
+                    initial={{ opacity: 0, y: 22 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.055, duration: 0.62, ease: EASE }}
                     onPointerEnter={() => sfx("hover")}
                     onClick={() => openProject(p.id, p.title)}
                   >
+                    <span className="card__head">
+                      <span className="t-index card__no">{pad(i)}</span>
+                      <span className="card__line" />
+                      <span className="t-mono card__year">{p.year}</span>
+                    </span>
+
                     <span className="card__art">
                       <Cover variant={p.art} hue={p.hue} title={p.title} />
                       <span className="card__sweep" aria-hidden />
                     </span>
+
                     <span className="card__meta">
-                      <span className="card__title">{p.title}</span>
-                      <span className="card__kind">{p.kind} · {p.year}</span>
+                      <span className="card__title t-title">{p.title}</span>
+                      <span className="card__kind t-mono">{p.kind}</span>
                     </span>
                   </motion.button>
                 ))}
@@ -159,8 +186,9 @@ export default function Finder() {
 
                 <div className="flow__bar">
                   <p className="flow__title">
-                    {items[Math.min(flowIndex, items.length - 1)]?.title}
-                    <span>{items[Math.min(flowIndex, items.length - 1)]?.tagline}</span>
+                    <span className="t-index">{pad(Math.min(flowIndex, items.length - 1))}</span>
+                    <span className="t-title">{items[Math.min(flowIndex, items.length - 1)]?.title}</span>
+                    <span className="t-mono">{items[Math.min(flowIndex, items.length - 1)]?.tagline}</span>
                   </p>
                   <input
                     type="range" min={0} max={Math.max(0, items.length - 1)} step={1}
@@ -179,19 +207,31 @@ export default function Finder() {
                 initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               >
                 <thead>
-                  <tr><th>Nome</th><th>Tipo</th><th>Ano</th><th>Stack</th></tr>
+                  <tr>
+                    <th className="t-label">Nº</th>
+                    <th className="t-label">Nome</th>
+                    <th className="t-label">Tipo</th>
+                    <th className="t-label">Ano</th>
+                    <th className="t-label">Stack</th>
+                  </tr>
                 </thead>
                 <tbody>
                   {items.map((p, i) => (
-                    <tr key={p.id} onClick={() => openProject(p.id, p.title)} data-odd={i % 2 === 1}>
-                      <td>
+                    <motion.tr
+                      key={p.id}
+                      initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                      transition={{ delay: i * 0.03, duration: 0.35 }}
+                      onClick={() => openProject(p.id, p.title)}
+                    >
+                      <td className="t-index list__no">{pad(i)}</td>
+                      <td className="list__name">
                         <span className="list__ico"><Cover variant={p.art} hue={p.hue} title={p.title} /></span>
                         {p.title}
                       </td>
                       <td>{p.kind}</td>
-                      <td>{p.year}</td>
+                      <td className="list__year">{p.year}</td>
                       <td className="list__stack">{p.stack.join(", ")}</td>
-                    </tr>
+                    </motion.tr>
                   ))}
                 </tbody>
               </motion.table>
@@ -199,14 +239,14 @@ export default function Finder() {
           </AnimatePresence>
 
           {items.length === 0 && (
-            <p className="finder__empty">Nenhum item corresponde a “{q}”.</p>
+            <p className="finder__empty t-body">Nenhum item corresponde a “{q}”.</p>
           )}
         </div>
       </div>
 
       <div className="statusbar">
-        <span>{items.length} {items.length === 1 ? "item" : "itens"}</span>
-        <span>Abra um projeto para ver o caso</span>
+        <span className="t-mono">{String(items.length).padStart(2, "0")} {items.length === 1 ? "ITEM" : "ITENS"}</span>
+        <span className="t-mono">ABRA UM PROJETO PARA VER O CASO</span>
       </div>
     </div>
   );

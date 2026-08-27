@@ -4,6 +4,9 @@ import Cover from "../components/Cover";
 import { useOS } from "../os/store";
 import { useSfx } from "../os/useSfx";
 
+const EASE = [0.16, 1, 0.3, 1] as const;
+const pad = (n: number) => String(n + 1).padStart(2, "0");
+
 export default function ProjectView({ id }: { id?: string }) {
   const open = useOS((s) => s.open);
   const sfx = useSfx();
@@ -15,35 +18,63 @@ export default function ProjectView({ id }: { id?: string }) {
     <article className="proj" key={p.id}>
       <motion.header
         className="proj__hero"
-        initial={{ opacity: 0, scale: 1.03 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5, ease: [0.22, 1, 0.32, 1] }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5, ease: EASE }}
       >
         <Cover variant={p.art} hue={p.hue} title={p.title} className="proj__herobed" />
         <div className="proj__heroveil" />
-        <div className="proj__herocard">
+
+        <motion.div
+          className="proj__herocard"
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease: EASE, delay: 0.06 }}
+        >
           <Cover variant={p.art} hue={p.hue} title={p.title} />
-        </div>
+        </motion.div>
+
+        <span className="proj__no t-index">
+          {pad(idx)} / {pad(PROJECTS.length - 1)}
+        </span>
+
         <div className="proj__herotext">
-          <p className="proj__kind">{p.kind} · {p.year}</p>
-          <h1 className="proj__title">{p.title}</h1>
-          <p className="proj__tagline">{p.tagline}</p>
+          <p className="proj__kind t-label">{p.kind} — {p.year}</p>
+          <span className="mask">
+            <motion.h1
+              className="proj__title t-display"
+              initial={{ y: "108%" }}
+              animate={{ y: 0 }}
+              transition={{ duration: 0.8, ease: EASE, delay: 0.08 }}
+            >
+              {p.title}
+            </motion.h1>
+          </span>
+          <motion.p
+            className="proj__tagline"
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+          >
+            {p.tagline}
+          </motion.p>
         </div>
       </motion.header>
 
       <div className="proj__body">
-        <motion.div
-          className="proj__metrics"
-          initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1, duration: 0.4 }}
-        >
-          {p.metrics.map((m) => (
-            <div key={m.label} className="metric">
+        <div className="proj__metrics">
+          {p.metrics.map((m, i) => (
+            <motion.div
+              key={m.label}
+              className="metric"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.16 + i * 0.07, duration: 0.55, ease: EASE }}
+            >
               <span className="metric__value">{m.value}</span>
-              <span className="metric__label">{m.label}</span>
-            </div>
+              <span className="metric__label t-label">{m.label}</span>
+            </motion.div>
           ))}
-        </motion.div>
+        </div>
 
         <div className="proj__cols">
           <div className="proj__prose">
@@ -51,7 +82,7 @@ export default function ProjectView({ id }: { id?: string }) {
               <motion.p
                 key={i}
                 initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.16 + i * 0.08, duration: 0.4 }}
+                transition={{ delay: 0.26 + i * 0.09, duration: 0.55, ease: EASE }}
               >
                 {t}
               </motion.p>
@@ -59,12 +90,20 @@ export default function ProjectView({ id }: { id?: string }) {
           </div>
 
           <aside className="proj__side">
-            <h2>Meu papel</h2>
-            <p>{p.role}</p>
-            <h2>Stack</h2>
-            <ul className="chips">
-              {p.stack.map((s) => <li key={s} className="chip">{s}</li>)}
-            </ul>
+            <dl className="data">
+              <dt className="t-label">Papel</dt>
+              <dd>{p.role}</dd>
+              <dt className="t-label">Ano</dt>
+              <dd>{p.year}</dd>
+              <dt className="t-label">Tipo</dt>
+              <dd>{p.kind}</dd>
+              <dt className="t-label">Stack</dt>
+              <dd>
+                <ul className="chips">
+                  {p.stack.map((s) => <li key={s} className="chip">{s}</li>)}
+                </ul>
+              </dd>
+            </dl>
           </aside>
         </div>
 
@@ -76,7 +115,7 @@ export default function ProjectView({ id }: { id?: string }) {
             className="btn btn--ghost"
             onClick={() => { sfx("open"); open("project", { id: next.id, title: next.title }); }}
           >
-            Próximo: {next.title} →
+            {pad((idx + 1) % PROJECTS.length)} · {next.title} →
           </button>
         </footer>
       </div>

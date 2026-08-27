@@ -1,10 +1,23 @@
-# AERO OS — portfólio como sistema operacional
+# AERO OS — International Edition
 
-Uma experiência de portfólio construída como um sistema operacional fictício do
-início dos anos 2000: Aqua, Frutiger Aero, vidro, gel e céu.
+Um portfólio construído como um sistema operacional fictício do início dos anos
+2000, cruzado com o minimalismo tipográfico da Escola Suíça.
 
 Não há um único arquivo de imagem no projeto. O papel de parede, os ícones, as
 capas dos projetos e até os sons da interface são gerados em código.
+
+## O princípio
+
+As duas linguagens brigam por natureza: uma é profundidade e ornamento, a outra
+é superfície e grade. Em vez de misturá-las em cada elemento, cada uma governa
+uma camada:
+
+> **O suíço governa a estrutura. O Aero governa o material.**
+
+Na prática isso vira uma regra tipográfica dura — **chrome em Lucida Grande**
+(janelas, dock, menus: o âncora de 2001), **conteúdo em Helvetica** (grade,
+fios de cabelo, numeração, uma única cor de destaque: o âncora de Basileia).
+Vidro e gel não entram no conteúdo; grade e hairline não entram no chrome.
 
 ## Rodando
 
@@ -19,7 +32,9 @@ npm run build    # produção em dist/
 | Peça | Onde | O que é |
 |---|---|---|
 | Boot | `src/components/Boot.tsx` | Power gate (necessário para liberar o áudio) + sequência de inicialização |
-| Papel de parede | `src/components/Wallpaper.tsx` | Canvas 2D: céu, nuvens volumétricas em 3 camadas de parallax, colina Bliss, sol com flare anamórfico e bolhas com rim iridescente |
+| Papel de parede | `src/components/Wallpaper.tsx` | Canvas 2D: céu, nuvens com volume real (sprites com face iluminada e face sombreada), colina Bliss, sol com flare, bolhas iridescentes, grão de filme — e um leque de arcos concêntricos em cromo com progressão geométrica de espessura: o único gesto suíço da camada material |
+| Camada suíça | `src/components/DesktopGrid.tsx` | Grade modular de 12 colunas, marcas de registro, trilho tipográfico vertical e um ritmo de barras com o único acento vermelho |
+| Sistema tipográfico | `src/styles/type.css` | Escala modular, papéis de texto, fios, blocos de dados |
 | Window manager | `src/os/store.ts` | Zustand: z-order, foco, minimizar/zoom, cascata, singletons |
 | Janelas | `src/components/Window.tsx` | Arrasto, resize, semáforo em gel, minimizar com genie até o ícone certo do dock |
 | Dock | `src/components/Dock.tsx` | Magnificação gaussiana real, com mola, indicador de app aberto |

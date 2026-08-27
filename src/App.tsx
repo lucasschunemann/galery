@@ -6,6 +6,7 @@ import Boot from "./components/Boot";
 import Wallpaper from "./components/Wallpaper";
 import MenuBar from "./components/MenuBar";
 import DesktopIcons from "./components/DesktopIcons";
+import DesktopGrid from "./components/DesktopGrid";
 import Dock from "./components/Dock";
 import Window from "./components/Window";
 import Screensaver from "./components/Screensaver";
@@ -54,6 +55,7 @@ export default function App() {
       {booted && (
         <>
           <MenuBar />
+          <DesktopGrid />
           <div className="desktop" onPointerDown={() => select(null)}>
             <DesktopIcons />
           </div>
