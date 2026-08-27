@@ -54,15 +54,15 @@ export default function Launcher() {
         kind: "cmd" as const,
         run: () => store.setWorkspace(n),
       })),
-      ...(["graphite", "mocha", "nord", "paper"] as Flavour[]).map((f) => ({
+      ...(["matcha", "sakura", "yozora", "sumi", "washi"] as Flavour[]).map((f) => ({
         key: `fl:${f}`,
-        glyph: "◐",
-        label: `Paleta: ${f}`,
-        hint: "flavour tema",
+        glyph: "◍",
+        label: `Ambiente: ${f}`,
+        hint: "tema cor paleta",
         kind: "cmd" as const,
         run: () => store.setFlavour(f),
       })),
-      { key: "lock", glyph: "⏻", label: "Bloquear a tela", hint: "lock sessão", kind: "cmd", run: () => store.lock() },
+      { key: "lock", glyph: "◐", label: "Descansar a tela", hint: "bloquear sessão", kind: "cmd", run: () => store.lock() },
     ];
 
     return [...apps, ...projects, ...cmds];

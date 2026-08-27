@@ -1,24 +1,33 @@
-# HELVETIA
+# KOMOREBI 木漏れ日
 
-Um portfólio construído como um sistema operacional — tiling window
-manager, paletas tonais e disciplina tipográfica suíça.
+*A luz que passa entre as folhas.*
 
-Não existe uma única imagem no projeto. Papel de parede, capas de projeto,
-ícones e sons são gerados em código.
+Um portfólio construído como um sistema operacional calmo — tiling window
+manager, vidro fosco, paletas suaves e movimento orgânico.
 
 ## O princípio
 
-Três linhagens, uma superfície:
+A linhagem é a cultura de *rice* do Hyprland cruzada com Material You, mas a
+temperatura é doméstica. As regras da casa:
 
-| Linhagem | O que ela governa |
+- **Elevação é tom e blur, nunca uma borda de sombra dura.** Não existe um
+  bevel no sistema.
+- **Um acento suave por ambiente.** No momento em que ele fica neon, tudo
+  volta a parecer um terminal.
+- **Nada se move linearmente.** Tudo assenta, com um pouco de overshoot.
+- **Respiro é conteúdo.** Raios grandes e muito espaço vazio.
+
+## Ambientes
+
+| | |
 |---|---|
-| **Tiling WM** (Hyprland) | Estrutura: gaps, workspaces, layout `dwindle`, foco por anel |
-| **Material 3** | Elevação: tom, nunca sombra. Rampa neutra de 10 passos + um acento |
-| **Suíço / Apple** | Ordem: grade, fio de cabelo, um acento só, vidro, contenção |
+| **Matcha** | verde, calmo — o padrão |
+| **Sakura** | rosa empoeirado, macio |
+| **Yozora** | noite, lilás |
+| **Sumi** | carvão e âmbar |
+| **Washi** | papel, o único claro |
 
-A regra dura: **elevação é expressa por tom, nunca por sombra**. A
-profundidade vem de blur e luz — não existe um bevel no sistema inteiro.
-E existe **um acento por paleta**; todo o resto é neutro.
+Trocar de ambiente retinge tudo: papel de parede, capas de projeto, interface.
 
 ## Rodando
 
@@ -30,35 +39,43 @@ npm run build
 
 ## Fluxo
 
-`boot` → `lock` → sessão. Uma área de trabalho vazia não é um vazio: é a
-**tela inicial**, com a composição do wallpaper aparecendo por trás.
+`boot` → `descanso` (tela de bloqueio) → sessão. Uma área de trabalho vazia não
+é um vazio: é a **tela inicial**.
 
 ## Atalhos
 
 | | |
 |---|---|
-| `⌘K` ou `espaço` | launcher (apps, projetos e comandos) |
-| `⌘1…5` | trocar de área de trabalho |
+| `⌘K` ou `espaço` | procurar (apps, projetos e comandos) |
+| `⌘1…5` | trocar de área |
 | `⌘W` | fechar janela |
-| `⌘F` | soltar / encaixar a janela (float ↔ tile) |
+| `⌘F` | soltar / encaixar a janela |
 | `⌘J` | alternar o foco |
-| `⌘L` | bloquear |
+| `⌘L` | descansar |
 
 ## Peças
 
 | Peça | Onde | O que é |
 |---|---|---|
-| Layout | `src/os/store.ts` | `dwindle`: cada janela toma metade do que sobrou, dividindo sempre o lado mais longo da região restante |
-| Wallpaper | `src/components/Wallpaper.tsx` | Composição "Signal": anéis concêntricos em progressão geométrica, leque radiante, grade modular, dois blooms lentos e grão. Precisa funcionar nítido nos gaps e como campo de cor sob 30px de blur |
-| Paletas | `src/styles/os.css` | Quatro flavours — graphite, mocha, nord, paper — cada uma com rampa neutra e um acento |
-| Capas | `src/components/Cover.tsx` | Oito composições suíças que herdam a paleta via CSS vars. Variação vem de forma e peso tonal, nunca de matiz |
-| Launcher | `src/components/Launcher.tsx` | rofi: apps, projetos e comandos numa lista só, teclado primeiro |
-| Bloqueio | `src/components/Lock.tsx` | hyprlock: o wallpaper segue vivo sob o blur |
-| Tokens | `src/apps/Tokens.tsx` | A folha de tokens do sistema, ao vivo — mexer aqui muda o OS que você está olhando |
+| Layout | `src/os/store.ts` | `dwindle`: cada janela toma metade do que sobrou, dividindo o lado mais longo da região restante |
+| Movimento | `src/os/motion.ts` | Um vocabulário só para todo o sistema — molas com peso, nada crítico-amortecido |
+| Papel de parede | `src/components/Wallpaper.tsx` | Quatro massas de cor à deriva em ciclos próprios, uma lanterna de papel e grão. Baixa frequência de propósito: precisa sobreviver a 40px de blur |
+| Ambientes | `src/styles/os.css` | Cinco paletas, cada uma com rampa neutra de dez passos e um acento dessaturado |
+| Capas | `src/components/Cover.tsx` | Oito composições macias que herdam a paleta por CSS vars |
+| Procurar | `src/components/Launcher.tsx` | Apps, projetos e comandos numa lista só, teclado primeiro |
+| Descanso | `src/components/Lock.tsx` | O papel de parede segue vivo sob o blur |
+
+## Tipografia
+
+Plus Jakarta Sans carrega a interface; **M PLUS Rounded 1c** — uma gótica
+japonesa arredondada — carrega os números e títulos grandes. É ela que faz o
+sistema parecer acolhedor em vez de técnico. Mono aparece só onde o dado pede.
+
+As fontes vêm do Google Fonts com fallbacks de sistema; sem rede, o layout
+continua íntegro. Nenhum arquivo de imagem no projeto.
 
 ## Stack
 
 React 19 · TypeScript · Vite · Zustand · Motion · Canvas 2D · Web Audio · CSS puro
 
-Abaixo de 820px o tiling colapsa para uma janela por vez e o rail sai —
-a metáfora de mosaico não sobrevive a 390px, e fingir que sobrevive seria pior.
+Abaixo de 820px o tiling colapsa para uma janela por vez e o rail sai.

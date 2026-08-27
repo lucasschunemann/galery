@@ -6,14 +6,14 @@ import { useSfx } from "../os/useSfx";
 type Line = { kind: "in" | "out" | "err"; text: string };
 
 const BANNER = [
-  "helvetia 1.0.0 — sh",
+  "komorebi — um shell tranquilo",
   'Digite "help" para ver os comandos disponíveis.',
 ];
 
 const NEOFETCH = String.raw`
-     ┌───────┐       lucas@helvetia
+     ┌───────┐       lucas em casa
      │  ▘ ▘  │       ───────────────
-     │   ─   │       OS      HELVETIA 1.0
+     │   ─   │       OS      KOMOREBI
      │  ───  │       WM      dwindle
      └───────┘       BAR     helvetia-bar
                      PALETTE {theme}
@@ -54,7 +54,7 @@ export default function Terminal() {
         out("comandos disponíveis:");
         out("  ls                lista os projetos");
         out("  open <alvo>       abre um app ou projeto");
-        out("  flavour <nome>    graphite | mocha | nord | paper");
+        out("  ambiente <nome>   matcha | sakura | yozora | sumi | washi");
         out("  whoami            quem escreveu isto");
         out("  neofetch          informações do sistema");
         out("  date              data e hora");
@@ -81,11 +81,12 @@ export default function Terminal() {
       }
 
       case "theme":
+      case "ambiente":
       case "flavour": {
         const t = arg.toLowerCase() as Flavour;
-        if (["graphite", "mocha", "nord", "paper"].includes(t)) {
+        if (["matcha", "sakura", "yozora", "sumi", "washi"].includes(t)) {
           setFlavour(t); sfx("chime"); out(`paleta alterada para ${t}`);
-        } else push({ kind: "err", text: "flavour: use graphite, mocha, nord ou paper" });
+        } else push({ kind: "err", text: "ambiente: matcha, sakura, yozora, sumi ou washi" });
         break;
       }
 
@@ -138,7 +139,7 @@ export default function Terminal() {
       <div className="term__body" ref={bodyRef}>
         {lines.map((l, i) => (
           <p key={i} className={`term__line term__line--${l.kind}`}>
-            {l.kind === "in" && <span className="term__ps">lucas@helvetia ~ $</span>}
+            {l.kind === "in" && <span className="term__ps">lucas ~ $</span>}
             {l.text}
           </p>
         ))}
@@ -152,7 +153,7 @@ export default function Terminal() {
             setValue("");
           }}
         >
-          <span className="term__ps">lucas@helvetia ~ $</span>
+          <span className="term__ps">lucas ~ $</span>
           <input
             ref={inputRef}
             autoFocus

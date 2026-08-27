@@ -2,18 +2,20 @@ import { useCallback, useRef, type ReactNode } from "react";
 import { motion } from "motion/react";
 import { useOS, type WindowState, type Rect } from "../os/store";
 import { useSfx } from "../os/useSfx";
-
-const SPRING = { type: "spring", stiffness: 260, damping: 30, mass: 0.85 } as const;
+import { tile } from "../os/motion";
 
 export default function Window({
-  win, rect, index, total, children, compact,
+  win, rect, index, children, compact, hidden, dir,
 }: {
   win: WindowState;
   rect: Rect;
   index: number;
-  total: number;
   children: ReactNode;
   compact: boolean;
+  /** parked on another workspace: kept alive, moved aside */
+  hidden: boolean;
+  /** which way the workspaces travelled */
+  dir: number;
 }) {
   const { focus, close, toggleFloat, setFloatRect } = useOS();
   const focusId = useOS((s) => s.focusId);
@@ -87,18 +89,23 @@ export default function Window({
       className="win glass"
       data-active={active}
       data-floating={floating}
-      style={{ zIndex: floating ? win.z : 100 + index }}
-      initial={{ ...geo, opacity: 0, scale: 0.96 }}
-      animate={{ ...geo, opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.97, transition: { duration: 0.14 } }}
-      transition={SPRING}
+      style={{
+        zIndex: floating ? win.z : 100 + index,
+        pointerEvents: hidden ? "none" : "auto",
+      }}
+      initial={{ ...geo, opacity: 0, scale: 0.9, filter: "blur(8px)" }}
+      animate={
+        hidden
+          ? { ...geo, opacity: 0, scale: 0.95, x: (geo.x as number) + dir * -54, filter: "blur(12px)" }
+          : { ...geo, opacity: 1, scale: 1, filter: "blur(0px)" }
+      }
+      exit={{ opacity: 0, scale: 0.93, filter: "blur(10px)", transition: { duration: 0.24 } }}
+      transition={{ ...tile, filter: { duration: 0.34 }, opacity: { duration: 0.28 } }}
       onPointerDown={() => focus(win.id)}
       aria-label={win.title}
+      aria-hidden={hidden}
     >
       <header className="win__bar" onPointerDown={startDrag} onDoubleClick={() => toggleFloat(win.id)}>
-        <span className="win__id t-label">
-          {String(index + 1).padStart(2, "0")}/{String(total).padStart(2, "0")}
-        </span>
         <span className="win__dot" aria-hidden />
         <h2 className="win__title">{win.title}</h2>
 
@@ -108,7 +115,7 @@ export default function Window({
             title={floating ? "Encaixar (tile)" : "Soltar (float)"}
             onClick={() => { sfx("click"); toggleFloat(win.id); }}
           >
-            {floating ? "▤" : "▭"}
+            {floating ? "⊞" : "⊡"}
           </button>
           <button
             className="win__act win__act--close"

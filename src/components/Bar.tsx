@@ -1,51 +1,60 @@
 import { useEffect, useState } from "react";
-import { motion } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 import { useOS, WORKSPACES, APPS, type Flavour } from "../os/store";
 import { useSfx } from "../os/useSfx";
+import { panelVariants, snappy, soft } from "../os/motion";
 
-const FLAVOURS: { id: Flavour; name: string }[] = [
-  { id: "graphite", name: "graphite" },
-  { id: "mocha", name: "mocha" },
-  { id: "nord", name: "nord" },
-  { id: "paper", name: "paper" },
+const FLAVOURS: { id: Flavour; name: string; note: string }[] = [
+  { id: "matcha", name: "Matcha", note: "verde, calmo" },
+  { id: "sakura", name: "Sakura", note: "rosa, macio" },
+  { id: "yozora", name: "Yozora", note: "noite, lilás" },
+  { id: "sumi", name: "Sumi", note: "carvão, âmbar" },
+  { id: "washi", name: "Washi", note: "papel, claro" },
 ];
 
+const GREET = (h: number) =>
+  h < 5 ? "boa madrugada" : h < 12 ? "bom dia" : h < 18 ? "boa tarde" : "boa noite";
+
 export default function Bar() {
-  const { setWorkspace, setLauncher, setFlavour, toggleSound, lock } = useOS();
+  const { setWorkspace, setLauncher, setFlavour, lock } = useOS();
   const workspace = useOS((s) => s.workspace);
   const windows = useOS((s) => s.windows);
   const focusId = useOS((s) => s.focusId);
   const flavour = useOS((s) => s.flavour);
-  const sound = useOS((s) => s.sound);
   const sfx = useSfx();
 
   const [now, setNow] = useState(() => new Date());
-  const [up, setUp] = useState(0);
-  const [flavOpen, setFlavOpen] = useState(false);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    const i = setInterval(() => { setNow(new Date()); setUp((u) => u + 1); }, 1000);
+    const i = setInterval(() => setNow(new Date()), 1000);
     return () => clearInterval(i);
   }, []);
 
-  const active = windows.find((w) => w.id === focusId);
-  const mm = String(Math.floor(up / 60)).padStart(2, "0");
-  const ss = String(up % 60).padStart(2, "0");
+  useEffect(() => {
+    if (!open) return;
+    const away = () => setOpen(false);
+    window.addEventListener("pointerdown", away);
+    return () => window.removeEventListener("pointerdown", away);
+  }, [open]);
+
+  const active = windows.find((w) => w.id === focusId && w.workspace === workspace);
+  const current = FLAVOURS.find((f) => f.id === flavour);
 
   return (
     <header className="bar glass">
-      {/* ---------- left: identity + workspaces ---------- */}
+      {/* ---------- left ---------- */}
       <div className="bar__side">
         <button
           className="bar__logo"
           onClick={() => { sfx("open"); setLauncher(true); }}
-          title="Abrir launcher — ⌘K"
+          title="Buscar — ⌘K"
         >
           <span className="bar__mark" aria-hidden />
-          helvetia
+          <span className="bar__name">komorebi</span>
         </button>
 
-        <nav className="ws" aria-label="Áreas de trabalho">
+        <nav className="ws" aria-label="Áreas">
           {WORKSPACES.map((n) => {
             const count = windows.filter((w) => w.workspace === n).length;
             const on = workspace === n;
@@ -56,93 +65,104 @@ export default function Bar() {
                 data-on={on}
                 data-filled={count > 0}
                 onClick={() => { setWorkspace(n); sfx("click"); }}
-                title={`Área ${n} — ${count} janela(s)`}
+                title={`Área ${n}`}
               >
-                {on && (
-                  <motion.span className="ws__bg" layoutId="ws-bg" transition={{ type: "spring", stiffness: 420, damping: 34 }} />
-                )}
+                {on && <motion.span className="ws__bg" layoutId="ws-bg" transition={snappy} />}
                 <span className="ws__n">{n}</span>
-                {count > 0 && <span className="ws__dot" aria-hidden />}
               </button>
             );
           })}
         </nav>
       </div>
 
-      {/* ---------- centre: focused window ---------- */}
+      {/* ---------- centre ---------- */}
       <div className="bar__centre">
-        {active ? (
-          <span className="bar__win">
-            <span className="bar__glyph" aria-hidden>{APPS[active.appId]?.glyph ?? "◻"}</span>
-            {active.title}
-          </span>
-        ) : (
-          <span className="bar__win bar__win--idle">área {workspace} · vazia</span>
-        )}
+        <AnimatePresence mode="wait">
+          <motion.span
+            key={active?.id ?? "idle"}
+            className="bar__win"
+            data-idle={!active}
+            initial={{ opacity: 0, y: 8, filter: "blur(6px)" }}
+            animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            exit={{ opacity: 0, y: -8, filter: "blur(6px)", transition: { duration: 0.16 } }}
+            transition={soft}
+          >
+            {active ? (
+              <>
+                <span className="bar__glyph" aria-hidden>{APPS[active.appId]?.glyph ?? "◻"}</span>
+                {active.title}
+              </>
+            ) : (
+              <>{GREET(now.getHours())}, lucas</>
+            )}
+          </motion.span>
+        </AnimatePresence>
       </div>
 
-      {/* ---------- right: system ---------- */}
+      {/* ---------- right ---------- */}
       <div className="bar__side bar__side--end">
-        <span className="bar__stat t-mono" title="Janelas abertas">
-          <b>WIN</b> {String(windows.length).padStart(2, "0")}
-        </span>
-        <span className="bar__stat t-mono" title="Tempo de sessão">
-          <b>UP</b> {mm}:{ss}
-        </span>
-
         <div className="bar__menu">
           <button
             className="bar__btn"
-            onClick={() => { setFlavOpen((v) => !v); sfx("click"); }}
-            data-on={flavOpen}
-            title="Paleta"
+            onPointerDown={(e) => { e.stopPropagation(); setOpen((v) => !v); sfx("click"); }}
+            data-on={open}
+            title="Ambiente"
           >
             <span className="bar__swatch" aria-hidden />
-            {flavour}
+            {current?.name}
           </button>
-          {flavOpen && (
-            <motion.ul
-              className="popover glass--high"
-              initial={{ opacity: 0, y: -6 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.16 }}
-              onPointerLeave={() => setFlavOpen(false)}
-            >
-              {FLAVOURS.map((f) => (
-                <li key={f.id}>
-                  <button
-                    data-on={flavour === f.id}
-                    onClick={() => { setFlavour(f.id); setFlavOpen(false); sfx("chime"); }}
+
+          <AnimatePresence>
+            {open && (
+              <motion.ul
+                className="popover glass--high"
+                variants={panelVariants}
+                initial="enter" animate="live" exit="leave"
+                onPointerDown={(e) => e.stopPropagation()}
+              >
+                <li className="popover__head t-label">Ambiente</li>
+                {FLAVOURS.map((f, i) => (
+                  <motion.li
+                    key={f.id}
+                    initial={{ opacity: 0, x: -8 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ ...soft, delay: 0.03 * i }}
                   >
-                    <span className="popover__swatch" data-flavour={f.id} aria-hidden />
-                    {f.name}
-                  </button>
-                </li>
-              ))}
-            </motion.ul>
-          )}
+                    <button
+                      data-on={flavour === f.id}
+                      onClick={() => { setFlavour(f.id); setOpen(false); sfx("chime"); }}
+                    >
+                      <span className="popover__swatch" data-flavour={f.id} aria-hidden />
+                      <span className="popover__label">
+                        {f.name}
+                        <em>{f.note}</em>
+                      </span>
+                    </button>
+                  </motion.li>
+                ))}
+              </motion.ul>
+            )}
+          </AnimatePresence>
         </div>
 
         <button
           className="bar__btn bar__btn--icon"
-          onClick={() => { toggleSound(); sfx("click"); }}
-          data-on={sound}
-          title={sound ? "Silenciar" : "Ativar som"}
-        >
-          {sound ? "◍" : "◌"}
-        </button>
-
-        <button
-          className="bar__btn bar__btn--icon"
           onClick={() => { sfx("close"); lock(); }}
-          title="Bloquear — ⌘L"
+          title="Descansar — ⌘L"
         >
-          ⏻
+          <svg viewBox="0 0 20 20" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
+            <path d="M15.6 12.4A6.4 6.4 0 017.6 4.4a6.4 6.4 0 108 8z" />
+          </svg>
         </button>
 
-        <time className="bar__clock t-num" dateTime={now.toISOString()}>
-          {now.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
-        </time>
+        <div className="bar__time">
+          <span className="bar__clock t-num">
+            {now.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}
+          </span>
+          <span className="bar__date">
+            {now.toLocaleDateString("pt-BR", { day: "2-digit", month: "short" }).replace(".", "")}
+          </span>
+        </div>
       </div>
     </header>
   );

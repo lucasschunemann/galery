@@ -21,8 +21,7 @@ const groupOf = (kind: string) => {
 
 const pad = (n: number) => String(n + 1).padStart(2, "0");
 
-/* the whole gallery moves on one curve */
-const EASE = [0.16, 1, 0.3, 1] as const;
+import { soft, stagger } from "../os/motion";
 
 export default function Finder() {
   const [view, setView] = useState<View>("grid");
@@ -107,9 +106,9 @@ export default function Finder() {
                 <span className="t-index masthead__no">{pad(0)}—{pad(items.length - 1)}</span>
                 <h1 className="masthead__title t-display">Trabalho<br />selecionado</h1>
                 <dl className="masthead__meta">
-                  <div><dt className="t-label">Período</dt><dd className="t-mono">{span}</dd></div>
-                  <div><dt className="t-label">Coleção</dt><dd className="t-mono">{group.toUpperCase()}</dd></div>
-                  <div><dt className="t-label">Itens</dt><dd className="t-mono">{String(items.length).padStart(2, "0")}</dd></div>
+                  <div><dt className="t-label">Período</dt><dd>{span}</dd></div>
+                  <div><dt className="t-label">Coleção</dt><dd>{group}</dd></div>
+                  <div><dt className="t-label">Itens</dt><dd>{items.length}</dd></div>
                 </dl>
               </div>
               <div className="masthead__rule masthead__rule--strong" />
@@ -120,23 +119,24 @@ export default function Finder() {
             {view === "grid" && (
               <motion.div
                 key="grid" className="grid"
-                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                transition={{ duration: 0.2 }}
+                initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+                exit={{ opacity: 0, y: -12, filter: "blur(6px)", transition: { duration: 0.16 } }}
               >
                 {items.map((p, i) => (
                   <motion.button
                     key={p.id}
                     className="card"
-                    initial={{ opacity: 0, y: 22 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.055, duration: 0.62, ease: EASE }}
+                    initial={{ opacity: 0, y: 34, scale: 0.94, filter: "blur(8px)" }}
+                    animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+                    transition={{ ...stagger(i, 0.055), filter: { duration: 0.4, delay: i * 0.055 } }}
+                    whileTap={{ scale: 0.985 }}
                     onPointerEnter={() => sfx("hover")}
                     onClick={() => openProject(p.id, p.title)}
                   >
                     <span className="card__head">
-                      <span className="t-index card__no">{pad(globalIndex(p.id))}</span>
+                      <span className="card__no">{pad(globalIndex(p.id))}</span>
                       <span className="card__line" />
-                      <span className="t-mono card__year">{p.year}</span>
+                      <span className="card__year">{p.year}</span>
                     </span>
 
                     <span className="card__art">
@@ -146,7 +146,7 @@ export default function Finder() {
 
                     <span className="card__meta">
                       <span className="card__title t-title">{p.title}</span>
-                      <span className="card__kind t-mono">{p.kind}</span>
+                      <span className="card__kind">{p.kind}</span>
                     </span>
                   </motion.button>
                 ))}
@@ -156,7 +156,10 @@ export default function Finder() {
             {view === "flow" && (
               <motion.div
                 key="flow" className="flow"
-                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                initial={{ opacity: 0, scale: 0.97, filter: "blur(8px)" }}
+                animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+                exit={{ opacity: 0, scale: 0.98, filter: "blur(6px)", transition: { duration: 0.16 } }}
+                transition={soft}
               >
                 <div className="flow__stage">
                   {items.map((p, i) => {
@@ -190,7 +193,7 @@ export default function Finder() {
                   <p className="flow__title">
                     <span className="t-index">{pad(Math.min(flowIndex, items.length - 1))}</span>
                     <span className="t-title">{items[Math.min(flowIndex, items.length - 1)]?.title}</span>
-                    <span className="t-mono">{items[Math.min(flowIndex, items.length - 1)]?.tagline}</span>
+                    <span className="flow__tag">{items[Math.min(flowIndex, items.length - 1)]?.tagline}</span>
                   </p>
                   <input
                     type="range" min={0} max={Math.max(0, items.length - 1)} step={1}
@@ -206,7 +209,9 @@ export default function Finder() {
             {view === "list" && (
               <motion.table
                 key="list" className="list"
-                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10, transition: { duration: 0.16 } }}
+                transition={soft}
               >
                 <thead>
                   <tr>
@@ -221,11 +226,11 @@ export default function Finder() {
                   {items.map((p, i) => (
                     <motion.tr
                       key={p.id}
-                      initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                      transition={{ delay: i * 0.03, duration: 0.35 }}
+                      initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }}
+                      transition={stagger(i, 0.03)}
                       onClick={() => openProject(p.id, p.title)}
                     >
-                      <td className="t-index list__no">{pad(globalIndex(p.id))}</td>
+                      <td className="list__no">{pad(globalIndex(p.id))}</td>
                       <td className="list__name">
                         <span className="list__ico"><Cover variant={p.art} index={globalIndex(p.id)} accent={p.accent} title={p.title} /></span>
                         {p.title}
@@ -247,8 +252,8 @@ export default function Finder() {
       </div>
 
       <div className="statusbar">
-        <span className="t-mono">{String(items.length).padStart(2, "0")} {items.length === 1 ? "ITEM" : "ITENS"}</span>
-        <span className="t-mono">ABRA UM PROJETO PARA VER O CASO</span>
+        <span>{items.length} {items.length === 1 ? "projeto" : "projetos"}</span>
+        <span>abra um projeto para ver o caso</span>
       </div>
     </div>
   );

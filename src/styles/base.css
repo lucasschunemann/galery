@@ -3,8 +3,9 @@ html, body, #root { height: 100%; }
 
 body {
   margin: 0;
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-size: var(--fs-12);
+  font-weight: 400;
   color: var(--text);
   background: var(--n-0);
   overflow: hidden;
@@ -24,12 +25,12 @@ a { color: var(--accent); }
 
 /* thin, quiet scrollbars — the tiling tradition hides chrome */
 * { scrollbar-width: thin; scrollbar-color: var(--n-30) transparent; }
-::-webkit-scrollbar { width: 9px; height: 9px; }
+::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
   background: var(--n-30);
   border-radius: 99px;
-  border: 2px solid transparent;
+  border: 3px solid transparent;
   background-clip: padding-box;
 }
 ::-webkit-scrollbar-thumb:hover { background: var(--n-40); background-clip: padding-box; }

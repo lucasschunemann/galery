@@ -1,13 +1,13 @@
 import { useId } from "react";
 
 /* ============================================================
-   Project covers as Swiss compositions.
+   Project covers.
 
-   Colour comes from the OS palette via CSS variables, so every
-   cover re-tints when the flavour changes. Variation across the
-   grid comes from composition and tonal weight — never from hue.
-   `accent` sets how loudly a cover speaks: 0 is nearly silent,
-   2 is accent-dominant. Rhythm across the grid is the point.
+   Same idea as before — colour comes from the OS palette so every
+   cover re-tints with the room — but the drawing is soft now:
+   round caps, generous negative space, gradients instead of flat
+   fills. Rhythm across the grid comes from `accent`: 0 is a
+   whisper, 2 speaks.
    ============================================================ */
 
 export type ArtVariant =
@@ -22,196 +22,185 @@ type Props = {
   className?: string;
 };
 
-export default function Cover({ variant, index, title, accent = 1, className }: Props) {
+export default function Cover({ variant, index, accent = 1, className }: Props) {
   const raw = useId().replace(/:/g, "");
   const id = (n: string) => `${n}-${raw}`;
+  const url = (n: string) => `url(#${id(n)})`;
 
-  const bg = accent === 2 ? "var(--accent)" : "var(--n-10)";
-  const ink = accent === 2 ? "var(--n-0)" : "var(--n-80)";
-  const hair = accent === 2 ? "rgba(0,0,0,.28)" : "var(--line-strong)";
-  const sig = accent === 2 ? "var(--n-0)" : "var(--accent)";
-  const quiet = accent === 0 ? 0.35 : 1;
+  const loud = accent === 2;
+  const ink = loud ? "var(--n-0)" : "var(--n-80)";
+  const sig = loud ? "var(--n-0)" : "var(--accent)";
+  const quiet = accent === 0 ? 0.4 : 1;
+
+  const cap = { strokeLinecap: "round", strokeLinejoin: "round", fill: "none" } as const;
 
   const body = () => {
     switch (variant) {
-      /* concentric arcs off a corner — the Beethoven move */
       case "arcs":
         return (
           <>
-            <g stroke={ink} fill="none" opacity={0.55 * quiet}>
-              {Array.from({ length: 9 }, (_, i) => (
-                <circle key={i} cx="14" cy="86" r={12 + i * 11} strokeWidth={0.4 + i * 0.34} />
-              ))}
-            </g>
-            <circle cx="14" cy="86" r="45" fill="none" stroke={sig} strokeWidth="1.6" />
-            <path d="M8 12h44" stroke={ink} strokeWidth="1" opacity={quiet} />
-          </>
-        );
-
-      /* modular grid with a few cells struck */
-      case "modular": {
-        const cells = [3, 6, 9, 12, 17, 22];
-        return (
-          <>
-            <g stroke={hair} strokeWidth="0.5">
-              {Array.from({ length: 5 }, (_, i) => (
-                <path key={"v" + i} d={`M${16 + i * 17} 8V92`} />
-              ))}
-              {Array.from({ length: 5 }, (_, i) => (
-                <path key={"h" + i} d={`M8 ${16 + i * 17}H92`} />
-              ))}
-            </g>
-            {cells.map((c) => {
-              const col = c % 5;
-              const row = Math.floor(c / 5);
-              return (
-                <rect
-                  key={c}
-                  x={16 + col * 17} y={16 + row * 17}
-                  width="17" height="17"
-                  fill={c === 9 ? sig : ink}
-                  opacity={c === 9 ? 1 : 0.14 * quiet}
+            <g stroke={ink} opacity={0.26 * quiet} {...cap}>
+              {[20, 34, 48, 62].map((r, i) => (
+                <path
+                  key={i}
+                  d={`M ${22 + r} 80 A ${r} ${r} 0 0 0 22 ${80 - r}`}
+                  strokeWidth={2 + i * 0.7}
                 />
-              );
-            })}
+              ))}
+            </g>
+            <path d="M63 80 A 41 41 0 0 0 22 39" stroke={sig} strokeWidth="4.5" {...cap} />
+            <circle cx="22" cy="39" r="5" fill={sig} />
           </>
         );
-      }
 
-      /* a fan of rays */
+      case "modular":
+        return (
+          <g>
+            {[0, 1, 2].map((r) =>
+              [0, 1, 2].map((c) => {
+                const on = (r === 1 && c === 1) || (r === 0 && c === 2);
+                return (
+                  <rect
+                    key={`${r}${c}`}
+                    x={20 + c * 21} y={20 + r * 21}
+                    width="17" height="17" rx="6"
+                    fill={on ? sig : ink}
+                    opacity={on ? 1 : 0.16 * quiet}
+                  />
+                );
+              })
+            )}
+          </g>
+        );
+
       case "wedge":
         return (
           <>
-            <g stroke={ink} opacity={0.5 * quiet}>
-              {Array.from({ length: 26 }, (_, i) => {
-                const a = (-50 + (i / 25) * 100) * (Math.PI / 180);
+            <g stroke={ink} opacity={0.26 * quiet} {...cap}>
+              {Array.from({ length: 9 }, (_, i) => {
+                const a = (-52 + (i / 8) * 104) * (Math.PI / 180);
                 return (
                   <path
                     key={i}
-                    d={`M50 96 L${50 + Math.sin(a) * 120} ${96 - Math.cos(a) * 120}`}
-                    strokeWidth={i === 13 ? 0 : 0.45}
+                    d={`M50 84 L${50 + Math.sin(a) * 56} ${84 - Math.cos(a) * 56}`}
+                    strokeWidth="3"
                   />
                 );
               })}
             </g>
-            <path d="M50 96 L50 -18" stroke={sig} strokeWidth="1.8" />
-            <circle cx="50" cy="96" r="3.4" fill={sig} />
+            <path d="M50 84 L50 24" stroke={sig} strokeWidth="4.5" {...cap} />
+            <circle cx="50" cy="84" r="5" fill={sig} />
           </>
         );
 
-      /* rhythmic bars — a Musica Viva cadence */
       case "bars": {
-        const seq = [14, 26, 20, 46, 32, 62, 40, 24, 12];
+        const seq = [16, 30, 22, 48, 34, 26, 14];
         return (
-          <>
-            <path d="M8 78H92" stroke={hair} strokeWidth="0.6" />
+          <g>
             {seq.map((v, i) => (
               <rect
                 key={i}
-                x={10 + i * 9.2} y={78 - v}
-                width="6" height={v}
-                fill={i === 5 ? sig : ink}
-                opacity={i === 5 ? 1 : 0.3 * quiet}
+                x={19 + i * 9.4} y={74 - v}
+                width="6" height={v} rx="3"
+                fill={i === 3 ? sig : ink}
+                opacity={i === 3 ? 1 : 0.24 * quiet}
               />
             ))}
-            <text x="8" y="90" fill={ink} opacity={0.6 * quiet} fontFamily="monospace" fontSize="4.4" letterSpacing="0.6">
-              {title.slice(0, 22).toUpperCase()}
-            </text>
-          </>
+          </g>
         );
       }
 
-      /* a diagonal cut with a disc riding it */
       case "split":
         return (
           <>
-            <clipPath id={id("cp")}>
-              <path d="M0 0H100V100H0Z" />
-            </clipPath>
-            <g clipPath={`url(#${id("cp")})`}>
-              <path d="M-10 74 L110 26 L110 110 L-10 110Z" fill={ink} opacity={0.12 * quiet} />
-              <path d="M-10 74 L110 26" stroke={sig} strokeWidth="1.4" />
-              <circle cx="66" cy="42" r="17" fill="none" stroke={ink} strokeWidth="0.8" opacity={quiet} />
-              <circle cx="66" cy="42" r="6" fill={sig} />
-            </g>
+            <defs>
+              <linearGradient id={id("sp")} x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stopColor={ink} stopOpacity={0.16 * quiet} />
+                <stop offset="1" stopColor={ink} stopOpacity="0" />
+              </linearGradient>
+            </defs>
+            <path d="M-4 66 C 24 44, 58 78, 104 46 L104 104 L-4 104Z" fill={url("sp")} />
+            <path d="M-4 66 C 24 44, 58 78, 104 46" stroke={sig} strokeWidth="4" {...cap} />
+            <circle cx="66" cy="34" r="13" stroke={ink} strokeWidth="2.4" opacity={0.4 * quiet} {...cap} />
           </>
         );
 
-      /* an oversized cropped numeral */
       case "numeral":
         return (
           <>
             <text
-              x="50" y="86" textAnchor="middle"
-              fill={ink} opacity={0.9 * quiet}
-              fontFamily="Helvetica, Arial, sans-serif"
-              fontWeight="700" fontSize="98" letterSpacing="-6"
+              x="50" y="72" textAnchor="middle"
+              fill={ink} opacity={0.85 * quiet}
+              fontFamily='"M PLUS Rounded 1c", system-ui, sans-serif'
+              fontWeight="800" fontSize="62" letterSpacing="-3"
             >
               {String(index + 1).padStart(2, "0")}
             </text>
-            <path d="M8 22H92" stroke={sig} strokeWidth="1.6" />
-            <path d="M8 30H52" stroke={ink} strokeWidth="0.6" opacity={quiet} />
+            <path d="M30 84 H70" stroke={sig} strokeWidth="4" {...cap} />
           </>
         );
 
-      /* discs in geometric progression along an axis */
       case "orbit": {
-        const rs = [3, 4.4, 6.4, 9.4, 13.8, 20.2];
-        let x = 12;
+        const rs = [2.5, 4, 6, 8.5];
+        let x = 24;
         return (
-          <>
-            <path d="M4 54H96" stroke={hair} strokeWidth="0.5" />
+          <g>
             {rs.map((r, i) => {
               const cx = x + r;
-              x = cx + r + 3;
+              x = cx + r + 4;
+              const last = i === rs.length - 1;
               return (
                 <circle
                   key={i}
-                  cx={cx} cy="54" r={r}
-                  fill={i === rs.length - 1 ? sig : "none"}
-                  stroke={i === rs.length - 1 ? "none" : ink}
-                  strokeWidth="0.8"
-                  opacity={i === rs.length - 1 ? 1 : quiet}
+                  cx={cx} cy="52" r={r}
+                  fill={last ? sig : "none"}
+                  stroke={last ? "none" : ink}
+                  strokeWidth="2.4"
+                  opacity={last ? 1 : 0.36 * quiet}
                 />
               );
             })}
-          </>
+          </g>
         );
       }
 
-      /* a perspective mesh */
       case "mesh":
       default:
         return (
-          <>
-            <g stroke={ink} fill="none" opacity={0.4 * quiet} strokeWidth="0.5">
-              {Array.from({ length: 13 }, (_, i) => (
-                <path key={"v" + i} d={`M${-30 + i * 13} 100 L${34 + i * 2.6} 40`} />
-              ))}
-              {Array.from({ length: 8 }, (_, i) => {
-                const y = 40 + Math.pow(i, 1.95) * 1.35;
-                return <path key={"h" + i} d={`M0 ${y}H100`} />;
-              })}
-            </g>
-            <path d="M4 30 Q 26 12 48 28 T 96 22" fill="none" stroke={sig} strokeWidth="1.6" />
-            <circle cx="48" cy="28" r="2.6" fill={sig} />
-          </>
+          <g {...cap}>
+            {[0, 1, 2, 3].map((i) => (
+              <path
+                key={i}
+                d={`M8 ${40 + i * 12} C 30 ${26 + i * 12}, 52 ${56 + i * 12}, 92 ${34 + i * 12}`}
+                stroke={i === 1 ? sig : ink}
+                strokeWidth={i === 1 ? 4 : 2.4}
+                opacity={i === 1 ? 1 : 0.3 * quiet}
+              />
+            ))}
+          </g>
         );
     }
   };
 
   return (
     <svg viewBox="0 0 100 100" className={className} preserveAspectRatio="xMidYMid slice" aria-hidden>
-      <rect width="100" height="100" fill={bg} />
+      <defs>
+        <linearGradient id={id("bg")} x1="0" y1="0" x2="0.6" y2="1">
+          {loud ? (
+            <>
+              <stop offset="0" stopColor="var(--accent-soft)" />
+              <stop offset="1" stopColor="var(--accent)" />
+            </>
+          ) : (
+            <>
+              <stop offset="0" stopColor="var(--n-15)" />
+              <stop offset="1" stopColor="var(--n-5)" />
+            </>
+          )}
+        </linearGradient>
+      </defs>
+      <rect width="100" height="100" fill={url("bg")} />
       {body()}
-      {/* every cover carries its index, printed */}
-      <text
-        x="92" y="93" textAnchor="end"
-        fill={ink} opacity={0.5 * quiet}
-        fontFamily="monospace" fontSize="4.6" letterSpacing="0.5"
-      >
-        {String(index + 1).padStart(2, "0")}
-      </text>
     </svg>
   );
 }

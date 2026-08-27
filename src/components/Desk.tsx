@@ -40,30 +40,29 @@ export default function Desk() {
             <div className="home__rule" />
 
             <div className="home__row">
-              <p className="home__index t-label">ws {String(workspace).padStart(2, "0")}</p>
+              <p className="home__index t-label">área {workspace}</p>
               <h1 className="home__title t-display">
                 Lucas
                 <br />
                 Schünemann
               </h1>
-              <p className="home__sub t-mono">
-                ux/ui designer &amp; web developer<br />
-                interfaces, sistemas e movimento
+              <p className="home__sub">
+                ux/ui designer &amp; web developer
+                <em>interfaces, sistemas e movimento</em>
               </p>
             </div>
 
             <div className="home__rule" />
 
             <dl className="home__data">
-              <div><dt className="t-label">layout</dt><dd className="t-mono">dwindle</dd></div>
-              <div><dt className="t-label">paleta</dt><dd className="t-mono">{flavour}</dd></div>
-              <div><dt className="t-label">áreas</dt><dd className="t-mono">{WORKSPACES.length}</dd></div>
-              <div><dt className="t-label">janelas</dt><dd className="t-mono">{String(windows.length).padStart(2, "0")}</dd></div>
+              <div><dt className="t-label">ambiente</dt><dd>{flavour}</dd></div>
+              <div><dt className="t-label">áreas</dt><dd>{WORKSPACES.length}</dd></div>
+              <div><dt className="t-label">janelas abertas</dt><dd>{windows.length}</dd></div>
             </dl>
 
             <button className="home__cta" onClick={() => setLauncher(true)}>
               <kbd>⌘</kbd><kbd>K</kbd>
-              <span>abrir o launcher</span>
+              <span>procurar alguma coisa</span>
             </button>
           </motion.div>
         )}

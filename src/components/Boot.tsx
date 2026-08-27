@@ -2,18 +2,17 @@ import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { useOS } from "../os/store";
 import { SFX, unlockAudio } from "../os/sound";
+import { gentle, soft } from "../os/motion";
 
-const LOG = [
-  ["0.0004", "helvetia kernel 1.0.0-swiss"],
-  ["0.0121", "reached target local filesystems"],
-  ["0.0388", "starting compositor · wayland"],
-  ["0.0712", "loading layout engine · dwindle"],
-  ["0.1140", "gaps  outer 14  inner 10"],
-  ["0.1663", "mounting /home/lucas"],
-  ["0.2291", "palette · graphite  accent #ff4d2e"],
-  ["0.3018", "grid  12 columns  baseline 8"],
-  ["0.4102", "typeface  mono + grotesk  ok"],
-  ["0.5330", "starting session for lucas"],
+/* Booting is not a status report. It is the few seconds before
+   someone opens the door — so it counts in sentences, not in
+   kernel timestamps. */
+const STEPS = [
+  "arrumando a mesa",
+  "acendendo a luz",
+  "aquecendo a água",
+  "abrindo as janelas",
+  "quase pronto",
 ];
 
 export default function Boot() {
@@ -21,7 +20,7 @@ export default function Boot() {
   const setPhase = useOS((s) => s.setPhase);
   const sound = useOS((s) => s.sound);
   const [started, setStarted] = useState(false);
-  const [line, setLine] = useState(0);
+  const [step, setStep] = useState(0);
   const [pct, setPct] = useState(0);
   const done = useRef(false);
 
@@ -30,107 +29,118 @@ export default function Boot() {
   useEffect(() => {
     if (!started) return;
     const t0 = performance.now();
-    const DUR = 2600;
+    const DUR = 3400;
     let raf = 0;
     const tick = (now: number) => {
       const p = Math.min(1, (now - t0) / DUR);
-      setPct(p);
-      setLine(Math.min(LOG.length, Math.floor(p * (LOG.length + 1))));
+      // ease so the last stretch feels unhurried
+      setPct(1 - Math.pow(1 - p, 1.8));
+      setStep(Math.min(STEPS.length - 1, Math.floor(p * STEPS.length)));
       if (p < 1) raf = requestAnimationFrame(tick);
       else if (!done.current) {
         done.current = true;
-        setTimeout(() => setPhase("lock"), 520);
+        setTimeout(() => setPhase("lock"), 620);
       }
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
   }, [started, setPhase]);
 
-  const power = () => {
+  const start = () => {
     unlockAudio();
     if (sound) setTimeout(() => SFX.boot(), 40);
     setStarted(true);
   };
+
+  const R = 46;
+  const C = 2 * Math.PI * R;
 
   return (
     <AnimatePresence>
       {on && (
         <motion.div
           className="boot"
-          exit={{ opacity: 0, filter: "blur(10px)" }}
-          transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+          exit={{ opacity: 0, filter: "blur(16px)", scale: 1.03 }}
+          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         >
-          <div className="boot__marks" aria-hidden>
-            {["tl", "tr", "bl", "br"].map((c) => (
-              <span key={c} className={`boot__mark boot__mark--${c}`} />
-            ))}
-          </div>
+          <div className="boot__glow" aria-hidden />
 
           <div className="boot__stage">
-            <motion.h1
-              className="boot__word t-display"
-              initial={{ opacity: 0, y: 18 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+            {/* a slow ring that fills as the room gets ready */}
+            <motion.div
+              className="boot__ring"
+              initial={{ opacity: 0, scale: 0.85 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ ...soft, delay: 0.1 }}
             >
-              HELVETIA
+              <svg viewBox="0 0 110 110" aria-hidden>
+                <circle cx="55" cy="55" r={R} className="boot__ring-track" />
+                <circle
+                  cx="55" cy="55" r={R}
+                  className="boot__ring-fill"
+                  strokeDasharray={C}
+                  strokeDashoffset={C * (1 - (started ? pct : 0))}
+                />
+              </svg>
+              <motion.span
+                className="boot__seed"
+                animate={{ scale: [1, 1.14, 1], opacity: [0.85, 1, 0.85] }}
+                transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
+                aria-hidden
+              />
+            </motion.div>
+
+            <motion.h1
+              className="boot__word"
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ ...gentle(0.9), delay: 0.16 }}
+            >
+              komorebi
             </motion.h1>
 
             <motion.p
-              className="boot__sub t-label"
+              className="boot__sub"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.35, duration: 0.6 }}
+              transition={{ ...gentle(0.7), delay: 0.4 }}
             >
-              um sistema operacional no estilo internacional
+              木漏れ日 — a luz que passa entre as folhas
             </motion.p>
 
-            <AnimatePresence mode="wait">
-              {!started ? (
-                <motion.button
-                  key="go"
-                  className="boot__power"
-                  onClick={power}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8 }}
-                  transition={{ delay: 0.55, duration: 0.5 }}
-                >
-                  <span className="boot__power-dot" aria-hidden />
-                  iniciar sessão
-                  <kbd>⏎</kbd>
-                </motion.button>
-              ) : (
-                <motion.div
-                  key="log"
-                  className="boot__loading"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                >
-                  <div className="boot__track">
-                    <span className="boot__fill" style={{ transform: `scaleX(${pct})` }} />
-                  </div>
-                  <ul className="boot__log">
-                    {LOG.slice(0, line).map(([ts, msg]) => (
-                      <motion.li
-                        key={ts}
-                        initial={{ opacity: 0, x: -6 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ duration: 0.22 }}
-                      >
-                        <span className="boot__ts">[ {ts} ]</span> {msg}
-                        <span className="boot__ok">ok</span>
-                      </motion.li>
-                    ))}
-                  </ul>
-                </motion.div>
-              )}
-            </AnimatePresence>
+            <div className="boot__slot">
+              <AnimatePresence mode="wait">
+                {!started ? (
+                  <motion.button
+                    key="go"
+                    className="boot__power"
+                    onClick={start}
+                    initial={{ opacity: 0, y: 14 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -12, filter: "blur(6px)" }}
+                    transition={{ ...soft, delay: 0.55 }}
+                    whileHover={{ scale: 1.035 }}
+                    whileTap={{ scale: 0.97 }}
+                  >
+                    entrar
+                  </motion.button>
+                ) : (
+                  <motion.p
+                    key={STEPS[step]}
+                    className="boot__step"
+                    initial={{ opacity: 0, y: 12, filter: "blur(6px)" }}
+                    animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+                    exit={{ opacity: 0, y: -12, filter: "blur(6px)" }}
+                    transition={gentle(0.5)}
+                  >
+                    {STEPS[step]}
+                  </motion.p>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
 
-          <p className="boot__foot t-mono">
-            lucas schünemann · portfólio · {new Date().getFullYear()}
-          </p>
+          <p className="boot__foot">lucas schünemann</p>
         </motion.div>
       )}
     </AnimatePresence>
