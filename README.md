@@ -50,7 +50,7 @@ foco; a segunda e a terceira são preenchimento apenas.
 | Tema | Origem | Cores |
 |---|---|---|
 | **Braun** | Dieter Rams | tan terroso |
-| **Zürich** | Josef Müller-Brockmann | vermelho |
+| **Zürich** | Josef Müller-Brockmann | vermelho. O padrão |
 | **Graphite** | carvão quente | azul-violeta |
 | 🇧🇷 **Brasil** | Niemeyer e Burle Marx | verde · amarelo · azul |
 | 🇳🇱 **Holanda** | Oranje | azul · vermelho · laranja |
@@ -78,9 +78,22 @@ para que os dois não se confundam.
 
 ```bash
 npm install
-npm run dev      # http://localhost:5173
-npm run build
+npm run dev        # http://localhost:5173
+npm run build      # gera dist/
+npm run preview    # serve dist/ em http://localhost:4173
 ```
+
+## Publicando
+
+O build é estático e não há roteamento no cliente, então qualquer host de
+arquivos serve e nenhuma regra de rewrite é necessária.
+
+- **Build:** `npm run build`
+- **Saída:** `dist/`
+- **Node:** 20+
+
+Antes de publicar em domínio próprio, trocar a URL em `<link rel="canonical">`
+e nas tags `og:url` do `index.html`.
 
 ## Fluxo
 

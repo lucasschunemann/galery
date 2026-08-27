@@ -111,10 +111,9 @@
    exists nowhere and reads as equipment.
    ============================================================ */
 
-/* --- braun · Dieter Rams: creme, tan terroso (default) ---
+/* --- braun · Dieter Rams: creme, tan terroso ---
    Rams was more restrained than memory suggests: the Braun
    palette leans brown and sand, not orange. */
-:root,
 [data-flavour="braun"] {
   --n-0:  #fffdf9; --n-5:  #fbf8f1; --n-10: #f6f2e9; --n-15: #f1ebe0; --n-20: #eae3d5;
   --n-30: #ded5c4; --n-40: #c5bba7; --n-60: #968c7b; --n-80: #4e483f; --n-95: #1d1b17;
@@ -128,7 +127,10 @@
   color-scheme: light;
 }
 
-/* --- zürich · Müller-Brockmann: papel, um vermelho --- */
+/* --- zürich · Müller-Brockmann: papel, um vermelho (default) ---
+   `:root` carries this one so the very first paint matches the
+   store, before React has set data-flavour on the element. */
+:root,
 [data-flavour="zurich"] {
   --n-0:  #fffefd; --n-5:  #fcfbfa; --n-10: #f8f7f5; --n-15: #f2f1ee; --n-20: #ebeae7;
   --n-30: #dedcd8; --n-40: #c5c3be; --n-60: #8f8c87; --n-80: #46443f; --n-95: #141312;

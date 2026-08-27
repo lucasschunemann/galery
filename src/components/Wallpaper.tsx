@@ -166,6 +166,12 @@ export default function Wallpaper() {
       }
     }
 
+    /* A portfolio sits open in a background tab for hours. Painting
+       a canvas nobody is looking at costs the reader battery for
+       nothing, so the loop stops with the tab and picks up again on
+       return. Anyone who asked for less motion gets a single frame. */
+    const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
     let last = performance.now();
     function frame(now: number) {
       const dt = Math.min((now - last) / 1000, 0.05);
@@ -177,7 +183,7 @@ export default function Wallpaper() {
       field();
       grid();
       finish();
-      raf = requestAnimationFrame(frame);
+      if (!still) raf = requestAnimationFrame(frame);
     }
 
     const onMove = (e: PointerEvent) => {
@@ -185,9 +191,20 @@ export default function Wallpaper() {
       pointer.ty = e.clientY / window.innerHeight;
     };
 
+    const onVisibility = () => {
+      if (document.hidden) {
+        cancelAnimationFrame(raf);
+        raf = 0;
+      } else if (!raf && !still) {
+        last = performance.now();
+        raf = requestAnimationFrame(frame);
+      }
+    };
+
     resize();
     window.addEventListener("resize", resize);
     window.addEventListener("pointermove", onMove, { passive: true });
+    document.addEventListener("visibilitychange", onVisibility);
     raf = requestAnimationFrame(frame);
 
     const obs = new MutationObserver(() => { C = read(); });
@@ -198,6 +215,7 @@ export default function Wallpaper() {
       clearInterval(clock);
       window.removeEventListener("resize", resize);
       window.removeEventListener("pointermove", onMove);
+      document.removeEventListener("visibilitychange", onVisibility);
       obs.disconnect();
     };
   }, []);

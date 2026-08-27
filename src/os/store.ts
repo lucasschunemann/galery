@@ -85,7 +85,7 @@ export const useOS = create<OSState>((set, get) => ({
   focusId: null,
   workspace: 1,
   zTop: 100,
-  flavour: "braun",
+  flavour: "zurich",
   sound: true,
   grain: true,
   launcher: false,
