@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { useOS, WORKSPACES } from "./os/store";
 import { useSfx } from "./os/useSfx";
 import { useCompact } from "./os/useViewport";
@@ -10,6 +10,7 @@ import Launcher from "./components/Launcher";
 import Boot from "./components/Boot";
 import Cursor from "./components/Cursor";
 import Desk from "./components/Desk";
+import NinoEmoji from "./components/NinoEmoji";
 import GridOverlay from "./components/GridOverlay";
 import SnapLayer from "./components/SnapLayer";
 
@@ -25,23 +26,6 @@ export default function App() {
   useEffect(() => {
     document.documentElement.dataset.flavour = flavour;
   }, [flavour]);
-
-  /* Open the gallery once, when the session starts.
-
-     This used to list `store` as a dependency. `store` is the whole
-     zustand state, so it changed on every update and the effect
-     re-ran constantly: closing the last window immediately
-     reopened it, and the home screen was unmounted mid-animation. */
-  const greeted = useRef(false);
-  useEffect(() => {
-    if (phase !== "live" || greeted.current) return;
-    greeted.current = true;
-    const t = setTimeout(() => {
-      useOS.getState().open("files");
-      sfx("open");
-    }, 420);
-    return () => clearTimeout(t);
-  }, [phase, sfx]);
 
   /* ---------------- keyboard: the OS is driven from here ---------------- */
   useEffect(() => {
@@ -88,6 +72,7 @@ export default function App() {
       {phase === "live" && (
         <>
           <Desk />
+          <NinoEmoji />
           <Bar />
           {!compact && <Rail />}
           <Windows />

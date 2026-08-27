@@ -131,6 +131,8 @@
 .popover__swatch[data-flavour="braun"]    { background: linear-gradient(135deg, #f6f2e9 50%, #9c6b3e 50%); }
 .popover__swatch[data-flavour="zurich"]   { background: linear-gradient(135deg, #f8f7f5 50%, #d8332a 50%); }
 .popover__swatch[data-flavour="graphite"] { background: linear-gradient(135deg, #141312 50%, #7d92c9 50%); }
+/* the joke theme gets three stripes instead of the schools' two-tone split */
+.popover__swatch[data-flavour="nino"]     { background: linear-gradient(135deg, #8e2a8c 0 34%, #e95420 34% 67%, #efb700 67% 100%); }
 
 /* the flags sit on the same footprint as the two-tone chips */
 .popover__flag {
@@ -337,7 +339,7 @@
 .desk {
   position: fixed;
   inset: 0;
-  z-index: var(--z-grid);
+  z-index: var(--z-desk);
   pointer-events: none;
   color: var(--n-40);
 }
@@ -562,6 +564,28 @@
   .ws__pill { min-width: 22px; }
   .bar__clock { font-size: var(--fs-11); padding-left: 2px; }
   .launcher { padding-top: 8vh; }
+}
+
+/* ------------------------------------------------------------
+   NINO — the one ornament the house allows
+   ------------------------------------------------------------ */
+
+.nino-field {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-desk);
+  pointer-events: none;
+  overflow: hidden;
+}
+.nino-mark {
+  position: absolute;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--accent);
+  opacity: 0.15;
+  user-select: none;
+  white-space: nowrap;
 }
 
 /* ------------------------------------------------------------

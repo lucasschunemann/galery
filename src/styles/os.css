@@ -91,8 +91,10 @@
 /* ============================================================
    COLOUR PROGRAMME
 
-   Six rooms. Three come from a school of design, three from a
-   place, and the two kinds obey different rules.
+   Seven rooms. Three come from a school of design, three from a
+   place, and one is just for fun — the two serious kinds obey
+   different rules, and the fun one borrows the tricolour rule
+   from the places because three colours is the whole point of it.
 
    The schools get one accent and nothing else: the discipline is
    the whole idea, and no two of them share an accent family.
@@ -208,6 +210,25 @@
   --sheen: rgba(255,255,255,.9); --shade: rgba(35,33,30,.12);
   --text: #131312; --text-dim: #595955; --text-mute: #8d8d89;
   --wall-a: #efefee; --wall-b: #f7f7f6; --wall-c: #e4e4e2;
+  color-scheme: light;
+}
+
+/* --- nino · Ubuntu / Canonical, mais brincalhão que sério ---
+   Aubergine, orange and the amber that sits between Yaru's accent
+   options — purple carries text because it is the one with real
+   contrast, orange and yellow are fills. The one theme in the set
+   that is allowed to be a joke on purpose. >:] */
+[data-flavour="nino"] {
+  --n-0:  #fffdfe; --n-5:  #fbf7f9; --n-10: #f6f1f4; --n-15: #f0e9ed; --n-20: #e8dfe4;
+  --n-30: #ddd1d8; --n-40: #c3b3bd; --n-60: #93808c; --n-80: #453a41; --n-95: #17121a;
+  --accent: #8e2a8c; --accent-dim: #6e1f6e; --accent-soft: #521652;
+  --accent-2: #e95420; --accent-3: #efb700;
+  --accent-a10: rgba(142,42,140,.08); --accent-a20: rgba(142,42,140,.18);
+  --glass: rgba(251,247,249,.8); --glass-high: rgba(255,253,254,.94);
+  --line: rgba(23,18,26,.08); --line-strong: rgba(23,18,26,.16);
+  --sheen: rgba(255,255,255,.9); --shade: rgba(45,20,42,.12);
+  --text: #17121a; --text-dim: #5c4d56; --text-mute: #93808c;
+  --wall-a: #ece1e6; --wall-b: #f6f1f4; --wall-c: #ddd1d8;
   color-scheme: light;
 }
 

@@ -6,8 +6,11 @@ import Flag, { type FlagName } from "../components/Flag";
 const RAMP = ["--n-0", "--n-5", "--n-10", "--n-15", "--n-20", "--n-30", "--n-40", "--n-60", "--n-80", "--n-95"];
 const ACCENTS = ["--accent-dim", "--accent", "--accent-soft"];
 const TRICOLOUR = ["--accent", "--accent-2", "--accent-3"];
-const FLAVOURS: Flavour[] = ["braun", "zurich", "graphite", "brasil", "holanda", "alemanha"];
+const FLAVOURS: Flavour[] = ["braun", "zurich", "graphite", "brasil", "holanda", "alemanha", "nino"];
 const ORIGIN: string[] = ["brasil", "holanda", "alemanha"];
+/** every theme that carries three colours instead of one — the flag
+    themes plus Nino, which is tricolour without being tied to a place */
+const TRIPLE: string[] = [...ORIGIN, "nino"];
 
 /* The system's own token sheet, live. Changing anything here
    changes the OS you are looking at — including this window. */
@@ -22,7 +25,7 @@ export default function Tokens() {
   const read = (v: string) =>
     getComputedStyle(document.documentElement).getPropertyValue(v).trim() || "—";
 
-  const sheet = [...RAMP, ...ACCENTS, ...(ORIGIN.includes(flavour) ? ["--accent-2", "--accent-3"] : [])]
+  const sheet = [...RAMP, ...ACCENTS, ...(TRIPLE.includes(flavour) ? ["--accent-2", "--accent-3"] : [])]
     .map((v) => `  ${v}: ${read(v)};`)
     .join("\n");
 
@@ -84,12 +87,13 @@ export default function Tokens() {
         </div>
       </section>
 
-      {ORIGIN.includes(flavour) && (
+      {TRIPLE.includes(flavour) && (
         <section className="tok__block">
           <p className="t-label">Tricolor</p>
           <p className="t-body">
-            Os temas tirados de uma bandeira são os únicos com três cores. A
-            primeira carrega texto e foco; as outras duas são preenchimento.
+            Só os temas tricolores têm essa seção: os três tirados de uma
+            bandeira, mais o Nino. A primeira cor carrega texto e foco; as
+            outras duas são só preenchimento.
           </p>
           <div className="tok__ramp tok__ramp--accent">
             {TRICOLOUR.map((v, i) => (
