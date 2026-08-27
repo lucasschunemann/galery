@@ -42,7 +42,7 @@ export default function Launcher() {
       key: `proj:${p.id}`,
       glyph: String(i + 1).padStart(2, "0"),
       label: p.title,
-      hint: `${p.kind} · ${p.year}`,
+      hint: p.kind,
       kind: "project",
       run: () => store.open("project", { id: p.id, title: p.title }),
     }));

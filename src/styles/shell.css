@@ -602,3 +602,51 @@
   .gridoverlay__cols { inset: var(--bar-h) var(--gap-out) 0 var(--gap-out); grid-template-columns: repeat(6, 1fr); gap: 16px; }
   .gridoverlay__note { left: var(--gap-out); }
 }
+
+/* ------------------------------------------------------------
+   SNAP — what the system shows while a window is being moved
+   ------------------------------------------------------------ */
+
+.snap {
+  position: fixed;
+  inset: 0;
+  z-index: 990;
+  pointer-events: none;
+}
+
+.snap__preview {
+  position: absolute;
+  top: 0; left: 0;
+  border-radius: var(--r-lg);
+  background: var(--accent-a10);
+  border: 1.5px solid var(--accent);
+}
+
+.snap__guide {
+  position: absolute;
+  background: var(--accent);
+  opacity: 0.85;
+}
+.snap__guide[data-axis="x"] { width: 1px; }
+.snap__guide[data-axis="y"] { height: 1px; }
+
+/* a lifted window loses its ground and says so */
+.win[data-lifted="true"] {
+  box-shadow:
+    inset 0 1px 0 var(--sheen),
+    0 0 0 1px var(--accent-a20),
+    0 20px 50px -18px var(--shade);
+  cursor: grabbing;
+}
+.win[data-lifted="true"] .win__bar { cursor: grabbing; }
+
+/* the pane a dragged window would trade places with */
+.win[data-drop="true"]::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--accent-a10);
+  box-shadow: inset 0 0 0 1.5px var(--accent);
+  pointer-events: none;
+}

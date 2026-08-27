@@ -82,13 +82,30 @@ tela inicial.
 | `⌘F` | soltar / encaixar a janela |
 | `⌘J` | alternar o foco |
 | `⌘L` | bloquear |
-| `⌘G` | mostrar a grade — 12 colunas e linha de base de 8px sobre tudo |
+| `⌘G` | mostrar a grade: 12 colunas e linha de base de 8px sobre tudo |
+| `alt` (arrastando) | desliga o snap e posiciona livremente |
+
+## Mover janelas
+
+Arrastar um painel do mosaico sobre outro troca os dois de lugar; o painel
+alvo se destaca enquanto o ponteiro está sobre ele.
+
+Uma janela solta (`⌘F`) tem três comportamentos, nesta ordem de prioridade:
+
+1. **Zonas de borda.** O ponteiro perto de uma borda propõe metade da área;
+   perto de um canto, um quarto. A prévia aparece antes de você soltar.
+2. **Alinhamento.** Bordas e centros se alinham com as janelas vizinhas e com
+   a área de trabalho, e uma linha mostra por quê.
+3. **Grade.** O que sobrar arredonda para a grade de 12 colunas.
+
+Segurar `alt` durante o arrasto desliga tudo isso.
 
 ## Peças
 
 | Peça | Onde | O que é |
 |---|---|---|
 | Layout | `src/os/store.ts` | `dwindle`: cada janela toma metade do que sobrou, dividindo o lado mais longo da região restante |
+| Snap | `src/os/snap.ts` | Funções puras: recebem um retângulo proposto e devolvem onde ele deve pousar, mais as guias que explicam o porquê |
 | Movimento | `src/os/motion.ts` | Molas criticamente amortecidas e tweens curtos. A coreografia é farta, o caráter não |
 | Papel de parede | `src/components/Wallpaper.tsx` | Campo quase plano, uma massa de luz posicionada pela hora do dia, grade modular e grão. O teste: se você o nota lendo uma janela, está alto demais |
 | Temas | `src/styles/os.css` | Cinco, cada um com rampa neutra de dez passos e um acento |
@@ -104,6 +121,15 @@ terminal, nomes de arquivo.
 
 As fontes vêm do Google Fonts com fallbacks de sistema; sem rede, o layout
 continua íntegro.
+
+## Sobre o conteúdo
+
+Os oito projetos da galeria são **placeholders**. As capas e o layout estão
+prontos; os casos não. Cada entrada em `src/data/projects.ts` tem o formato de
+um estudo de caso para que a galeria possa ser lida sem que nada ali afirme
+ser um trabalho que existe. Para preencher um: troque título, tipo, tagline e
+corpo, coloque números reais em `metrics`, e deixe `art` e `accent` como estão,
+a não ser que queira mudar o ritmo da grade.
 
 ## Stack
 

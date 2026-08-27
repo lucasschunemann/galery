@@ -2,11 +2,10 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { useSfx } from "../os/useSfx";
 
+/* Only what is real. Add the rest when the handles are decided. */
 const LINKS = [
   { label: "E-mail", value: "lucas.vhschunemann@gmail.com", href: "mailto:lucas.vhschunemann@gmail.com" },
-  { label: "GitHub", value: "github.com/lucas", href: "#" },
-  { label: "LinkedIn", value: "in/lucas-schunemann", href: "#" },
-  { label: "Dribbble", value: "dribbble.com/lucas", href: "#" },
+  { label: "Local", value: "Porto Alegre, Brasil", href: null },
 ];
 
 export default function Contact() {
@@ -86,7 +85,11 @@ export default function Contact() {
         {LINKS.map((l) => (
           <li key={l.label}>
             <span>{l.label}</span>
-            <a href={l.href} onPointerEnter={() => sfx("hover")}>{l.value}</a>
+            {l.href ? (
+              <a href={l.href} onPointerEnter={() => sfx("hover")}>{l.value}</a>
+            ) : (
+              <em className="contact__plain">{l.value}</em>
+            )}
           </li>
         ))}
       </ul>

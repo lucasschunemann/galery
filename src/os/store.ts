@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import type { PictName } from "../components/Pict";
+import type { Guide } from "./snap";
 
 export type Flavour = "braun" | "linen" | "zurich" | "delft" | "graphite" | "ulm" | "basel" | "stedelijk";
 export type Rect = { x: number; y: number; w: number; h: number };
@@ -51,6 +52,8 @@ interface OSState {
   grain: boolean;
   launcher: boolean;
   gridOverlay: boolean;
+  /** live feedback while a window is being moved or resized */
+  drag: { guides: Guide[]; preview: Rect | null; overId: string | null } | null;
 
   setPhase: (p: OSState["phase"]) => void;
   lock: () => void;
@@ -69,6 +72,9 @@ interface OSState {
   toggleSound: () => void;
   toggleGrain: () => void;
   toggleGrid: () => void;
+  setDrag: (d: OSState["drag"]) => void;
+  /** exchange two windows' places in the layout order */
+  swap: (a: string, b: string) => void;
   setLauncher: (v: boolean) => void;
 }
 
@@ -86,6 +92,7 @@ export const useOS = create<OSState>((set, get) => ({
   grain: true,
   launcher: false,
   gridOverlay: false,
+  drag: null,
 
   setPhase: (phase) => set({ phase }),
   lock: () => set({ phase: "lock", launcher: false }),
@@ -215,6 +222,17 @@ export const useOS = create<OSState>((set, get) => ({
   toggleSound: () => set((s) => ({ sound: !s.sound })),
   toggleGrain: () => set((s) => ({ grain: !s.grain })),
   toggleGrid: () => set((s) => ({ gridOverlay: !s.gridOverlay })),
+  setDrag: (drag) => set({ drag }),
+
+  swap: (a, b) =>
+    set((s) => {
+      const list = [...s.windows];
+      const ia = list.findIndex((w) => w.id === a);
+      const ib = list.findIndex((w) => w.id === b);
+      if (ia === -1 || ib === -1 || ia === ib) return s;
+      [list[ia], list[ib]] = [list[ib], list[ia]];
+      return { windows: list };
+    }),
   setLauncher: (launcher) => set({ launcher }),
 }));
 

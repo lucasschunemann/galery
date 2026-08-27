@@ -36,7 +36,7 @@ export default function ProjectView({ id }: { id?: string }) {
             <span className="proj__no t-index">
               {pad(idx)} / {pad(PROJECTS.length - 1)}
             </span>
-            <span className="proj__kind t-label">{p.kind} — {p.year}</span>
+            <span className="proj__kind t-label">{p.kind}</span>
           </p>
           <span className="mask">
             <motion.h1
@@ -91,8 +91,6 @@ export default function ProjectView({ id }: { id?: string }) {
             <dl className="data">
               <dt className="t-label">Papel</dt>
               <dd>{p.role}</dd>
-              <dt className="t-label">Ano</dt>
-              <dd>{p.year}</dd>
               <dt className="t-label">Tipo</dt>
               <dd>{p.kind}</dd>
               <dt className="t-label">Stack</dt>

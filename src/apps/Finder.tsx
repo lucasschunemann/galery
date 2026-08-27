@@ -11,13 +11,7 @@ type View = "grid" | "flow" | "list";
 
 const GROUPS = ["Todos", "Web", "Interface", "Motion", "Produto"] as const;
 
-const groupOf = (kind: string) => {
-  const k = kind.toLowerCase();
-  if (k.includes("web") || k.includes("webgl") || k.includes("editorial")) return "Web";
-  if (k.includes("system") || k.includes("interface") || k.includes("dashboard")) return "Interface";
-  if (k.includes("motion") || k.includes("identidade")) return "Motion";
-  return "Produto";
-};
+const groupOf = (kind: string) => kind;
 
 const pad = (n: number) => String(n + 1).padStart(2, "0");
 
@@ -46,9 +40,6 @@ export default function Finder() {
     sfx("open");
     open("project", { id, title });
   };
-
-  const years = PROJECTS.map((p) => +p.year);
-  const span = `${Math.min(...years)}—${Math.max(...years)}`;
 
   return (
     <div className="finder">
@@ -106,9 +97,9 @@ export default function Finder() {
                 <span className="t-index masthead__no">{pad(0)}—{pad(items.length - 1)}</span>
                 <h1 className="masthead__title t-display">Trabalho<br />selecionado</h1>
                 <dl className="masthead__meta">
-                  <div><dt className="t-label">Período</dt><dd>{span}</dd></div>
                   <div><dt className="t-label">Coleção</dt><dd>{group}</dd></div>
                   <div><dt className="t-label">Itens</dt><dd>{items.length}</dd></div>
+                  <div><dt className="t-label">Estado</dt><dd>Em construção</dd></div>
                 </dl>
               </div>
               <div className="masthead__rule masthead__rule--strong" />
@@ -136,7 +127,7 @@ export default function Finder() {
                     <span className="card__head">
                       <span className="card__no">{pad(globalIndex(p.id))}</span>
                       <span className="card__line" />
-                      <span className="card__year">{p.year}</span>
+                      <span className="card__kindmark">{p.kind}</span>
                     </span>
 
                     <span className="card__art">
@@ -193,7 +184,7 @@ export default function Finder() {
                   <p className="flow__title">
                     <span className="t-index">{pad(Math.min(flowIndex, items.length - 1))}</span>
                     <span className="t-title">{items[Math.min(flowIndex, items.length - 1)]?.title}</span>
-                    <span className="flow__tag">{items[Math.min(flowIndex, items.length - 1)]?.tagline}</span>
+                    <span className="flow__tag">{items[Math.min(flowIndex, items.length - 1)]?.kind}</span>
                   </p>
                   <input
                     type="range" min={0} max={Math.max(0, items.length - 1)} step={1}
@@ -218,8 +209,7 @@ export default function Finder() {
                     <th className="t-label">Nº</th>
                     <th className="t-label">Nome</th>
                     <th className="t-label">Tipo</th>
-                    <th className="t-label">Ano</th>
-                    <th className="t-label">Stack</th>
+                    <th className="t-label">Estado</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -236,8 +226,7 @@ export default function Finder() {
                         {p.title}
                       </td>
                       <td>{p.kind}</td>
-                      <td className="list__year">{p.year}</td>
-                      <td className="list__stack">{p.stack.join(", ")}</td>
+                      <td className="list__stack">Em construção</td>
                     </motion.tr>
                   ))}
                 </tbody>

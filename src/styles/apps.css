@@ -155,7 +155,8 @@
   padding-top: 12px;
   border-top: 1px solid var(--line);
 }
-.card__no, .card__year { font-family: var(--font-mono); font-size: var(--fs-11); color: var(--text-mute); transition: color var(--d-1); }
+.card__no { font-family: var(--font-mono); font-size: var(--fs-11); color: var(--text-mute); transition: color var(--d-1); }
+.card__kindmark { font-family: var(--font-sans); font-size: var(--fs-11); color: var(--text-mute); }
 .card__line {
   height: 1px;
   background: var(--line);
@@ -447,6 +448,7 @@
 .contact__links span { font-family: var(--font-sans); font-size: var(--fs-11); font-weight: 600; color: var(--text-mute); }
 .contact__links a { font-family: var(--font-sans); font-size: var(--fs-12); font-weight: 500; color: var(--text); text-decoration: none; transition: color var(--d-1); }
 .contact__links a:hover { color: var(--accent); }
+.contact__plain { font-family: var(--font-sans); font-size: var(--fs-12); font-weight: 500; font-style: normal; color: var(--text); }
 
 /* ------------------------------------------------------------
    TOKENS
@@ -632,3 +634,30 @@
   .tok__ramp { grid-template-columns: repeat(5, 1fr); }
   .trash__list li { grid-template-columns: 1fr; gap: 3px; }
 }
+
+/* ------------------------------------------------------------
+   About: the list of what the work involves
+   ------------------------------------------------------------ */
+
+.about__block { display: flex; flex-direction: column; gap: 16px; }
+.about__list { display: flex; flex-direction: column; }
+.about__list li {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--line);
+  font-family: var(--font-sans);
+  font-size: var(--fs-14);
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+.about__list li::before {
+  content: "";
+  flex: none;
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+  translate: 0 -3px;
+}
+.about__list li:first-child { border-top: 1px solid var(--line); }

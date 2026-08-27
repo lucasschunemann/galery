@@ -65,7 +65,7 @@ export default function Terminal() {
       case "ls":
       case "projects":
         PROJECTS.forEach((p) =>
-          out(`  ${p.id.padEnd(14)} ${p.year}  ${p.title}`)
+          out(`  ${p.id.padEnd(14)} ${p.kind.padEnd(10)} ${p.title}`)
         );
         out(`total ${PROJECTS.length}`);
         break;

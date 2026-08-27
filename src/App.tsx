@@ -12,6 +12,7 @@ import Boot from "./components/Boot";
 import Cursor from "./components/Cursor";
 import Desk from "./components/Desk";
 import GridOverlay from "./components/GridOverlay";
+import SnapLayer from "./components/SnapLayer";
 
 export default function App() {
   const phase = useOS((s) => s.phase);
@@ -86,6 +87,7 @@ export default function App() {
           <Bar />
           {!compact && <Rail />}
           <Windows />
+          <SnapLayer />
           <Launcher />
           <GridOverlay />
         </>
