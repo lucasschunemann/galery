@@ -62,11 +62,14 @@ export default function Wallpaper() {
       const cs = getComputedStyle(document.documentElement);
       const g = (n: string, f: string) => cs.getPropertyValue(n).trim() || f;
       return {
-        a: g("--wall-a", "#08090a"),
-        b: g("--wall-b", "#0d0e10"),
-        c: g("--wall-c", "#16171b"),
-        accent: g("--accent", "#6e79d6"),
-        line: g("--n-40", "#2e3034"),
+        /* fallbacks follow the default theme; the previous ones were
+           left over from a palette that no longer exists, so a failed
+           read painted a different theme entirely */
+        a: g("--wall-a", "#f0efec"),
+        b: g("--wall-b", "#f8f7f5"),
+        c: g("--wall-c", "#e5e3df"),
+        accent: g("--accent", "#d8332a"),
+        line: g("--n-40", "#c5c3be"),
       };
     }
 
@@ -95,6 +98,7 @@ export default function Wallpaper() {
       cv!.style.height = h + "px";
       ctx!.setTransform(dpr, 0, 0, dpr, 0, 0);
       grainTile = ctx!.createPattern(grainCanvas, "repeat");
+      if (still) paint();
     }
 
     function field() {
@@ -172,6 +176,13 @@ export default function Wallpaper() {
        return. Anyone who asked for less motion gets a single frame. */
     const still = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+    /** draws exactly one frame */
+    function paint() {
+      field();
+      grid();
+      finish();
+    }
+
     let last = performance.now();
     function frame(now: number) {
       const dt = Math.min((now - last) / 1000, 0.05);
@@ -180,11 +191,17 @@ export default function Wallpaper() {
       pointer.x += (pointer.tx - pointer.x) * 0.035;
       pointer.y += (pointer.ty - pointer.y) * 0.035;
 
-      field();
-      grid();
-      finish();
-      if (!still) raf = requestAnimationFrame(frame);
+      paint();
+      // the id has to be cleared when the loop stops, otherwise
+      // `repaint` still sees a live frame and declines to draw
+      raf = still ? 0 : requestAnimationFrame(frame);
     }
+
+    /* When the loop is stopped — reduced motion, or a hidden tab —
+       nothing would ever redraw, so a theme change left the old
+       colours on the canvas while the rest of the interface moved on.
+       Anything that invalidates the picture repaints it directly. */
+    const repaint = () => { if (!raf) paint(); };
 
     const onMove = (e: PointerEvent) => {
       pointer.tx = e.clientX / window.innerWidth;
@@ -195,7 +212,10 @@ export default function Wallpaper() {
       if (document.hidden) {
         cancelAnimationFrame(raf);
         raf = 0;
-      } else if (!raf && !still) {
+      } else if (still) {
+        paint();
+      } else {
+        cancelAnimationFrame(raf);
         last = performance.now();
         raf = requestAnimationFrame(frame);
       }
@@ -207,7 +227,7 @@ export default function Wallpaper() {
     document.addEventListener("visibilitychange", onVisibility);
     raf = requestAnimationFrame(frame);
 
-    const obs = new MutationObserver(() => { C = read(); });
+    const obs = new MutationObserver(() => { C = read(); repaint(); });
     obs.observe(document.documentElement, { attributes: true, attributeFilter: ["data-flavour"] });
 
     return () => {

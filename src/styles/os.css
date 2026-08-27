@@ -128,9 +128,11 @@
 }
 
 /* --- zürich · Müller-Brockmann: papel, um vermelho (default) ---
-   `:root` carries this one so the very first paint matches the
-   store, before React has set data-flavour on the element. */
-:root,
+   The default is set as data-flavour on <html> in index.html rather
+   than through :root here. Hanging :root on a theme block looks
+   harmless but is a trap: :root and [data-flavour="x"] have the same
+   specificity and <html> matches both, so the block carrying :root
+   silently overrode every theme declared above it in this file. */
 [data-flavour="zurich"] {
   --n-0:  #fffefd; --n-5:  #fcfbfa; --n-10: #f8f7f5; --n-15: #f2f1ee; --n-20: #ebeae7;
   --n-30: #dedcd8; --n-40: #c5c3be; --n-60: #8f8c87; --n-80: #46443f; --n-95: #141312;

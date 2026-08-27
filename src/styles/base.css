@@ -38,7 +38,16 @@ a { color: var(--accent); }
 .os { position: fixed; inset: 0; overflow: hidden; isolation: isolate; }
 .os[data-custom-cursor="on"], .os[data-custom-cursor="on"] * { cursor: none !important; }
 
-.wall { position: fixed; inset: 0; z-index: var(--z-wall); display: block; }
+/* the 2D context is opaque, so the element is black until the first
+   frame lands. Painting the theme's ground underneath means the gap is
+   never visible, whatever delays that first frame. */
+.wall {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-wall);
+  display: block;
+  background: var(--wall-a);
+}
 
 .apploading { display: grid; place-items: center; min-height: 160px; }
 .spinner {
