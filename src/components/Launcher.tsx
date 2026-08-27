@@ -4,10 +4,11 @@ import { panelVariants } from "../os/motion";
 import { useOS, APPS, WORKSPACES, type Flavour } from "../os/store";
 import { useSfx } from "../os/useSfx";
 import { PROJECTS } from "../data/projects";
+import Pict, { type PictName } from "./Pict";
 
 type Entry = {
   key: string;
-  glyph: string;
+  glyph: string | PictName;
   label: string;
   hint: string;
   kind: "app" | "cmd" | "project";
@@ -30,7 +31,7 @@ export default function Launcher() {
       .filter((a) => a.inRail)
       .map((a) => ({
         key: `app:${a.id}`,
-        glyph: a.glyph,
+        glyph: a.icon,
         label: a.name,
         hint: a.keywords.split(" ").slice(0, 3).join(" · "),
         kind: "app",
@@ -49,21 +50,22 @@ export default function Launcher() {
     const cmds: Entry[] = [
       ...WORKSPACES.map((n) => ({
         key: `ws:${n}`,
-        glyph: "◱",
+        glyph: "tile",
         label: `Ir para a área ${n}`,
         hint: "workspace",
         kind: "cmd" as const,
         run: () => store.setWorkspace(n),
       })),
-      ...(["graphite", "slate", "ochre", "paper", "delft"] as Flavour[]).map((f) => ({
+      ...(["graphite", "basel", "ulm", "stedelijk", "zurich", "braun", "delft", "muenchen"] as Flavour[]).map((f) => ({
         key: `fl:${f}`,
-        glyph: "◍",
+        glyph: "tokens",
         label: `Tema: ${f}`,
         hint: "cor aparência",
         kind: "cmd" as const,
         run: () => store.setFlavour(f),
       })),
-      { key: "lock", glyph: "◐", label: "Bloquear a tela", hint: "sessão", kind: "cmd", run: () => store.lock() },
+      { key: "lock", glyph: "lock", label: "Bloquear a tela", hint: "sessão", kind: "cmd", run: () => store.lock() },
+      { key: "grid", glyph: "grid", label: "Mostrar a grade", hint: "overlay layout", kind: "cmd", run: () => store.toggleGrid() },
     ];
 
     return [...apps, ...projects, ...cmds];
@@ -148,7 +150,9 @@ export default function Launcher() {
                     onPointerEnter={() => setSel(i)}
                     onClick={() => commit(e)}
                   >
-                    <span className="launcher__glyph" data-kind={e.kind} aria-hidden>{e.glyph}</span>
+                    <span className="launcher__glyph" data-kind={e.kind} aria-hidden>
+                      {e.kind === "project" ? e.glyph : <Pict name={e.glyph as PictName} size={15} />}
+                    </span>
                     <span className="launcher__label">{e.label}</span>
                     <span className="launcher__hint t-mono">{e.hint}</span>
                     {i === sel && <span className="launcher__enter t-label">⏎</span>}

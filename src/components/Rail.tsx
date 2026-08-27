@@ -1,6 +1,7 @@
 import { motion } from "motion/react";
 import { useOS, APPS } from "../os/store";
 import { useSfx } from "../os/useSfx";
+import Pict from "./Pict";
 
 /* A slim glyph rail replaces the dock: the tiling tradition keeps
    launching out of the way, and a mono glyph column is as quiet as
@@ -19,7 +20,7 @@ export default function Rail() {
         onClick={() => { sfx("open"); setLauncher(true); }}
         title="Buscar — ⌘K"
       >
-        <span aria-hidden>⌕</span>
+        <Pict name="search" size={17} />
       </button>
 
       <span className="rail__sep" aria-hidden />
@@ -40,7 +41,7 @@ export default function Rail() {
             onPointerEnter={() => sfx("hover")}
             title={a.name}
           >
-            <span className="rail__glyph" aria-hidden>{a.glyph}</span>
+            <Pict name={a.icon} size={18} />
             <span className="rail__tip">{a.name}</span>
             {open_ && <span className="rail__mark" aria-hidden />}
           </motion.button>

@@ -11,6 +11,7 @@ import Lock from "./components/Lock";
 import Boot from "./components/Boot";
 import Cursor from "./components/Cursor";
 import Desk from "./components/Desk";
+import GridOverlay from "./components/GridOverlay";
 
 export default function App() {
   const phase = useOS((s) => s.phase);
@@ -65,6 +66,8 @@ export default function App() {
         e.preventDefault(); sfx("click"); store.toggleFloat(focusId);
       } else if (k === "l") {
         e.preventDefault(); sfx("close"); store.lock();
+      } else if (k === "g") {
+        e.preventDefault(); store.toggleGrid(); sfx("click");
       } else if (k === "j") {
         e.preventDefault(); store.focusCycle(1); sfx("hover");
       }
@@ -84,6 +87,7 @@ export default function App() {
           {!compact && <Rail />}
           <Windows />
           <Launcher />
+          <GridOverlay />
         </>
       )}
 

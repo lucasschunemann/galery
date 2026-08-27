@@ -3,6 +3,7 @@ import { motion } from "motion/react";
 import { useOS, type WindowState, type Rect } from "../os/store";
 import { useSfx } from "../os/useSfx";
 import { tile } from "../os/motion";
+import Pict from "./Pict";
 
 export default function Window({
   win, rect, index, children, compact, hidden, dir,
@@ -115,14 +116,14 @@ export default function Window({
             title={floating ? "Encaixar (tile)" : "Soltar (float)"}
             onClick={() => { sfx("click"); toggleFloat(win.id); }}
           >
-            {floating ? "⊞" : "⊡"}
+            <Pict name={floating ? "tile" : "float"} size={14} />
           </button>
           <button
             className="win__act win__act--close"
             title="Fechar"
             onClick={() => { sfx("close"); close(win.id); }}
           >
-            ✕
+            <Pict name="close" size={14} />
           </button>
         </div>
       </header>

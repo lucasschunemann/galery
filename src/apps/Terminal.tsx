@@ -54,7 +54,7 @@ export default function Terminal() {
         out("comandos disponíveis:");
         out("  ls                lista os projetos");
         out("  open <alvo>       abre um app ou projeto");
-        out("  tema <nome>       graphite | slate | ochre | paper | delft");
+        out("  tema <nome>       graphite basel ulm stedelijk zurich braun delft muenchen");
         out("  whoami            quem escreveu isto");
         out("  neofetch          informações do sistema");
         out("  date              data e hora");
@@ -84,9 +84,9 @@ export default function Terminal() {
       case "tema":
       case "flavour": {
         const t = arg.toLowerCase() as Flavour;
-        if (["graphite", "slate", "ochre", "paper", "delft"].includes(t)) {
+        if (["graphite", "basel", "ulm", "stedelijk", "zurich", "braun", "delft", "muenchen"].includes(t)) {
           setFlavour(t); sfx("chime"); out(`paleta alterada para ${t}`);
-        } else push({ kind: "err", text: "tema: graphite, slate, ochre, paper ou delft" });
+        } else push({ kind: "err", text: "tema: graphite basel ulm stedelijk zurich braun delft muenchen" });
         break;
       }
 

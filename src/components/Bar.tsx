@@ -3,21 +3,28 @@ import { motion, AnimatePresence } from "motion/react";
 import { useOS, WORKSPACES, APPS, type Flavour } from "../os/store";
 import { useSfx } from "../os/useSfx";
 import { panelVariants, snappy, soft } from "../os/motion";
+import Pict from "./Pict";
 
+/* every theme carries the lineage it was taken from — the note is
+   not decoration, it is the reason the palette looks like that */
 const FLAVOURS: { id: Flavour; name: string; note: string }[] = [
-  { id: "graphite", name: "Graphite", note: "escuro neutro" },
-  { id: "slate", name: "Slate", note: "escuro frio" },
-  { id: "ochre", name: "Ochre", note: "escuro quente" },
-  { id: "paper", name: "Paper", note: "claro quente" },
-  { id: "delft", name: "Delft", note: "claro frio" },
+  { id: "graphite",  name: "Graphite",  note: "Neutro escuro" },
+  { id: "basel",     name: "Basel",     note: "Hofmann · Ruder" },
+  { id: "ulm",       name: "Ulm",       note: "Aicher · HfG" },
+  { id: "stedelijk", name: "Stedelijk", note: "Crouwel · Total Design" },
+  { id: "zurich",    name: "Zürich",    note: "Müller-Brockmann" },
+  { id: "braun",     name: "Braun",     note: "Dieter Rams" },
+  { id: "delft",     name: "Delft",     note: "Azul de Delft" },
+  { id: "muenchen",  name: "München",   note: "Aicher · 1972" },
 ];
 
 export default function Bar() {
-  const { setWorkspace, setLauncher, setFlavour, lock } = useOS();
+  const { setWorkspace, setLauncher, setFlavour, lock, toggleGrid } = useOS();
   const workspace = useOS((s) => s.workspace);
   const windows = useOS((s) => s.windows);
   const focusId = useOS((s) => s.focusId);
   const flavour = useOS((s) => s.flavour);
+  const gridOverlay = useOS((s) => s.gridOverlay);
   const sfx = useSfx();
 
   const [now, setNow] = useState(() => new Date());
@@ -86,7 +93,7 @@ export default function Bar() {
           >
             {active ? (
               <>
-                <span className="bar__glyph" aria-hidden>{APPS[active.appId]?.glyph ?? "◻"}</span>
+                <Pict name={APPS[active.appId]?.icon ?? "project"} size={14} className="bar__glyph" />
                 {active.title}
               </>
             ) : (
@@ -144,13 +151,19 @@ export default function Bar() {
 
         <button
           className="bar__btn bar__btn--icon"
+          onClick={() => { toggleGrid(); sfx("click"); }}
+          data-on={gridOverlay}
+          title="Mostrar a grade — ⌘G"
+        >
+          <Pict name="grid" size={15} />
+        </button>
+
+        <button
+          className="bar__btn bar__btn--icon"
           onClick={() => { sfx("close"); lock(); }}
           title="Bloquear — ⌘L"
         >
-          <svg viewBox="0 0 20 20" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="1.5">
-            <rect x="4" y="9" width="12" height="8" rx="1.5" />
-            <path d="M7 9V6.5a3 3 0 016 0V9" />
-          </svg>
+          <Pict name="lock" size={15} />
         </button>
 
         <div className="bar__time">

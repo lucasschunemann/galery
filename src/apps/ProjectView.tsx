@@ -31,12 +31,13 @@ export default function ProjectView({ id }: { id?: string }) {
           <Cover variant={p.art} index={idx} accent={p.accent} title={p.title} />
         </motion.div>
 
-        <span className="proj__no t-index">
-          {pad(idx)} / {pad(PROJECTS.length - 1)}
-        </span>
-
         <div className="proj__herotext">
-          <p className="proj__kind t-label">{p.kind} — {p.year}</p>
+          <p className="proj__meta">
+            <span className="proj__no t-index">
+              {pad(idx)} / {pad(PROJECTS.length - 1)}
+            </span>
+            <span className="proj__kind t-label">{p.kind} — {p.year}</span>
+          </p>
           <span className="mask">
             <motion.h1
               className="proj__title t-display"

@@ -62,8 +62,7 @@
 }
 .ws__pill[data-filled="true"] { color: var(--text-dim); }
 .ws__pill[data-on="true"] { color: var(--n-0); }
-[data-flavour="paper"] .ws__pill[data-on="true"],
-[data-flavour="delft"] .ws__pill[data-on="true"] { color: #fff; }
+.ws__pill[data-on="true"] { color: #fff; }
 .ws__pill:hover { color: var(--text); }
 .ws__bg { position: absolute; inset: 0; border-radius: var(--r-xs); background: var(--accent); z-index: 0; }
 .ws__n { position: relative; z-index: 1; }
@@ -116,13 +115,24 @@
   position: absolute;
   top: calc(100% + 8px);
   right: 0;
-  min-width: 216px;
+  min-width: 244px;
   padding: 5px;
+  max-height: 74vh;
+  overflow-y: auto;
   border-radius: var(--r-md);
   z-index: 20;
   transform-origin: top right;
 }
 .popover__head { padding: 8px 9px 7px; }
+.popover__swatch[data-flavour="graphite"]  { background: linear-gradient(135deg, #0f1011 50%, #6e79d6 50%); }
+.popover__swatch[data-flavour="basel"]     { background: linear-gradient(135deg, #111419 50%, #3d7bf7 50%); }
+.popover__swatch[data-flavour="ulm"]       { background: linear-gradient(135deg, #131210 50%, #e8703a 50%); }
+.popover__swatch[data-flavour="stedelijk"] { background: linear-gradient(135deg, #121212 50%, #f2d02c 50%); }
+.popover__swatch[data-flavour="zurich"]    { background: linear-gradient(135deg, #f7f7f7 50%, #e2231a 50%); }
+.popover__swatch[data-flavour="braun"]     { background: linear-gradient(135deg, #f6f3ec 50%, #cf7c2c 50%); }
+.popover__swatch[data-flavour="delft"]     { background: linear-gradient(135deg, #f5f7f9 50%, #2b4c8c 50%); }
+.popover__swatch[data-flavour="muenchen"]  { background: linear-gradient(135deg, #f4f8f9 50%, #3d8fc4 50%); }
+
 .popover button {
   width: 100%;
   display: flex;
@@ -147,11 +157,6 @@
   border-radius: var(--r-xs);
   border: 1px solid var(--line-strong);
 }
-.popover__swatch[data-flavour="graphite"] { background: linear-gradient(135deg, #0f1011 50%, #6e79d6 50%); }
-.popover__swatch[data-flavour="slate"]    { background: linear-gradient(135deg, #121519 50%, #5b93c9 50%); }
-.popover__swatch[data-flavour="ochre"]    { background: linear-gradient(135deg, #131210 50%, #d99a4e 50%); }
-.popover__swatch[data-flavour="paper"]    { background: linear-gradient(135deg, #f8f8f7 50%, #5b56d6 50%); }
-.popover__swatch[data-flavour="delft"]    { background: linear-gradient(135deg, #f5f7f9 50%, #2b4c8c 50%); }
 
 /* ------------------------------------------------------------
    RAIL
@@ -299,9 +304,8 @@
   transition: background var(--d-1) var(--ease), color var(--d-1);
 }
 .win__act:hover { background: var(--line); color: var(--text); }
-.win__act--close:hover { background: var(--accent); color: var(--n-0); }
-[data-flavour="paper"] .win__act--close:hover,
-[data-flavour="delft"] .win__act--close:hover { color: #fff; }
+.win__act--close:hover { background: var(--accent); }
+.win__act--close:hover { color: #fff; }
 
 .win__body { flex: 1; min-height: 0; overflow: auto; }
 
@@ -556,4 +560,49 @@
   .ws__pill { min-width: 22px; }
   .bar__clock { font-size: var(--fs-11); padding-left: 2px; }
   .launcher { padding-top: 8vh; }
+}
+
+/* ------------------------------------------------------------
+   GRID OVERLAY — ⌘G
+   ------------------------------------------------------------ */
+
+.gridoverlay {
+  position: fixed;
+  inset: 0;
+  z-index: calc(var(--z-launcher) - 1);
+  pointer-events: none;
+}
+.gridoverlay__cols {
+  position: absolute;
+  inset: var(--bar-h) var(--gap-out) 0 calc(var(--rail-w) + var(--gap-out));
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--col-gap);
+}
+.gridoverlay__cols span { background: var(--accent-a10); border-inline: 1px solid var(--accent-a20); }
+.gridoverlay__base {
+  position: absolute;
+  inset: var(--bar-h) 0 0 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    var(--accent-a10) 0 1px,
+    transparent 1px 8px
+  );
+  opacity: 0.5;
+}
+.gridoverlay__note {
+  position: absolute;
+  left: calc(var(--rail-w) + var(--gap-out));
+  bottom: 14px;
+  padding: 5px 10px;
+  border-radius: var(--r-xs);
+  background: var(--accent);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: var(--fs-11);
+}
+
+@media (max-width: 819px) {
+  .gridoverlay__cols { inset: var(--bar-h) var(--gap-out) 0 var(--gap-out); grid-template-columns: repeat(6, 1fr); gap: 16px; }
+  .gridoverlay__note { left: var(--gap-out); }
 }

@@ -1,6 +1,7 @@
 import { create } from "zustand";
+import type { PictName } from "../components/Pict";
 
-export type Flavour = "graphite" | "paper" | "slate" | "ochre" | "delft";
+export type Flavour = "graphite" | "basel" | "ulm" | "stedelijk" | "zurich" | "braun" | "delft" | "muenchen";
 export type Rect = { x: number; y: number; w: number; h: number };
 
 export interface WindowState {
@@ -20,8 +21,8 @@ export const WORKSPACES = [1, 2, 3, 4, 5] as const;
 export interface AppMeta {
   id: string;
   name: string;
-  /** the mono glyph the rail and launcher draw */
-  glyph: string;
+  /** the pictogram this app is drawn with */
+  icon: PictName;
   keywords: string;
   size: { w: number; h: number };
   singleton?: boolean;
@@ -29,14 +30,14 @@ export interface AppMeta {
 }
 
 export const APPS: Record<string, AppMeta> = {
-  files:    { id: "files",    name: "Trabalho",  glyph: "▤", keywords: "galeria projetos work portfolio", size: { w: 980, h: 660 }, singleton: true, inRail: true },
-  project:  { id: "project",  name: "Projeto",   glyph: "◧", keywords: "caso case estudo",                size: { w: 880, h: 700 } },
-  about:    { id: "about",    name: "Sobre",     glyph: "◐", keywords: "sobre bio quem lucas",            size: { w: 660, h: 560 }, singleton: true, inRail: true },
-  tokens:   { id: "tokens",   name: "Tokens",    glyph: "◨", keywords: "tema cores paleta flavour",       size: { w: 700, h: 620 }, singleton: true, inRail: true },
-  terminal: { id: "terminal", name: "Terminal",  glyph: "▶", keywords: "shell console bash cli",          size: { w: 680, h: 460 }, singleton: true, inRail: true },
-  contact:  { id: "contact",  name: "Contato",   glyph: "◇", keywords: "contato email falar",             size: { w: 560, h: 540 }, singleton: true, inRail: true },
-  player:   { id: "player",   name: "Áudio",     glyph: "◉", keywords: "musica som player ambient",       size: { w: 440, h: 380 }, singleton: true, inRail: true },
-  archive:  { id: "archive",  name: "Arquivo",   glyph: "◫", keywords: "descartado lixo arquivo morto",   size: { w: 620, h: 460 }, singleton: true, inRail: true },
+  files:    { id: "files",    name: "Trabalho",  icon: "work", keywords: "galeria projetos work portfolio", size: { w: 980, h: 660 }, singleton: true, inRail: true },
+  project:  { id: "project",  name: "Projeto",   icon: "project", keywords: "caso case estudo",                size: { w: 880, h: 700 } },
+  about:    { id: "about",    name: "Sobre",     icon: "about", keywords: "sobre bio quem lucas",            size: { w: 660, h: 560 }, singleton: true, inRail: true },
+  tokens:   { id: "tokens",   name: "Tokens",    icon: "tokens", keywords: "tema cores paleta flavour",       size: { w: 700, h: 620 }, singleton: true, inRail: true },
+  terminal: { id: "terminal", name: "Terminal",  icon: "terminal", keywords: "shell console bash cli",          size: { w: 680, h: 460 }, singleton: true, inRail: true },
+  contact:  { id: "contact",  name: "Contato",   icon: "contact", keywords: "contato email falar",             size: { w: 560, h: 540 }, singleton: true, inRail: true },
+  player:   { id: "player",   name: "Áudio",     icon: "player", keywords: "musica som player ambient",       size: { w: 440, h: 380 }, singleton: true, inRail: true },
+  archive:  { id: "archive",  name: "Arquivo",   icon: "archive", keywords: "descartado lixo arquivo morto",   size: { w: 620, h: 460 }, singleton: true, inRail: true },
 };
 
 interface OSState {
@@ -49,6 +50,7 @@ interface OSState {
   sound: boolean;
   grain: boolean;
   launcher: boolean;
+  gridOverlay: boolean;
 
   setPhase: (p: OSState["phase"]) => void;
   lock: () => void;
@@ -66,6 +68,7 @@ interface OSState {
   setFlavour: (f: Flavour) => void;
   toggleSound: () => void;
   toggleGrain: () => void;
+  toggleGrid: () => void;
   setLauncher: (v: boolean) => void;
 }
 
@@ -82,6 +85,7 @@ export const useOS = create<OSState>((set, get) => ({
   sound: true,
   grain: true,
   launcher: false,
+  gridOverlay: false,
 
   setPhase: (phase) => set({ phase }),
   lock: () => set({ phase: "lock", launcher: false }),
@@ -210,6 +214,7 @@ export const useOS = create<OSState>((set, get) => ({
   setFlavour: (flavour) => set({ flavour }),
   toggleSound: () => set((s) => ({ sound: !s.sound })),
   toggleGrain: () => set((s) => ({ grain: !s.grain })),
+  toggleGrid: () => set((s) => ({ gridOverlay: !s.gridOverlay })),
   setLauncher: (launcher) => set({ launcher }),
 }));
 

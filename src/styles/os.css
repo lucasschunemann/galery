@@ -33,8 +33,9 @@
   --fs-30: 30px;
   --fs-38: 38px;
   --fs-48: 48px;
-  --fs-64: 64px;
-  --fs-84: 84px;
+  --fs-60: 60px;
+  --fs-76: 76px;
+  --fs-96: 96px;
 
   /* ---- geometry: small. Softness is a spacing problem. ---- */
   --r-xs: 4px;
@@ -44,12 +45,19 @@
   --r-xl: 16px;
   --r-full: 999px;
 
-  /* ---- the grid ---- */
-  --gap-out: 12px;
-  --gap-in: 8px;
-  --bar-h: 44px;
-  --rail-w: 52px;
-  --pad: 28px;
+  /* ---- the grid ----
+     Swiss margins: the air inside a panel is not leftover space,
+     it is the thing that makes the type readable. */
+  --gap-out: 14px;
+  --gap-in: 10px;
+  --bar-h: 46px;
+  --rail-w: 58px;
+
+  --pad: 48px;        /* the panel margin */
+  --pad-y: 40px;      /* vertical rhythm at the top of a panel */
+  --pad-sm: 28px;     /* compact panels */
+  --col-gap: 32px;
+  --row-gap: 44px;
 
   /* ---- motion: quantity without elasticity ---- */
   --ease: cubic-bezier(0.25, 0.1, 0.25, 1);
@@ -72,187 +80,124 @@
 }
 
 /* ============================================================
-   THEMES — one neutral ramp, one accent.
+   COLOUR PROGRAMME
+
+   Eight rooms, each taken from a real lineage rather than
+   invented. Every one is a ten-step neutral ramp plus exactly
+   one accent — the discipline is the point; the variety lives
+   in temperature, not in quantity of colour.
    ============================================================ */
 
-/* graphite — near-black, cool, indigo signal */
+/* --- graphite · neutro escuro (default) --- */
 :root,
 [data-flavour="graphite"] {
-  --n-0:  #08090a;
-  --n-5:  #0c0d0e;
-  --n-10: #0f1011;
-  --n-15: #141516;
-  --n-20: #191a1c;
-  --n-30: #232426;
-  --n-40: #2e3034;
-  --n-60: #5c6069;
-  --n-80: #8a8f98;
-  --n-95: #f7f8f8;
-
-  --accent:      #6e79d6;
-  --accent-dim:  #4a53a0;
-  --accent-soft: #b6bcee;
-  --accent-a10:  rgba(110, 121, 214, 0.1);
-  --accent-a20:  rgba(110, 121, 214, 0.22);
-
-  --glass:      rgba(15, 16, 17, 0.72);
-  --glass-high: rgba(20, 21, 22, 0.86);
-  --line:        rgba(255, 255, 255, 0.07);
-  --line-strong: rgba(255, 255, 255, 0.12);
-  --sheen:       rgba(255, 255, 255, 0.03);
-  --shade:       rgba(0, 0, 0, 0.5);
-
-  --text:      #f7f8f8;
-  --text-dim:  #8a8f98;
-  --text-mute: #5c6069;
-
-  --wall-a: #08090a;
-  --wall-b: #0d0e10;
-  --wall-c: #16171b;
+  --n-0:  #08090a; --n-5:  #0c0d0e; --n-10: #0f1011; --n-15: #141516; --n-20: #191a1c;
+  --n-30: #232426; --n-40: #2e3034; --n-60: #5c6069; --n-80: #8a8f98; --n-95: #f7f8f8;
+  --accent: #6e79d6; --accent-dim: #4a53a0; --accent-soft: #b6bcee;
+  --accent-a10: rgba(110,121,214,.1); --accent-a20: rgba(110,121,214,.22);
+  --glass: rgba(15,16,17,.72); --glass-high: rgba(20,21,22,.86);
+  --line: rgba(255,255,255,.07); --line-strong: rgba(255,255,255,.12);
+  --sheen: rgba(255,255,255,.03); --shade: rgba(0,0,0,.5);
+  --text: #f7f8f8; --text-dim: #8a8f98; --text-mute: #5c6069;
+  --wall-a: #08090a; --wall-b: #0d0e10; --wall-c: #16171b;
   color-scheme: dark;
 }
 
-/* paper — Notion's daylight: warm white, near-black ink */
-[data-flavour="paper"] {
-  --n-0:  #ffffff;
-  --n-5:  #fcfcfb;
-  --n-10: #f8f8f7;
-  --n-15: #f3f3f1;
-  --n-20: #ededea;
-  --n-30: #e3e3e0;
-  --n-40: #cbcbc7;
-  --n-60: #9b9a97;
-  --n-80: #4d4a45;
-  --n-95: #191918;
+/* --- basel · Hofmann e Ruder: cinza frio, azul de sinal --- */
+[data-flavour="basel"] {
+  --n-0:  #090b0e; --n-5:  #0d1014; --n-10: #111419; --n-15: #161a20; --n-20: #1c2027;
+  --n-30: #262b34; --n-40: #333944; --n-60: #626a78; --n-80: #929aa8; --n-95: #f4f6f9;
+  --accent: #3d7bf7; --accent-dim: #2a56b0; --accent-soft: #a8c4fb;
+  --accent-a10: rgba(61,123,247,.1); --accent-a20: rgba(61,123,247,.22);
+  --glass: rgba(17,20,25,.72); --glass-high: rgba(22,26,32,.86);
+  --line: rgba(244,246,249,.07); --line-strong: rgba(244,246,249,.13);
+  --sheen: rgba(244,246,249,.035); --shade: rgba(0,2,8,.52);
+  --text: #f4f6f9; --text-dim: #929aa8; --text-mute: #626a78;
+  --wall-a: #080a0d; --wall-b: #0e1116; --wall-c: #171d26;
+  color-scheme: dark;
+}
 
-  --accent:      #5b56d6;
-  --accent-dim:  #4540b8;
-  --accent-soft: #37339c;
-  --accent-a10:  rgba(91, 86, 214, 0.08);
-  --accent-a20:  rgba(91, 86, 214, 0.18);
+/* --- ulm · Otl Aicher e a HfG: neutro quente, laranja --- */
+[data-flavour="ulm"] {
+  --n-0:  #0b0a09; --n-5:  #0f0e0c; --n-10: #131210; --n-15: #191714; --n-20: #1f1c19;
+  --n-30: #2a2622; --n-40: #38332d; --n-60: #6b645b; --n-80: #9d948a; --n-95: #f8f5f1;
+  --accent: #e8703a; --accent-dim: #a84e26; --accent-soft: #f5b596;
+  --accent-a10: rgba(232,112,58,.1); --accent-a20: rgba(232,112,58,.22);
+  --glass: rgba(19,18,16,.72); --glass-high: rgba(25,23,20,.86);
+  --line: rgba(248,245,241,.07); --line-strong: rgba(248,245,241,.13);
+  --sheen: rgba(248,245,241,.035); --shade: rgba(8,4,0,.5);
+  --text: #f8f5f1; --text-dim: #9d948a; --text-mute: #6b645b;
+  --wall-a: #0a0908; --wall-b: #100e0c; --wall-c: #1d1813;
+  color-scheme: dark;
+}
 
-  --glass:      rgba(252, 252, 251, 0.78);
-  --glass-high: rgba(255, 255, 255, 0.92);
-  --line:        rgba(25, 25, 24, 0.08);
-  --line-strong: rgba(25, 25, 24, 0.14);
-  --sheen:       rgba(255, 255, 255, 0.8);
-  --shade:       rgba(30, 28, 24, 0.12);
+/* --- stedelijk · Crouwel e a Total Design: preto e um amarelo chapado --- */
+[data-flavour="stedelijk"] {
+  --n-0:  #0a0a0a; --n-5:  #0e0e0e; --n-10: #121212; --n-15: #171717; --n-20: #1d1d1d;
+  --n-30: #262626; --n-40: #333333; --n-60: #666666; --n-80: #969696; --n-95: #fafafa;
+  --accent: #f2d02c; --accent-dim: #b39a14; --accent-soft: #faeb9c;
+  --accent-a10: rgba(242,208,44,.1); --accent-a20: rgba(242,208,44,.22);
+  --glass: rgba(18,18,18,.74); --glass-high: rgba(23,23,23,.88);
+  --line: rgba(250,250,250,.08); --line-strong: rgba(250,250,250,.14);
+  --sheen: rgba(250,250,250,.035); --shade: rgba(0,0,0,.55);
+  --text: #fafafa; --text-dim: #969696; --text-mute: #666666;
+  --wall-a: #090909; --wall-b: #101010; --wall-c: #1a1a1a;
+  color-scheme: dark;
+}
 
-  --text:      #191918;
-  --text-dim:  #5f5e5b;
-  --text-mute: #8f8e8b;
-
-  --wall-a: #f1f1ef;
-  --wall-b: #f7f7f5;
-  --wall-c: #e6e6e2;
+/* --- zürich · Müller-Brockmann: branco, preto, um vermelho --- */
+[data-flavour="zurich"] {
+  --n-0:  #ffffff; --n-5:  #fcfcfc; --n-10: #f7f7f7; --n-15: #f1f1f1; --n-20: #eaeaea;
+  --n-30: #dedede; --n-40: #c4c4c4; --n-60: #8e8e8e; --n-80: #454545; --n-95: #111111;
+  --accent: #e2231a; --accent-dim: #b31a12; --accent-soft: #8c130d;
+  --accent-a10: rgba(226,35,26,.08); --accent-a20: rgba(226,35,26,.18);
+  --glass: rgba(252,252,252,.8); --glass-high: rgba(255,255,255,.93);
+  --line: rgba(17,17,17,.1); --line-strong: rgba(17,17,17,.18);
+  --sheen: rgba(255,255,255,.85); --shade: rgba(20,20,20,.12);
+  --text: #111111; --text-dim: #575757; --text-mute: #8e8e8e;
+  --wall-a: #efefef; --wall-b: #f7f7f7; --wall-c: #e4e4e4;
   color-scheme: light;
 }
 
-/* slate — cool blue-grey, steel signal */
-[data-flavour="slate"] {
-  --n-0:  #0a0c0f;
-  --n-5:  #0e1114;
-  --n-10: #121519;
-  --n-15: #171b20;
-  --n-20: #1d2126;
-  --n-30: #272c33;
-  --n-40: #343a43;
-  --n-60: #656d79;
-  --n-80: #939ba7;
-  --n-95: #f2f5f8;
-
-  --accent:      #5b93c9;
-  --accent-dim:  #3d6791;
-  --accent-soft: #aac9e6;
-  --accent-a10:  rgba(91, 147, 201, 0.1);
-  --accent-a20:  rgba(91, 147, 201, 0.22);
-
-  --glass:      rgba(18, 21, 25, 0.72);
-  --glass-high: rgba(23, 27, 32, 0.86);
-  --line:        rgba(242, 245, 248, 0.07);
-  --line-strong: rgba(242, 245, 248, 0.13);
-  --sheen:       rgba(242, 245, 248, 0.035);
-  --shade:       rgba(0, 2, 6, 0.5);
-
-  --text:      #f2f5f8;
-  --text-dim:  #939ba7;
-  --text-mute: #656d79;
-
-  --wall-a: #090b0e;
-  --wall-b: #0f1216;
-  --wall-c: #191e24;
-  color-scheme: dark;
+/* --- braun · Dieter Rams: quase branco quente, âmbar --- */
+[data-flavour="braun"] {
+  --n-0:  #ffffff; --n-5:  #fbf9f5; --n-10: #f6f3ec; --n-15: #f0ece4; --n-20: #e8e3d9;
+  --n-30: #dbd5c8; --n-40: #c0b9aa; --n-60: #918a7d; --n-80: #4a453d; --n-95: #1b1916;
+  --accent: #cf7c2c; --accent-dim: #a35f1d; --accent-soft: #8a4f16;
+  --accent-a10: rgba(207,124,44,.09); --accent-a20: rgba(207,124,44,.2);
+  --glass: rgba(251,249,245,.8); --glass-high: rgba(255,255,255,.93);
+  --line: rgba(27,25,22,.1); --line-strong: rgba(27,25,22,.18);
+  --sheen: rgba(255,255,255,.85); --shade: rgba(60,50,35,.13);
+  --text: #1b1916; --text-dim: #5f584e; --text-mute: #918a7d;
+  --wall-a: #ece7dc; --wall-b: #f6f3ec; --wall-c: #e0d9cb;
+  color-scheme: light;
 }
 
-/* ochre — warm neutral, Braun amber */
-[data-flavour="ochre"] {
-  --n-0:  #0b0a09;
-  --n-5:  #0f0e0c;
-  --n-10: #131210;
-  --n-15: #191714;
-  --n-20: #1f1c19;
-  --n-30: #2a2622;
-  --n-40: #38332d;
-  --n-60: #6b645b;
-  --n-80: #9a9187;
-  --n-95: #f8f6f3;
-
-  --accent:      #d99a4e;
-  --accent-dim:  #a06f33;
-  --accent-soft: #efd0a5;
-  --accent-a10:  rgba(217, 154, 78, 0.1);
-  --accent-a20:  rgba(217, 154, 78, 0.22);
-
-  --glass:      rgba(19, 18, 16, 0.72);
-  --glass-high: rgba(25, 23, 20, 0.86);
-  --line:        rgba(248, 246, 243, 0.07);
-  --line-strong: rgba(248, 246, 243, 0.13);
-  --sheen:       rgba(248, 246, 243, 0.035);
-  --shade:       rgba(6, 4, 0, 0.5);
-
-  --text:      #f8f6f3;
-  --text-dim:  #9a9187;
-  --text-mute: #6b645b;
-
-  --wall-a: #0a0908;
-  --wall-b: #100e0c;
-  --wall-c: #1c1814;
-  color-scheme: dark;
-}
-
-/* delft — cool daylight, Delft blue */
+/* --- delft · azul de Delft sobre branco frio --- */
 [data-flavour="delft"] {
-  --n-0:  #ffffff;
-  --n-5:  #fafbfc;
-  --n-10: #f5f7f9;
-  --n-15: #eff2f5;
-  --n-20: #e7ebef;
-  --n-30: #dbe1e7;
-  --n-40: #c2cad3;
-  --n-60: #8c96a2;
-  --n-80: #454f5c;
-  --n-95: #141a22;
+  --n-0:  #ffffff; --n-5:  #fafbfc; --n-10: #f5f7f9; --n-15: #eff2f5; --n-20: #e7ebef;
+  --n-30: #dbe1e7; --n-40: #c2cad3; --n-60: #8c96a2; --n-80: #454f5c; --n-95: #141a22;
+  --accent: #2b4c8c; --accent-dim: #1e376a; --accent-soft: #16294f;
+  --accent-a10: rgba(43,76,140,.08); --accent-a20: rgba(43,76,140,.18);
+  --glass: rgba(250,251,252,.8); --glass-high: rgba(255,255,255,.93);
+  --line: rgba(20,26,34,.09); --line-strong: rgba(20,26,34,.16);
+  --sheen: rgba(255,255,255,.85); --shade: rgba(20,34,56,.12);
+  --text: #141a22; --text-dim: #5b6673; --text-mute: #8c96a2;
+  --wall-a: #eaeef2; --wall-b: #f5f7f9; --wall-c: #dfe5eb;
+  color-scheme: light;
+}
 
-  --accent:      #2b4c8c;
-  --accent-dim:  #1e376a;
-  --accent-soft: #16294f;
-  --accent-a10:  rgba(43, 76, 140, 0.08);
-  --accent-a20:  rgba(43, 76, 140, 0.18);
-
-  --glass:      rgba(250, 251, 252, 0.78);
-  --glass-high: rgba(255, 255, 255, 0.92);
-  --line:        rgba(20, 26, 34, 0.08);
-  --line-strong: rgba(20, 26, 34, 0.14);
-  --sheen:       rgba(255, 255, 255, 0.8);
-  --shade:       rgba(20, 34, 56, 0.12);
-
-  --text:      #141a22;
-  --text-dim:  #5b6673;
-  --text-mute: #8c96a2;
-
-  --wall-a: #eef1f4;
-  --wall-b: #f6f8fa;
-  --wall-c: #e2e7ec;
+/* --- münchen · Aicher, 1972: claro e frio, azul de céu --- */
+[data-flavour="muenchen"] {
+  --n-0:  #ffffff; --n-5:  #fafcfc; --n-10: #f4f8f9; --n-15: #edf3f5; --n-20: #e4ecef;
+  --n-30: #d6e1e5; --n-40: #b9c9cf; --n-60: #85969d; --n-80: #3f4e54; --n-95: #101a1e;
+  --accent: #3d8fc4; --accent-dim: #2a6b96; --accent-soft: #1d5375;
+  --accent-a10: rgba(61,143,196,.09); --accent-a20: rgba(61,143,196,.2);
+  --glass: rgba(250,252,252,.8); --glass-high: rgba(255,255,255,.93);
+  --line: rgba(16,26,30,.09); --line-strong: rgba(16,26,30,.16);
+  --sheen: rgba(255,255,255,.85); --shade: rgba(20,45,55,.12);
+  --text: #101a1e; --text-dim: #566569; --text-mute: #85969d;
+  --wall-a: #e8f0f2; --wall-b: #f4f8f9; --wall-c: #dcE8ec;
   color-scheme: light;
 }
 
@@ -281,10 +226,13 @@
 
 .t-display {
   font-family: var(--font-sans);
-  font-weight: 600;
-  letter-spacing: -0.028em;
-  line-height: 1.05;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1.02;
   color: var(--text);
+  /* Swiss setting: flush left, ragged right, never justified */
+  text-align: left;
+  text-wrap: balance;
 }
 .t-h {
   font-family: var(--font-sans);
@@ -306,9 +254,10 @@
   font-family: var(--font-sans);
   font-size: var(--fs-14);
   font-weight: 400;
-  line-height: 1.65;
+  line-height: 1.72;
   color: var(--text-dim);
-  max-width: 68ch;
+  /* the Swiss measure — a line that runs longer stops being read */
+  max-width: 64ch;
 }
 .t-label {
   font-family: var(--font-sans);
