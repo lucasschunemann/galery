@@ -73,7 +73,7 @@
 
 .win__lights {
   display: flex;
-  gap: 6px;
+  gap: 8px;
   padding-left: 8px;
 }
 
@@ -91,6 +91,14 @@
     inset 0 -3px 4px -2px rgba(0, 0, 0, 0.5),
     0 1px 1px rgba(0, 0, 0, 0.2);
   transition: filter 0.15s var(--ease-soft), transform 0.12s var(--ease-aqua);
+}
+/* the dot stays 13px for period accuracy, but the hit area is grown to
+   ~21x27 so it is actually clickable — the gap keeps them from overlapping */
+.light::before {
+  content: "";
+  position: absolute;
+  inset: -7px -4px;
+  border-radius: 4px;
 }
 .light::after {
   content: "";

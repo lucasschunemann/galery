@@ -12,7 +12,7 @@ import { useEffect, useRef, useState } from "react";
 
 export default function Cursor() {
   const dot = useRef<HTMLDivElement>(null);
-  const aura = useRef<HTMLDivElement>(null);
+  const ring = useRef<HTMLDivElement>(null);
   const [enabled, setEnabled] = useState(false);
   const [visible, setVisible] = useState(false);
   const [shape, setShape] = useState<"arrow" | "text" | "grab">("arrow");
@@ -25,18 +25,16 @@ export default function Cursor() {
     if (!window.matchMedia("(pointer: fine) and (hover: hover)").matches) return;
     setEnabled(true);
 
-    let x = innerWidth / 2, y = innerHeight / 2;
-    let ax = x, ay = y;
-    let raf = 0;
-
     const move = (e: PointerEvent) => {
-      x = e.clientX; y = e.clientY;
-      if (dot.current) dot.current.style.transform = `translate(${x}px, ${y}px)`;
+      const x = e.clientX;
+      const y = e.clientY;
+      // both layers sit exactly on the hotspot — anything that lags behind
+      // shifts the cursor's visual centre of mass away from where clicks land
+      const t3d = `translate3d(${x}px, ${y}px, 0)`;
+      if (dot.current) dot.current.style.transform = t3d;
+      if (ring.current) ring.current.style.transform = t3d;
 
       if (!shown.current) {
-        // first real position: snap the aura here so it doesn't fly in
-        ax = x; ay = y;
-        if (aura.current) aura.current.style.transform = `translate(${x}px, ${y}px)`;
         shown.current = true;
         setVisible(true);
       }
@@ -45,13 +43,6 @@ export default function Cursor() {
       if (t?.closest("input, textarea, [contenteditable]")) setShape("text");
       else if (t?.closest(".win__bar, .dicon")) setShape("grab");
       else setShape("arrow");
-    };
-
-    const tick = () => {
-      ax += (x - ax) * 0.16;
-      ay += (y - ay) * 0.16;
-      if (aura.current) aura.current.style.transform = `translate(${ax}px, ${ay}px)`;
-      raf = requestAnimationFrame(tick);
     };
 
     const down = (e: PointerEvent) => {
@@ -67,14 +58,12 @@ export default function Cursor() {
     window.addEventListener("pointerdown", down, { passive: true });
     document.documentElement.addEventListener("pointerleave", leave);
     window.addEventListener("blur", leave);
-    raf = requestAnimationFrame(tick);
 
     return () => {
       window.removeEventListener("pointermove", move);
       window.removeEventListener("pointerdown", down);
       document.documentElement.removeEventListener("pointerleave", leave);
       window.removeEventListener("blur", leave);
-      cancelAnimationFrame(raf);
     };
   }, []);
 
@@ -91,7 +80,7 @@ export default function Cursor() {
 
   return (
     <>
-      <div ref={aura} className="cursor-aura" data-visible={visible} aria-hidden />
+      <div ref={ring} className="cursor-ring" data-visible={visible} aria-hidden />
       <div ref={dot} className="cursor" data-visible={visible} data-shape={shape} aria-hidden>
         {shape === "text" ? (
           <svg viewBox="0 0 12 20" width="12" height="20">

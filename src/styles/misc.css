@@ -37,28 +37,33 @@
   top: 0; left: 0;
   z-index: var(--z-cursor);
   pointer-events: none;
-  filter: drop-shadow(0 2px 2px rgba(0, 20, 50, 0.45));
+  filter: drop-shadow(0 1px 1.5px rgba(0, 20, 50, 0.5));
   will-change: transform;
   opacity: 0;
+  /* the arrow's point sits at (2, 1.5) inside its own box — pull the box
+     back by exactly that so the drawn tip lands on the real hotspot */
+  margin: -1.5px 0 0 -2px;
 }
 .cursor[data-visible="true"] { opacity: 1; }
-.cursor[data-shape="text"] { margin: -10px -6px; }
-.cursor[data-shape="grab"] { rotate: -8deg; }
+/* the I-beam is centred on the hotspot instead */
+.cursor[data-shape="text"] { margin: -10px 0 0 -6px; }
 
-.cursor-aura {
+/* a small ring locked to the hotspot: it marks the point instead of
+   trailing behind it, so the eye reads the exact click target */
+.cursor-ring {
   position: fixed;
   top: 0; left: 0;
   z-index: calc(var(--z-cursor) - 1);
   opacity: 0;
-  width: 34px; height: 34px;
-  margin: -17px 0 0 -17px;
+  width: 16px; height: 16px;
+  margin: -8px 0 0 -8px;
   border-radius: 50%;
   pointer-events: none;
-  background: radial-gradient(circle, var(--accent-glow), transparent 68%);
+  background: radial-gradient(circle, var(--accent-glow) 0%, transparent 62%);
   will-change: transform;
   transition: opacity 0.2s var(--ease-soft);
 }
-.cursor-aura[data-visible="true"] { opacity: 0.5; }
+.cursor-ring[data-visible="true"] { opacity: 0.55; }
 
 .cursor-ripple {
   position: fixed;
