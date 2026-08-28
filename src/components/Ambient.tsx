@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { motion, useReducedMotion } from "motion/react";
+import { motion, useMotionValue, useReducedMotion, useSpring, useTransform } from "motion/react";
 import { useOS } from "../os/store";
 
 /* ============================================================
@@ -18,19 +18,48 @@ import { useOS } from "../os/store";
      graphite  embers off hot charcoal
      nino      the faces, now floating
 
+   These bleed off the right edge, poster-scale — the reference is
+   less "polite desktop widget" and more the kind of framed print a
+   studio hangs behind the espresso machine. The one restraint that
+   survives from the wallpaper's rule: it still lives only where an
+   empty workspace has nothing to compete with.
+
    Everything mounts and unmounts with the empty desk. The moment
-   a window opens, this is gone — the wallpaper's rule still
-   holds, that noticing it while reading means it was too loud.
+   a window opens, this is gone.
    ============================================================ */
 
 type Still = { still: boolean };
 
-/** the shared drawing field: every staged figure is 200×200 */
+/** cursor position, springed — the poster leans toward whoever is looking */
+function usePointerTilt(still: boolean) {
+  const mx = useMotionValue(0);
+  const my = useMotionValue(0);
+  useEffect(() => {
+    if (still) return;
+    const onMove = (e: PointerEvent) => {
+      mx.set(e.clientX / window.innerWidth - 0.5);
+      my.set(e.clientY / window.innerHeight - 0.5);
+    };
+    window.addEventListener("pointermove", onMove, { passive: true });
+    return () => window.removeEventListener("pointermove", onMove);
+  }, [still, mx, my]);
+  const sx = useSpring(mx, { stiffness: 60, damping: 18 });
+  const sy = useSpring(my, { stiffness: 60, damping: 18 });
+  return {
+    x: useTransform(sx, (v) => v * -26),
+    y: useTransform(sy, (v) => v * -18),
+    rotate: useTransform(sx, (v) => v * -3),
+  };
+}
+
+/** the shared drawing field: every staged figure is 200×200, bled to the edge */
 function Stage({ piece, children }: { piece: string; children: React.ReactNode }) {
+  const still = !!useReducedMotion();
+  const tilt = usePointerTilt(still);
   return (
-    <div className="amb__stage" data-piece={piece}>
+    <motion.div className="amb__stage" data-piece={piece} style={still ? undefined : tilt}>
       <svg viewBox="0 0 200 200" className="amb__svg">{children}</svg>
-    </div>
+    </motion.div>
   );
 }
 
@@ -124,7 +153,7 @@ function ZurichArcs({ still }: Still) {
             fill="none"
             stroke={lit ? "var(--accent)" : "var(--text)"}
             strokeWidth={k.w}
-            opacity={lit ? 0.55 : 0.24}
+            opacity={lit ? 0.86 : 0.4}
             style={pivot}
             {...(still ? {} : turn(k.dur, k.dir))}
           />
@@ -178,15 +207,15 @@ function DeStijl({ still }: Still) {
 /* the palette is the flag, so black takes the circle; it carries more
    weight than the other two at the same opacity and is dialled back */
 const PRIMITIVES = [
-  { dur: 168, o: 0.42, node: <circle cx="100" cy="100" r="23" fill="var(--accent-3)" /> },
-  { dur: 124, o: 0.58, node: <rect x="79" y="79" width="42" height="42" fill="var(--accent)" /> },
-  { dur: 202, o: 0.66, node: <path d="M100 76 L124 121 L76 121 Z" fill="var(--accent-2)" /> },
+  { dur: 168, o: 0.62, node: <circle cx="100" cy="100" r="23" fill="var(--accent-3)" /> },
+  { dur: 124, o: 0.8,  node: <rect x="79" y="79" width="42" height="42" fill="var(--accent)" /> },
+  { dur: 202, o: 0.88, node: <path d="M100 76 L124 121 L76 121 Z" fill="var(--accent-2)" /> },
 ];
 
 function Bauhaus({ still }: Still) {
   return (
     <Stage piece="alemanha">
-      <circle cx="100" cy="100" r="56" fill="none" stroke="var(--text)" strokeWidth="1" opacity="0.18" />
+      <circle cx="100" cy="100" r="56" fill="none" stroke="var(--text)" strokeWidth="1.5" opacity="0.3" />
       {PRIMITIVES.map((p, i) => (
         <motion.g key={i} style={pivot} {...(still ? {} : turn(p.dur, i % 2 ? -1 : 1))}>
           <g transform={`rotate(${i * 120} 100 100) translate(0 -56)`} opacity={p.o}>
@@ -208,11 +237,11 @@ function Bauhaus({ still }: Still) {
    circles on top of each other, which is decoration and not a plan */
 const FIELDS = [
   { d: "M30,120 C14,84 34,40 76,32 C110,26 136,46 132,72 C129,92 106,96 92,86 C74,73 54,84 58,106 C63,134 96,146 124,136 C150,127 164,142 150,158 C130,180 84,178 58,160 C36,145 38,140 30,120 Z",
-    fill: "var(--accent)",   o: 0.30, dur: 68,  x: 12,  y: -9, rot: 6 },
+    fill: "var(--accent)",   o: 0.5, dur: 68,  x: 12,  y: -9, rot: 6 },
   { d: "M22,88 C34,52 76,34 116,42 C152,49 176,74 170,102 C165,126 138,132 118,124 C100,117 84,124 84,140 C84,158 66,168 48,158 C26,146 12,120 22,88 Z",
-    fill: "var(--accent-2)", o: 0.26, dur: 86,  x: -14, y: 11, rot: -8 },
+    fill: "var(--accent-2)", o: 0.44, dur: 86,  x: -14, y: 11, rot: -8 },
   { d: "M56,150 C30,138 24,104 44,80 C64,56 100,52 122,66 C140,77 138,96 122,102 C106,108 96,122 108,134 C122,148 152,144 162,158 C172,172 140,182 108,178 C84,175 74,158 56,150 Z",
-    fill: "var(--accent-3)", o: 0.22, dur: 104, x: 9,   y: 14, rot: 5 },
+    fill: "var(--accent-3)", o: 0.4, dur: 104, x: 9,   y: 14, rot: 5 },
 ];
 
 function BurleMarx({ still }: Still) {
