@@ -13,8 +13,8 @@ import Flag, { type FlagName } from "./Flag";
 const FLAVOURS: {
   id: Flavour; name: string; note: string; flag?: FlagName; group: "school" | "flag" | "extra";
 }[] = [
-  { id: "braun",    name: "Braun",    note: "Dieter Rams", group: "school" },
   { id: "zurich",   name: "Zürich",   note: "Müller-Brockmann", group: "school" },
+  { id: "braun",    name: "Braun",    note: "Dieter Rams", group: "school" },
   { id: "graphite", name: "Graphite", note: "Carvão quente", group: "school" },
   { id: "brasil",   name: "Brasil",   note: "Niemeyer · Burle Marx", flag: "brasil", group: "flag" },
   { id: "holanda",  name: "Holanda",  note: "Oranje", flag: "holanda", group: "flag" },

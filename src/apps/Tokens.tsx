@@ -6,7 +6,7 @@ import Flag, { type FlagName } from "../components/Flag";
 const RAMP = ["--n-0", "--n-5", "--n-10", "--n-15", "--n-20", "--n-30", "--n-40", "--n-60", "--n-80", "--n-95"];
 const ACCENTS = ["--accent-dim", "--accent", "--accent-soft"];
 const TRICOLOUR = ["--accent", "--accent-2", "--accent-3"];
-const FLAVOURS: Flavour[] = ["braun", "zurich", "graphite", "brasil", "holanda", "alemanha", "nino"];
+const FLAVOURS: Flavour[] = ["zurich", "braun", "graphite", "brasil", "holanda", "alemanha", "nino"];
 const ORIGIN: string[] = ["brasil", "holanda", "alemanha"];
 /** every theme that carries three colours instead of one — the flag
     themes plus Nino, which is tricolour without being tied to a place */

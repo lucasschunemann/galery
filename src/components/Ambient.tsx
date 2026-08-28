@@ -11,7 +11,7 @@ import { useOS } from "../os/store";
    palette came from:
 
      braun     a Braun wall clock, telling the actual time
-     zurich    a Müller-Brockmann arc study, slowly recomposing
+     zurich    a Müller-Brockmann grid of dots, pulsing on the diagonal
      holanda   a De Stijl grid, colour migrating cell to cell
      alemanha  the Bauhaus primitives in orbit
      brasil    Burle Marx colour fields, drifting
@@ -121,44 +121,45 @@ function BraunClock() {
 
 /* --------------------------------------------------------------- zurich */
 
-/* Concentric arcs at different weights, each turning at its own rate,
-   so the figure never repeats the same composition twice in a sitting.
-   Müller-Brockmann's Beethoven poster is the obvious debt. */
-const RINGS = [
-  { r: 88, w: 3,  a0: -96,  a1: 84,  dur: 210, dir: 1 as const },
-  { r: 74, w: 10, a0: 30,   a1: 190, dur: 164, dir: -1 as const },
-  { r: 60, w: 4,  a0: -140, a1: -10, dur: 132, dir: 1 as const },
-  { r: 46, w: 15, a0: 96,   a1: 250, dur: 104, dir: -1 as const },
-  { r: 31, w: 5,  a0: -60,  a1: 120, dur: 80,  dir: 1 as const },
-  { r: 17, w: 11, a0: 150,  a1: 330, dur: 62,  dir: -1 as const },
-];
+/* Not the Beethoven arcs — the other Müller-Brockmann move, the one
+   that ends up on the cover of every "grid systems" book: a field of
+   circles whose radius is set by a rule, not by hand, so size reads
+   as a diagonal progression rather than a decorative scatter. A slow
+   pulse sweeps the same diagonal, one cell of delay at a time. */
+const GRID = 8;
+function ZurichGrid({ still }: Still) {
+  const dots = useMemo(() => {
+    const cell = 200 / GRID;
+    const out: { x: number; y: number; base: number; accent: boolean; delay: number }[] = [];
+    for (let row = 0; row < GRID; row++) {
+      for (let col = 0; col < GRID; col++) {
+        const d = (col + row) / (GRID * 2 - 2);
+        out.push({
+          x: cell * (col + 0.5),
+          y: cell * (row + 0.5),
+          base: 2 + d * 8.5,
+          accent: (col + row) % 7 === 3,
+          delay: (col + row) * 0.055,
+        });
+      }
+    }
+    return out;
+  }, []);
 
-function arcPath(r: number, a0: number, a1: number) {
-  const pt = (a: number) => {
-    const rad = (a * Math.PI) / 180;
-    return `${(100 + r * Math.cos(rad)).toFixed(2)} ${(100 + r * Math.sin(rad)).toFixed(2)}`;
-  };
-  return `M${pt(a0)} A${r} ${r} 0 ${Math.abs(a1 - a0) > 180 ? 1 : 0} 1 ${pt(a1)}`;
-}
-
-function ZurichArcs({ still }: Still) {
   return (
     <Stage piece="zurich">
-      {RINGS.map((k, i) => {
-        const lit = i % 3 === 1;
-        return (
-          <motion.path
-            key={i}
-            d={arcPath(k.r, k.a0, k.a1)}
-            fill="none"
-            stroke={lit ? "var(--accent)" : "var(--text)"}
-            strokeWidth={k.w}
-            opacity={lit ? 0.86 : 0.4}
-            style={pivot}
-            {...(still ? {} : turn(k.dur, k.dir))}
-          />
-        );
-      })}
+      {dots.map((d, i) => (
+        <motion.circle
+          key={i}
+          cx={d.x}
+          cy={d.y}
+          fill={d.accent ? "var(--accent)" : "var(--text)"}
+          opacity={d.accent ? 0.88 : 0.5}
+          initial={{ r: d.base }}
+          animate={still ? undefined : { r: [d.base, d.base * 1.6, d.base] }}
+          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: d.delay }}
+        />
+      ))}
     </Stage>
   );
 }
@@ -372,7 +373,7 @@ export default function Ambient() {
   const piece = () => {
     switch (flavour) {
       case "braun": return <BraunClock />;
-      case "zurich": return <ZurichArcs still={still} />;
+      case "zurich": return <ZurichGrid still={still} />;
       case "holanda": return <DeStijl still={still} />;
       case "alemanha": return <Bauhaus still={still} />;
       case "brasil": return <BurleMarx still={still} />;

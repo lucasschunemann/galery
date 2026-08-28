@@ -2,25 +2,55 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { useSfx } from "../os/useSfx";
 
+const TO = "lucas.vhschunemann@gmail.com";
+const WEB3FORMS_KEY = import.meta.env.VITE_WEB3FORMS_KEY as string | undefined;
+
 /* Only what is real. Add the rest when the handles are decided. */
 const LINKS = [
-  { label: "E-mail", value: "lucas.vhschunemann@gmail.com", href: "mailto:lucas.vhschunemann@gmail.com" },
+  { label: "E-mail", value: TO, href: `mailto:${TO}` },
   { label: "Local", value: "Porto Alegre, Brasil", href: null },
 ];
 
 export default function Contact() {
   const sfx = useSfx();
-  const [state, setState] = useState<"idle" | "sending" | "sent">("idle");
+  const [state, setState] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [form, setForm] = useState({ name: "", email: "", msg: "" });
 
-  const send = (e: React.FormEvent) => {
+  const send = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (state !== "idle") return;
+    if (state === "sending") return;
     sfx("click");
     setState("sending");
-    // no backend here on purpose — the form demonstrates the interaction,
-    // the real channel is the mailto link below
-    setTimeout(() => { setState("sent"); sfx("chime"); }, 1500);
+
+    if (!WEB3FORMS_KEY) {
+      // sem chave configurada, cai pro cliente de e-mail do visitante
+      window.location.href =
+        `mailto:${TO}?subject=${encodeURIComponent(form.name)}&body=${encodeURIComponent(`${form.msg}\n\n— ${form.email}`)}`;
+      setState("sent");
+      sfx("chime");
+      return;
+    }
+
+    try {
+      const res = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          access_key: WEB3FORMS_KEY,
+          to: TO,
+          subject: form.name || "Nova mensagem pelo portfólio",
+          from_name: form.email,
+          email: form.email,
+          message: form.msg,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) throw new Error(data.message || "falha no envio");
+      setState("sent");
+      sfx("chime");
+    } catch {
+      setState("error");
+    }
   };
 
   return (
@@ -61,6 +91,11 @@ export default function Contact() {
               </button>
               {state === "sending" && <span className="spinner" aria-hidden />}
             </div>
+            {state === "error" && (
+              <p className="contact__ok-sub">
+                Não consegui enviar. Escreve direto pro e-mail aí embaixo.
+              </p>
+            )}
           </motion.form>
         ) : (
           <motion.div
@@ -69,12 +104,9 @@ export default function Contact() {
             transition={{ type: "spring", stiffness: 300, damping: 22 }}
           >
             <div className="contact__ok-badge">✓</div>
-            <p><strong>Mensagem escrita.</strong></p>
-            <p className="contact__ok-sub">
-              Este formulário é uma demonstração e não envia nada. Para falar comigo,
-              use o e-mail abaixo.
-            </p>
-            <button className="btn btn--ghost" onClick={() => { setState("idle"); sfx("click"); }}>
+            <p><strong>Mensagem enviada.</strong></p>
+            <p className="contact__ok-sub">Respondo assim que ver.</p>
+            <button className="btn btn--ghost" onClick={() => { setState("idle"); setForm({ name: "", email: "", msg: "" }); sfx("click"); }}>
               Escrever outra
             </button>
           </motion.div>
