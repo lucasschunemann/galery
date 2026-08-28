@@ -7,8 +7,6 @@ const About = lazy(() => import("../apps/About"));
 const Contact = lazy(() => import("../apps/Contact"));
 const Tokens = lazy(() => import("../apps/Tokens"));
 const Terminal = lazy(() => import("../apps/Terminal"));
-const Player = lazy(() => import("../apps/Player"));
-const Archive = lazy(() => import("../apps/Trash"));
 
 export default function AppHost({ win }: { win: WindowState }) {
   const body = () => {
@@ -19,8 +17,6 @@ export default function AppHost({ win }: { win: WindowState }) {
       case "contact": return <Contact />;
       case "tokens": return <Tokens />;
       case "terminal": return <Terminal />;
-      case "player": return <Player />;
-      case "archive": return <Archive />;
       default: return <p style={{ padding: 20 }}>App não encontrado.</p>;
     }
   };

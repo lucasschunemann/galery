@@ -567,23 +567,70 @@
 }
 
 /* ------------------------------------------------------------
-   NINO — the one ornament the house allows
+   AMBIENT — one figure per theme, only on an empty workspace
+
+   This layer sits under the home text and never overlaps it: the
+   home card is pinned left with a max width, the staged figures
+   sit right. Below the breakpoint the two would collide, so the
+   staged ones step aside and only the full-bleed pieces stay.
    ------------------------------------------------------------ */
 
-.nino-field {
-  position: fixed;
+.amb {
+  position: absolute;
   inset: 0;
-  z-index: var(--z-desk);
   pointer-events: none;
   overflow: hidden;
 }
-.nino-mark {
+
+.amb__stage {
+  position: absolute;
+  right: clamp(20px, 6vw, 110px);
+  top: 50%;
+  translate: 0 -50%;
+  width: clamp(210px, 29vw, 370px);
+  aspect-ratio: 1 / 1;
+}
+.amb__svg { display: block; width: 100%; height: 100%; overflow: visible; }
+
+/* the clock is the one figure carrying information, so it is allowed
+   to be legible; the rest stay at the edge of noticing */
+.amb__stage[data-piece="braun"] { opacity: 0.9; }
+.amb__stage[data-piece="zurich"],
+.amb__stage[data-piece="alemanha"] { opacity: 0.85; }
+.amb__stage[data-piece="holanda"] { opacity: 0.5; }
+.amb__stage[data-piece="brasil"] { opacity: 0.9; }
+
+@media (max-width: 900px) {
+  .amb__stage { display: none; }
+}
+
+/* graphite: motes rising the full height of the screen. The negative
+   animation-delay is the point — it drops each one in mid-flight, so
+   the field is already moving on the first frame. */
+.amb__motes { position: absolute; inset: 0; }
+.amb__mote {
+  position: absolute;
+  bottom: -8px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  box-shadow: 0 0 8px var(--accent);
+  animation: amb-rise var(--dur) linear var(--delay) infinite;
+}
+@keyframes amb-rise {
+  0%   { transform: translateY(0); opacity: 0; }
+  16%  { opacity: var(--peak); }
+  72%  { opacity: var(--peak); }
+  100% { transform: translateY(calc(var(--rise) * -1)); opacity: 0; }
+}
+
+/* nino: the one ornament the house allows */
+.amb__marks { position: absolute; inset: 0; }
+.amb__mark {
   position: absolute;
   font-family: var(--font-mono);
   font-weight: 700;
   font-size: 15px;
   color: var(--accent);
-  opacity: 0.15;
   user-select: none;
   white-space: nowrap;
 }

@@ -37,8 +37,6 @@ export const APPS: Record<string, AppMeta> = {
   tokens:   { id: "tokens",   name: "Tokens",    icon: "tokens", keywords: "tema cores paleta flavour",       size: { w: 700, h: 620 }, singleton: true, inRail: true },
   terminal: { id: "terminal", name: "Terminal",  icon: "terminal", keywords: "shell console bash cli",          size: { w: 680, h: 460 }, singleton: true, inRail: true },
   contact:  { id: "contact",  name: "Contato",   icon: "contact", keywords: "contato email falar",             size: { w: 560, h: 540 }, singleton: true, inRail: true },
-  player:   { id: "player",   name: "Áudio",     icon: "player", keywords: "musica som player ambient",       size: { w: 440, h: 380 }, singleton: true, inRail: true },
-  archive:  { id: "archive",  name: "Arquivo",   icon: "archive", keywords: "descartado lixo arquivo morto",   size: { w: 620, h: 460 }, singleton: true, inRail: true },
 };
 
 interface OSState {

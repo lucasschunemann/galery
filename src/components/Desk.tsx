@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from "motion/react";
 import { useOS, WORKSPACES } from "../os/store";
+import Ambient from "./Ambient";
 
 /* In a tiling WM the desktop is not a surface you decorate — it is
    whatever the windows leave behind. So this layer keeps only the
@@ -14,6 +15,10 @@ export default function Desk() {
 
   return (
     <div className="desk" data-empty={empty}>
+      <AnimatePresence>
+        {empty && <Ambient key="ambient" />}
+      </AnimatePresence>
+
       <AnimatePresence>
         {empty && (
           <motion.div

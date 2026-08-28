@@ -99,6 +99,16 @@ export default function ProjectView({ id }: { id?: string }) {
                   {p.stack.map((s) => <li key={s} className="chip">{s}</li>)}
                 </ul>
               </dd>
+              {p.link && (
+                <>
+                  <dt className="t-label">Link</dt>
+                  <dd>
+                    <a href={p.link} target="_blank" rel="noreferrer" onPointerEnter={() => sfx("hover")}>
+                      {p.link.replace(/^https?:\/\//, "")}
+                    </a>
+                  </dd>
+                </>
+              )}
             </dl>
           </aside>
         </div>

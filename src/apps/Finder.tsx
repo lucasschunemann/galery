@@ -99,7 +99,7 @@ export default function Finder() {
                 <dl className="masthead__meta">
                   <div><dt className="t-label">Coleção</dt><dd>{group}</dd></div>
                   <div><dt className="t-label">Itens</dt><dd>{items.length}</dd></div>
-                  <div><dt className="t-label">Estado</dt><dd>Em construção</dd></div>
+                  <div><dt className="t-label">Estado</dt><dd>Publicado</dd></div>
                 </dl>
               </div>
               <div className="masthead__rule masthead__rule--strong" />
@@ -209,7 +209,7 @@ export default function Finder() {
                     <th className="t-label">Nº</th>
                     <th className="t-label">Nome</th>
                     <th className="t-label">Tipo</th>
-                    <th className="t-label">Estado</th>
+                    <th className="t-label">Papel</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -226,7 +226,7 @@ export default function Finder() {
                         {p.title}
                       </td>
                       <td>{p.kind}</td>
-                      <td className="list__stack">Em construção</td>
+                      <td className="list__stack">{p.role}</td>
                     </motion.tr>
                   ))}
                 </tbody>

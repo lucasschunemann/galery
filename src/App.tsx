@@ -10,7 +10,6 @@ import Launcher from "./components/Launcher";
 import Boot from "./components/Boot";
 import Cursor from "./components/Cursor";
 import Desk from "./components/Desk";
-import NinoEmoji from "./components/NinoEmoji";
 import GridOverlay from "./components/GridOverlay";
 import SnapLayer from "./components/SnapLayer";
 
@@ -72,7 +71,6 @@ export default function App() {
       {phase === "live" && (
         <>
           <Desk />
-          <NinoEmoji />
           <Bar />
           {!compact && <Rail />}
           <Windows />

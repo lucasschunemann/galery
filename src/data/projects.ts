@@ -12,55 +12,116 @@ export interface Project {
   /** how loudly the cover speaks: 0 quiet, 1 normal, 2 accent-dominant */
   accent: 0 | 1 | 2;
   metrics: { label: string; value: string }[];
+  link?: string;
 }
 
 /* ============================================================
-   Placeholders, on purpose.
+   Trabalho real, feito como Lucas von e pela quieto®.
 
-   The covers and the layout are finished; the cases are not.
-   Each entry below is a slot with the shape of a case study, so
-   the gallery can be shown and read without anything here
-   claiming to be work that exists.
-
-   To fill one in: replace title, kind, tagline and body, put real
-   numbers in metrics, and leave `art` and `accent` alone unless
-   you want to change the rhythm of the grid.
+   Cinco projetos, cinco clientes reais. Sem métricas inventadas:
+   o que aparece em cada card lateral é o que existe de fato —
+   cliente, indústria, ano. Quando um projeto tem link público,
+   ele está em `link`.
    ============================================================ */
 
-const slot = (
-  n: number,
-  kind: string,
-  art: ArtVariant,
-  accent: 0 | 1 | 2
-): Project => ({
-  id: `projeto-${String(n).padStart(2, "0")}`,
-  title: `Projeto ${String(n).padStart(2, "0")}`,
-  kind,
-  tagline: "Espaço reservado para um estudo de caso.",
-  body: [
-    "Aqui entra o contexto: qual era o problema, para quem, e qual restrição definiu o projeto.",
-    "Em seguida, o processo e a decisão. O que foi testado, o que foi descartado e o que mudou no resultado.",
-  ],
-  role: "A definir",
-  stack: ["A definir"],
-  art,
-  accent,
-  metrics: [
-    { label: "Métrica", value: "—" },
-    { label: "Métrica", value: "—" },
-    { label: "Métrica", value: "—" },
-  ],
-});
-
 export const PROJECTS: Project[] = [
-  slot(1, "Interface", "arcs", 1),
-  slot(2, "Web", "mesh", 0),
-  slot(3, "Interface", "modular", 2),
-  slot(4, "Web", "numeral", 0),
-  slot(5, "Produto", "orbit", 1),
-  slot(6, "Motion", "wedge", 1),
-  slot(7, "Web", "split", 2),
-  slot(8, "Produto", "bars", 1),
+  {
+    id: "acronos",
+    title: "Acronos",
+    kind: "Interface",
+    tagline: "Sistema de design para consistência entre os produtos digitais da Área Central.",
+    body: [
+      "O Acronos foi criado para dar consistência, escalabilidade e eficiência aos produtos digitais da Área Central. Antes dele, cada time construía seus próprios componentes, e as pequenas diferenças entre eles se acumulavam até virar atrito.",
+      "O sistema entrega componentes reutilizáveis e diretrizes de acessibilidade. O ganho não é só visual: times passam menos tempo redecidindo decisões já tomadas, e a colaboração entre design e desenvolvimento fica mais direta.",
+    ],
+    role: "Design de sistema",
+    stack: ["Figma", "Design tokens"],
+    art: "modular",
+    accent: 2,
+    metrics: [
+      { label: "Cliente", value: "Área Central" },
+      { label: "Indústria", value: "Software" },
+      { label: "Ano", value: "2025" },
+    ],
+  },
+  {
+    id: "sendeski",
+    title: "Sendeski Café",
+    kind: "Produto",
+    tagline: "Site para uma marca de café gourmet brasileira, construído em torno do produto.",
+    body: [
+      "O Sendeski Café precisava de um site moderno e funcional para uma marca de café gourmet. O processo começou com análise competitiva no segmento e identificação de um público que valoriza experiências autênticas, não só o produto em si.",
+      "A estrutura final prioriza os produtos premium na hierarquia visual, com um layout responsivo pensado para navegação simples entre loja, produtos e informações institucionais.",
+    ],
+    role: "Web design",
+    stack: ["Framer"],
+    art: "orbit",
+    accent: 1,
+    metrics: [
+      { label: "Cliente", value: "Sendeski Café" },
+      { label: "Indústria", value: "Café gourmet" },
+      { label: "Ano", value: "2025" },
+    ],
+  },
+  {
+    id: "wf-odontologia",
+    title: "WF Odontologia",
+    kind: "Web",
+    tagline: "Landing page minimalista para uma clínica odontológica.",
+    body: [
+      "A WF Odontologia precisava de uma presença digital que comunicasse confiabilidade e expertise sem depender de excesso de informação na tela. A resposta foi um site limpo, com navegação intuitiva e conteúdo objetivo.",
+      "O foco ficou na experiência de quem chega buscando um profissional: encontrar o que precisa rápido, sem ruído visual no caminho.",
+    ],
+    role: "Web design",
+    stack: ["Framer"],
+    art: "bars",
+    accent: 0,
+    metrics: [
+      { label: "Cliente", value: "WF Odontologia" },
+      { label: "Indústria", value: "Odontologia" },
+      { label: "Ano", value: "2025" },
+    ],
+    link: "https://wfodontologia.framer.website",
+  },
+  {
+    id: "traveldone",
+    title: "TravelDone",
+    kind: "Web",
+    tagline: "Landing page para o infoproduto TravelDone, da MetaCumprida.",
+    body: [
+      "O TravelDone é um infoproduto sobre viajar com liberdade e praticidade. A landing page precisava traduzir essa promessa em algo visual e persuasivo sem soar como propaganda genérica de curso online.",
+      "O resultado combina clareza, uma comunicação direta e uma estética leve — pensada para transmitir confiança antes mesmo de o visitante ler o primeiro parágrafo.",
+    ],
+    role: "Web design",
+    stack: ["Framer"],
+    art: "wedge",
+    accent: 1,
+    metrics: [
+      { label: "Cliente", value: "MetaCumprida" },
+      { label: "Indústria", value: "Infoproduto" },
+      { label: "Ano", value: "2025" },
+    ],
+  },
+  {
+    id: "pf-advogados",
+    title: "PF Advogados",
+    kind: "Web",
+    tagline: "Site institucional para um escritório de advocacia.",
+    body: [
+      "Um escritório de advocacia vive de credibilidade, então o site da PF Advogados foi construído em torno disso: tons sóbrios, tipografia refinada e uma navegação direta até áreas de atuação e equipe.",
+      "Nada aqui tenta chamar atenção por conta própria — a seriedade da marca é o que precisa aparecer primeiro.",
+    ],
+    role: "Web design",
+    stack: ["Framer"],
+    art: "split",
+    accent: 0,
+    metrics: [
+      { label: "Cliente", value: "PF Advogados" },
+      { label: "Indústria", value: "Advocacia" },
+      { label: "Ano", value: "2024" },
+    ],
+    link: "https://passigfirmino.adv.br",
+  },
 ];
 
 export const byId = (id: string) => PROJECTS.find((p) => p.id === id);

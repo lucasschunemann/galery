@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { audioCtx, audioOut } from "../os/sound";
-import { useSfx } from "../os/useSfx";
+import { audioCtx, audioOut } from "../../os/sound";
+import { useSfx } from "../../os/useSfx";
 
 /* ============================================================
    AeroTunes — a generative ambient patch. Four detuned voices
