@@ -4,7 +4,7 @@ import { useOS } from "../os/store";
 import { SFX, unlockAudio } from "../os/sound";
 import { gentle, soft } from "../os/motion";
 
-/* Short, factual, and over quickly — the loading screen is not
+/* Short, factual, and over quickly. The loading screen is not
    where the personality goes. */
 const STEPS = [
   "Carregando o sistema",

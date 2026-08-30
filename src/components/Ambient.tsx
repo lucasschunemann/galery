@@ -18,7 +18,7 @@ import { useOS } from "../os/store";
      graphite  embers off hot charcoal
      nino      the faces, now floating
 
-   These bleed off the right edge, poster-scale — the reference is
+   These bleed off the right edge, poster-scale. The reference is
    less "polite desktop widget" and more the kind of framed print a
    studio hangs behind the espresso machine. The one restraint that
    survives from the wallpaper's rule: it still lives only where an
@@ -30,7 +30,7 @@ import { useOS } from "../os/store";
 
 type Still = { still: boolean };
 
-/** cursor position, springed — the poster leans toward whoever is looking */
+/** cursor position, springed: the poster leans toward whoever is looking */
 function usePointerTilt(still: boolean) {
   const mx = useMotionValue(0);
   const my = useMotionValue(0);
@@ -121,7 +121,7 @@ function BraunClock() {
 
 /* --------------------------------------------------------------- zurich */
 
-/* Not the Beethoven arcs — the other Müller-Brockmann move, the one
+/* Not the Beethoven arcs: the other Müller-Brockmann move, the one
    that ends up on the cover of every "grid systems" book: a field of
    circles whose radius is set by a rule, not by hand, so size reads
    as a diagonal progression rather than a decorative scatter. A slow
@@ -203,7 +203,7 @@ function DeStijl({ still }: Still) {
 
 /* ------------------------------------------------------------- alemanha */
 
-/* Circle, square, triangle — the Bauhaus primitives, each on its own
+/* Circle, square, triangle: the Bauhaus primitives, each on its own
    orbit at its own speed, so they only occasionally line up. */
 /* the palette is the flag, so black takes the circle; it carries more
    weight than the other two at the same opacity and is dialled back */
@@ -313,7 +313,7 @@ function Motes({ still }: Still) {
 
 /* The one piece of pure ornament in the system, kept because it earns
    its place by being funny rather than by being justified. */
-/** the home card is pinned left of centre — scatter around it, not on it */
+/** the home card is pinned left of centre: scatter around it, not on it */
 function spot() {
   for (let i = 0; i < 24; i++) {
     const x = 4 + Math.random() * 90;
@@ -384,7 +384,7 @@ export default function Ambient() {
   };
 
   /* keyed on the theme so switching themes rebuilds the figure from
-     scratch — the random scatters get a fresh draw each time */
+     scratch: the random scatters get a fresh draw each time */
   return (
     <motion.div
       key={flavour}

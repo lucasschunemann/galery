@@ -3,7 +3,7 @@ import { useId } from "react";
 /* ============================================================
    Project covers.
 
-   Flat, constructed, on a grid — the vocabulary of Crouwel and
+   Flat, constructed, on a grid: the vocabulary of Crouwel and
    the Ulm school rather than anything hand-drawn. Colour comes
    from the theme, so covers re-tint with the system. `accent`
    sets how loudly each one speaks; the variety across the grid

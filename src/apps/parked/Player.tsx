@@ -3,7 +3,7 @@ import { audioCtx, audioOut } from "../../os/sound";
 import { useSfx } from "../../os/useSfx";
 
 /* ============================================================
-   AeroTunes — a generative ambient patch. Four detuned voices
+   AeroTunes: a generative ambient patch. Four detuned voices
    walk a pentatonic scale through a slowly-breathing lowpass;
    an AnalyserNode drives the visualiser. No audio files.
    ============================================================ */

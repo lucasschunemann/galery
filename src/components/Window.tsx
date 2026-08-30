@@ -38,7 +38,7 @@ export default function Window({
 
   /* Geometry lives in motion values, never in inline style. The
      previous version wrote style.transform during a drag while
-     motion also animated transform — the two fought for the same
+     motion also animated transform, and the two fought for the same
      property and the window jumped on the next frame. */
   const target = floating
     ? { x: win.fx, y: win.fy, w: win.fw, h: win.fh }

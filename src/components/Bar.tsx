@@ -6,7 +6,7 @@ import { panelVariants, snappy, soft } from "../os/motion";
 import Pict from "./Pict";
 import Flag, { type FlagName } from "./Flag";
 
-/* Schools first, then places, then the one room that is neither —
+/* Schools first, then places, then the one room that is neither.
    Nino borrows the tricolour rule from the places (three colours
    is the whole point of it) but isn't tied to a flag, so it gets
    its own group at the end instead of a fourth flag. */
@@ -56,7 +56,7 @@ export default function Bar() {
         <button
           className="bar__logo"
           onClick={() => { sfx("open"); setLauncher(true); }}
-          title="Buscar — ⌘K"
+          title="Buscar (⌘K)"
         >
           <span className="bar__mark" aria-hidden />
           <span className="bar__name">von</span>
@@ -162,7 +162,7 @@ export default function Bar() {
           className="bar__btn bar__btn--icon"
           onClick={() => { toggleGrid(); sfx("click"); }}
           data-on={gridOverlay}
-          title="Mostrar a grade — ⌘G"
+          title="Mostrar a grade (⌘G)"
         >
           <Pict name="grid" size={15} />
         </button>

@@ -6,11 +6,11 @@ import type { Rect } from "./store";
    Three behaviours, in order of priority while a window is being
    dragged:
 
-     1. edge zones   — the pointer near an edge proposes half or
+     1. edge zones:   the pointer near an edge proposes half or
                        quarter of the work area
-     2. alignment    — edges and centres line up with neighbours
+     2. alignment:    edges and centres line up with neighbours
                        and with the work area, and say so
-     3. grid         — whatever is left rounds to the column grid
+     3. grid:         whatever is left rounds to the column grid
 
    Everything here is pure: it takes a proposed rectangle and
    returns where it should actually land.

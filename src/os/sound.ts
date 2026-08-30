@@ -1,5 +1,5 @@
 /* ============================================================
-   AERO OS — synthesized UI audio.
+   Synthesized UI audio.
    Every sound is generated at runtime with the Web Audio API,
    so the whole OS ships with zero audio assets.
    ============================================================ */
@@ -67,7 +67,7 @@ function voice(
   osc.stop(now + dur + 0.05);
 }
 
-/** filtered noise burst — used for whooshes and the trash crunch */
+/** filtered noise burst, used for whooshes and the trash crunch */
 function noise(opts: { t?: number; dur?: number; gain?: number; from?: number; to?: number } = {}) {
   const c = ac();
   if (!c || !master) return;
@@ -94,7 +94,7 @@ function noise(opts: { t?: number; dur?: number; gain?: number; from?: number; t
 }
 
 export const SFX = {
-  /** boot: two dry notes and a low swell — no cathedral reverb here */
+  /** boot: two dry notes and a low swell, no cathedral reverb here */
   boot() {
     voice(196, { dur: 1.5, wave: "sine", gain: 0.16, attack: 0.06, filter: 900 });
     voice(587.33, { t: 0.06, dur: 0.5, wave: "sine", gain: 0.16, filter: 4000 });
@@ -113,13 +113,13 @@ export const SFX = {
     noise({ dur: 1.6, gain: 0.05, from: 3000, to: 400 });
   },
 
-  /** window opens — rising gel pop */
+  /** window opens: rising gel pop */
   open() {
     voice(520, { dur: 0.16, wave: "sine", gain: 0.32, glide: 980, filter: 4000 });
     voice(1560, { t: 0.03, dur: 0.1, wave: "sine", gain: 0.08 });
   },
 
-  /** window closes — falling counterpart */
+  /** window closes: falling counterpart */
   close() {
     voice(760, { dur: 0.15, wave: "sine", gain: 0.26, glide: 300, filter: 3000 });
   },
@@ -130,7 +130,7 @@ export const SFX = {
     voice(2360, { t: 0.008, dur: 0.035, wave: "sine", gain: 0.05 });
   },
 
-  /** hover over an icon — barely-there tick */
+  /** hover over an icon: barely-there tick */
   hover() {
     voice(2100, { dur: 0.028, wave: "sine", gain: 0.045 });
   },
@@ -152,7 +152,7 @@ export const SFX = {
     voice(150, { t: 0.04, dur: 0.3, wave: "square", gain: 0.09, glide: 60, filter: 800 });
   },
 
-  /** theme switch — a small arpeggio */
+  /** theme switch: a small arpeggio */
   chime(base = 523.25) {
     [1, 1.26, 1.5].forEach((m, i) =>
       voice(base * m, { t: i * 0.055, dur: 0.4, wave: "sine", gain: 0.14, filter: 5000 })

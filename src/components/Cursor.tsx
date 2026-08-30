@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react";
    ripple.
 
    The native cursor is only hidden once ours is actually on
-   screen at a real position — otherwise the user spends the
+   screen at a real position. Otherwise the user spends the
    first frames (and the whole boot screen) with no pointer.
    ============================================================ */
 
@@ -21,14 +21,14 @@ export default function Cursor() {
   const shown = useRef(false);
 
   useEffect(() => {
-    // pointer-based devices only — a phantom arrow on touch is worse than none
+    // pointer-based devices only: a phantom arrow on touch is worse than none
     if (!window.matchMedia("(pointer: fine) and (hover: hover)").matches) return;
     setEnabled(true);
 
     const move = (e: PointerEvent) => {
       const x = e.clientX;
       const y = e.clientY;
-      // both layers sit exactly on the hotspot — anything that lags behind
+      // both layers sit exactly on the hotspot: anything that lags behind
       // shifts the cursor's visual centre of mass away from where clicks land
       const t3d = `translate3d(${x}px, ${y}px, 0)`;
       if (dot.current) dot.current.style.transform = t3d;

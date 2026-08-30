@@ -25,7 +25,7 @@ export default function Contact() {
     if (!WEB3FORMS_KEY) {
       // sem chave configurada, cai pro cliente de e-mail do visitante
       window.location.href =
-        `mailto:${TO}?subject=${encodeURIComponent(form.name)}&body=${encodeURIComponent(`${form.msg}\n\n— ${form.email}`)}`;
+        `mailto:${TO}?subject=${encodeURIComponent(form.name)}&body=${encodeURIComponent(`${form.msg}\n\n(${form.email})`)}`;
       setState("sent");
       sfx("chime");
       return;

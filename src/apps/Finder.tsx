@@ -89,12 +89,12 @@ export default function Finder() {
 
         {/* ---------------- content ---------------- */}
         <div className="finder__content" data-view={view}>
-          {/* editorial masthead — the Swiss layer starts here */}
+          {/* editorial masthead: the Swiss layer starts here */}
           {view !== "flow" && (
             <header className="masthead">
               <div className="masthead__rule" />
               <div className="masthead__row">
-                <span className="t-index masthead__no">{pad(0)}—{pad(items.length - 1)}</span>
+                <span className="t-index masthead__no">{pad(0)}–{pad(items.length - 1)}</span>
                 <h1 className="masthead__title t-display">Trabalho<br />selecionado</h1>
                 <dl className="masthead__meta">
                   <div><dt className="t-label">Coleção</dt><dd>{group}</dd></div>

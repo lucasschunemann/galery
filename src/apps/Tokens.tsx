@@ -8,12 +8,12 @@ const ACCENTS = ["--accent-dim", "--accent", "--accent-soft"];
 const TRICOLOUR = ["--accent", "--accent-2", "--accent-3"];
 const FLAVOURS: Flavour[] = ["zurich", "braun", "graphite", "brasil", "holanda", "alemanha", "nino"];
 const ORIGIN: string[] = ["brasil", "holanda", "alemanha"];
-/** every theme that carries three colours instead of one — the flag
-    themes plus Nino, which is tricolour without being tied to a place */
+/** every theme that carries three colours instead of one: the flag
+    themes, plus Nino, which is tricolour without being tied to a place */
 const TRIPLE: string[] = [...ORIGIN, "nino"];
 
 /* The system's own token sheet, live. Changing anything here
-   changes the OS you are looking at — including this window. */
+   changes the OS you are looking at, including this window. */
 export default function Tokens() {
   const { setFlavour, toggleGrain, toggleSound } = useOS();
   const flavour = useOS((s) => s.flavour);
@@ -23,7 +23,7 @@ export default function Tokens() {
   const [copied, setCopied] = useState(false);
 
   const read = (v: string) =>
-    getComputedStyle(document.documentElement).getPropertyValue(v).trim() || "—";
+    getComputedStyle(document.documentElement).getPropertyValue(v).trim() || "–";
 
   const sheet = [...RAMP, ...ACCENTS, ...(TRIPLE.includes(flavour) ? ["--accent-2", "--accent-3"] : [])]
     .map((v) => `  ${v}: ${read(v)};`)

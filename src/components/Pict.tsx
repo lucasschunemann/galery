@@ -4,7 +4,7 @@
    One system, drawn the Ulm way: every mark sits on the same
    24-unit grid, uses the same 1.5 stroke, and is built from
    circles, squares and 45° diagonals only. Nothing is drawn by
-   eye — if a shape cannot be described by the grid, it does not
+   eye. If a shape cannot be described by the grid, it does not
    belong in the set.
    ============================================================ */
 

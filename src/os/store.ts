@@ -231,7 +231,7 @@ export const useOS = create<OSState>((set, get) => ({
 }));
 
 /* ============================================================
-   LAYOUT — dwindle, the Hyprland default.
+   LAYOUT: dwindle, the Hyprland default.
 
    Each window takes half of what is left, splitting whichever
    side of the remaining region is longer. The result is a
@@ -250,7 +250,7 @@ export function dwindle(area: Rect, count: number, gap: number): Rect[] {
       break;
     }
     /* The first split is 0.618 rather than a half. A room reads
-       calmer when its parts are unequal — an even division makes
+       calmer when its parts are unequal: an even division makes
        the eye compare the two halves instead of settling into one. */
     const ratio = i === 0 ? 0.618 : 0.5;
     const horizontal = region.w >= region.h;

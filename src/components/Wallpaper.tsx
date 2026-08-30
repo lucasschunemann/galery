@@ -197,7 +197,7 @@ export default function Wallpaper() {
       raf = still ? 0 : requestAnimationFrame(frame);
     }
 
-    /* When the loop is stopped — reduced motion, or a hidden tab —
+    /* When the loop is stopped (reduced motion, or a hidden tab),
        nothing would ever redraw, so a theme change left the old
        colours on the canvas while the rest of the interface moved on.
        Anything that invalidates the picture repaints it directly. */

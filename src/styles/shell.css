@@ -1,5 +1,5 @@
 /* ============================================================
-   SHELL — bar, rail, windows, launcher, desk, cursor
+   SHELL: bar, rail, windows, launcher, desk, cursor
    ============================================================ */
 
 /* ------------------------------------------------------------
@@ -333,7 +333,7 @@
 .win__rz:hover { opacity: 0.9; }
 
 /* ------------------------------------------------------------
-   DESK / HOME — what the windows leave behind
+   DESK / HOME: what the windows leave behind
    ------------------------------------------------------------ */
 
 .desk {
@@ -567,7 +567,7 @@
 }
 
 /* ------------------------------------------------------------
-   AMBIENT — one figure per theme, only on an empty workspace
+   AMBIENT: one figure per theme, only on an empty workspace
 
    This layer sits under the home text and never overlaps it: the
    home card is pinned left with a max width, the staged figures
@@ -582,7 +582,7 @@
   overflow: hidden;
 }
 
-/* poster-scale, bled off the right edge — the studio-print register,
+/* Poster-scale, bled off the right edge: the studio-print register,
    not the desktop-widget one. .amb clips it, so the crop is deliberate. */
 .amb__stage {
   position: absolute;
@@ -607,7 +607,7 @@
 }
 
 /* graphite: motes rising the full height of the screen. The negative
-   animation-delay is the point — it drops each one in mid-flight, so
+   animation-delay is the point: it drops each one in mid-flight, so
    the field is already moving on the first frame. */
 .amb__motes { position: absolute; inset: 0; }
 .amb__mote {
@@ -638,7 +638,7 @@
 }
 
 /* ------------------------------------------------------------
-   GRID OVERLAY — ⌘G
+   GRID OVERLAY (⌘G)
    ------------------------------------------------------------ */
 
 .gridoverlay {
@@ -683,7 +683,7 @@
 }
 
 /* ------------------------------------------------------------
-   SNAP — what the system shows while a window is being moved
+   SNAP: what the system shows while a window is being moved
    ------------------------------------------------------------ */
 
 .snap {

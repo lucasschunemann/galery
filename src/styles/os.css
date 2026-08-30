@@ -9,7 +9,7 @@
    Rules of the house:
      · one neutral ramp, one accent, nothing else
      · surfaces are separated by a 1px line, not by a shadow
-     · radii are small — softness comes from spacing, not corners
+     · radii are small: softness comes from spacing, not corners
      · motion is plentiful but precise: fast, eased, never elastic
      · no ornament survives that does not carry information
    ============================================================ */
@@ -92,7 +92,7 @@
    COLOUR PROGRAMME
 
    Seven rooms. Three come from a school of design, three from a
-   place, and one is just for fun — the two serious kinds obey
+   place, and one is just for fun. The two serious kinds obey
    different rules, and the fun one borrows the tricolour rule
    from the places because three colours is the whole point of it.
 
@@ -215,7 +215,7 @@
 
 /* --- nino · Ubuntu / Canonical, mais brincalhão que sério ---
    Aubergine, orange and the amber that sits between Yaru's accent
-   options — purple carries text because it is the one with real
+   options. Purple carries text because it is the one with real
    contrast, orange and yellow are fills. The one theme in the set
    that is allowed to be a joke on purpose. >:] */
 [data-flavour="nino"] {
@@ -233,7 +233,7 @@
 }
 
 /* ============================================================
-   MATERIALS — surfaces are separated by a line, not a shadow
+   MATERIALS: surfaces are separated by a line, not a shadow
    ============================================================ */
 
 .glass {
@@ -251,14 +251,14 @@
   box-shadow: 0 2px 6px var(--shade), 0 28px 70px -28px var(--shade);
 }
 
-/* where the browser can draw a continuous corner, let it —
+/* where the browser can draw a continuous corner, let it:
    the transition into the curve is what reads as "soft" */
 @supports (corner-shape: squircle) {
   .glass, .win, .card__art, .btn { corner-shape: squircle; }
 }
 
 /* ============================================================
-   TYPE ROLES — one family, carried by weight and tracking
+   TYPE ROLES: one family, carried by weight and tracking
    ============================================================ */
 
 .t-display {
@@ -293,7 +293,7 @@
   font-weight: 400;
   line-height: 1.72;
   color: var(--text-dim);
-  /* the Swiss measure — a line that runs longer stops being read */
+  /* the Swiss measure: a line that runs longer stops being read */
   max-width: 64ch;
 }
 .t-label {

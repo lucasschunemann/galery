@@ -6,7 +6,7 @@ import type { Transition, Variants } from "motion/react";
    The brief asked for a lot of movement, and the reference asks
    for restraint. Those are not in conflict: Linear moves almost
    constantly, but nothing it does wobbles. So the quantity of
-   choreography stays and the character changes — critically
+   choreography stays and the character changes: critically
    damped springs and short eased tweens, no overshoot anywhere.
    ============================================================ */
 
@@ -16,13 +16,13 @@ export const soft: Transition = { type: "spring", stiffness: 400, damping: 40, m
 /** for controls that must answer immediately */
 export const snappy: Transition = { type: "spring", stiffness: 700, damping: 46, mass: 0.6 };
 
-/** layout retiling — a touch slower so panes read as moving, not cutting */
+/** layout retiling: a touch slower so panes read as moving, not cutting */
 export const tile: Transition = { type: "spring", stiffness: 340, damping: 38, mass: 1 };
 
 export const quick = (d = 0.18): Transition => ({ duration: d, ease: [0.16, 1, 0.3, 1] });
 export const gentle = (d = 0.32): Transition => ({ duration: d, ease: [0.16, 1, 0.3, 1] });
 
-/** stagger helper — steps are short; long cascades read as slow, not rich */
+/** stagger helper: steps are short, long cascades read as slow, not rich */
 export const stagger = (i: number, step = 0.028, base = 0): Transition => ({
   ...soft,
   delay: base + i * step,

@@ -9,12 +9,12 @@ import { gentle } from "../os/motion";
    actually be checked against it. */
 export default function GridOverlay() {
   const on = useOS((s) => s.gridOverlay);
-  const [margin, setMargin] = useState("—");
+  const [margin, setMargin] = useState("–");
 
   useEffect(() => {
     if (!on) return;
     const v = getComputedStyle(document.documentElement).getPropertyValue("--gap-out").trim();
-    setMargin(v || "—");
+    setMargin(v || "–");
   }, [on]);
 
   return (

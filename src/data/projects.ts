@@ -19,7 +19,7 @@ export interface Project {
    Trabalho real, feito como Lucas von e pela quieto®.
 
    Seis projetos, seis clientes reais. Sem métricas inventadas:
-   o que aparece em cada card lateral é o que existe de fato —
+   o que aparece em cada card lateral é o que existe de fato:
    cliente, indústria, ano. Quando um projeto tem link público,
    ele está em `link`. Acompanha não tem: é produto de cliente,
    ainda em desenvolvimento, sem versão pública para apontar.
@@ -32,7 +32,7 @@ export const PROJECTS: Project[] = [
     kind: "Produto",
     tagline: "SaaS que mostra pra lojas de material de construção se elas estão comprando bem.",
     body: [
-      "O produto acompanha preço e demanda do mercado regional e compara com o que a loja está de fato pagando, pra mostrar se a compra dela está boa ou não. Entrei nele para desenhar as telas e os fluxos que hoje seguem para desenvolvimento — a tela de produto, por exemplo, passou por várias versões inteiras até fechar num layout de coluna única com indicadores de confiança nos dados, num vocabulário visual próximo do Linear.",
+      "O produto acompanha preço e demanda do mercado regional e compara com o que a loja está de fato pagando, pra mostrar se a compra dela está boa ou não. Entrei nele para desenhar as telas e os fluxos que hoje seguem para desenvolvimento. A tela de produto, por exemplo, passou por várias versões inteiras até fechar num layout de coluna única com indicadores de confiança nos dados, num vocabulário visual próximo do Linear.",
       "Um dos módulos que desenhei transforma a Reforma Tributária brasileira em oportunidade de produto: um motor de créditos que simula a transição de PIS/COFINS/ICMS/ISS para CBS/IBS, com um simulador editável na própria tela em vez de um cenário fixo. Também fiz o módulo de Educação do produto.",
     ],
     role: "Design de produto",
@@ -111,7 +111,7 @@ export const PROJECTS: Project[] = [
     tagline: "Landing page para o infoproduto TravelDone, da MetaCumprida.",
     body: [
       "O TravelDone é um infoproduto sobre viajar com liberdade e praticidade. A landing page precisava traduzir essa promessa em algo visual e persuasivo sem soar como propaganda genérica de curso online.",
-      "O resultado combina clareza, uma comunicação direta e uma estética leve — pensada para transmitir confiança antes mesmo de o visitante ler o primeiro parágrafo.",
+      "O resultado combina clareza, comunicação direta e uma estética leve, pensada para transmitir confiança antes mesmo de o visitante ler o primeiro parágrafo.",
     ],
     role: "Web design",
     stack: ["Framer"],
@@ -131,7 +131,7 @@ export const PROJECTS: Project[] = [
     tagline: "Site institucional para um escritório de advocacia.",
     body: [
       "Um escritório de advocacia vive de credibilidade, então o site da PF Advogados foi construído em torno disso: tons sóbrios, tipografia refinada e uma navegação direta até áreas de atuação e equipe.",
-      "Nada aqui tenta chamar atenção por conta própria — a seriedade da marca é o que precisa aparecer primeiro.",
+      "A seriedade da marca precisa aparecer antes de qualquer coisa, sem elementos brigando por atenção.",
     ],
     role: "Web design",
     stack: ["Framer"],

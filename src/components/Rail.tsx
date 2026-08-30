@@ -18,7 +18,7 @@ export default function Rail() {
       <button
         className="rail__btn rail__btn--launch"
         onClick={() => { sfx("open"); setLauncher(true); }}
-        title="Buscar — ⌘K"
+        title="Buscar (⌘K)"
       >
         <Pict name="search" size={17} />
       </button>

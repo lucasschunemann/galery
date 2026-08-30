@@ -2,7 +2,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { useOS, WORKSPACES } from "../os/store";
 import Ambient from "./Ambient";
 
-/* In a tiling WM the desktop is not a surface you decorate — it is
+/* In a tiling WM the desktop is not a surface you decorate. It is
    whatever the windows leave behind. So this layer keeps only the
    registration marks when work is on screen, and expands into a
    full home screen the moment a workspace is empty. */
