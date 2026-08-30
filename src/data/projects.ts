@@ -18,13 +18,33 @@ export interface Project {
 /* ============================================================
    Trabalho real, feito como Lucas von e pela quieto®.
 
-   Cinco projetos, cinco clientes reais. Sem métricas inventadas:
+   Seis projetos, seis clientes reais. Sem métricas inventadas:
    o que aparece em cada card lateral é o que existe de fato —
    cliente, indústria, ano. Quando um projeto tem link público,
-   ele está em `link`.
+   ele está em `link`. Acompanha não tem: é produto de cliente,
+   ainda em desenvolvimento, sem versão pública para apontar.
    ============================================================ */
 
 export const PROJECTS: Project[] = [
+  {
+    id: "acompanha",
+    title: "Acompanha",
+    kind: "Produto",
+    tagline: "Plataforma de inteligência de mercado B2B para materiais de construção.",
+    body: [
+      "Entrei no Acompanha para desenhar as telas e os fluxos que hoje seguem para desenvolvimento. A tela de produto, por exemplo, passou por várias versões inteiras até fechar num layout de coluna única com indicadores de confiança nos dados, num vocabulário visual próximo do Linear.",
+      "Um dos módulos que desenhei transforma a Reforma Tributária brasileira em oportunidade de produto: um motor de créditos que simula a transição de PIS/COFINS/ICMS/ISS para CBS/IBS, com um simulador editável na própria tela em vez de um cenário fixo. Também fiz o módulo de Educação do produto e venho construindo, com o Figma MCP, a biblioteca de componentes da assistente de IA da plataforma, a Yana.",
+    ],
+    role: "Design de produto",
+    stack: ["Figma", "Figma MCP"],
+    art: "numeral",
+    accent: 1,
+    metrics: [
+      { label: "Cliente", value: "Acompanha" },
+      { label: "Indústria", value: "Inteligência de mercado" },
+      { label: "Ano", value: "2025–2026" },
+    ],
+  },
   {
     id: "acronos",
     title: "Acronos",
@@ -43,6 +63,7 @@ export const PROJECTS: Project[] = [
       { label: "Indústria", value: "Software" },
       { label: "Ano", value: "2025" },
     ],
+    link: "https://acronosds.framer.website",
   },
   {
     id: "sendeski",
@@ -101,6 +122,7 @@ export const PROJECTS: Project[] = [
       { label: "Indústria", value: "Infoproduto" },
       { label: "Ano", value: "2025" },
     ],
+    link: "https://traveldone.framer.website",
   },
   {
     id: "pf-advogados",
