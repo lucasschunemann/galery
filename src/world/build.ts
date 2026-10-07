@@ -1,5 +1,10 @@
 import {
   AdditiveBlending,
+  BackSide,
+  CircleGeometry,
+  ExtrudeGeometry,
+  Path,
+  Shape,
   BoxGeometry,
   BufferAttribute,
   BufferGeometry,
@@ -14,7 +19,7 @@ import {
   TorusGeometry,
   Vector3,
 } from "three";
-import { BRIDGES, BRIDGE_WIDTH, HILL_RADIUS, ZONES, groundY, type Zone } from "./layout";
+import { BRIDGES, BRIDGE_WIDTH, HILL_RADIUS, POND_R, ZONES, groundY, type Zone } from "./layout";
 import { M, anodized, standard } from "./materials";
 import { archWall, bridgeArch, onLayer, shadowed, type Opening } from "./geo";
 import { paintGlow, paintSign, signSpec } from "./sign";
@@ -53,11 +58,21 @@ export function buildArchitecture(): Built {
   const rings = new Map<string, { ring: Mesh; mat: MeshBasicMaterial }>();
   const anchors = new Map<string, Vector3>();
   const floorRects: [number, number, number, number][] = [];
+  const floorRings: Ring[] = [];
 
   for (const zn of ZONES) {
     const r = rng(zn.id.length * 97 + Math.round(zn.x * 3 + zn.z * 7));
     if (zn.kind === "hill") {
       root.add(hill(zn));
+    } else if (zn.kind === "pond") {
+      root.add(pondBase(zn));
+      floorRings.push({ x: zn.x, z: zn.z, r0: POND_R + 0.15, r1: zn.half });
+    } else if (zn.kind === "lookout") {
+      root.add(lookoutBase(zn));
+      floorRings.push({ x: zn.x, z: zn.z, r0: 0, r1: zn.half });
+    } else if (zn.kind === "arcade" || zn.kind === "library" || zn.kind === "garden") {
+      root.add(onLayer(shadowed(roundSlab(zn), false, true), BELOW));
+      floorRings.push({ x: zn.x, z: zn.z, r0: 0, r1: zn.half });
     } else {
       root.add(base(zn, r));
       floorRects.push([zn.x - zn.half, zn.x + zn.half, zn.z - zn.half, zn.z + zn.half]);
@@ -65,7 +80,7 @@ export function buildArchitecture(): Built {
       else root.add(atriumColumns(zn));
     }
 
-    if (zn.kind !== "atrium" && zn.kind !== "hill") {
+    if (zn.kind === "work" || zn.kind === "about" || zn.kind === "contact") {
       const p = pedestal(zn);
       root.add(p.group);
       rings.set(zn.id, { ring: p.ring, mat: p.mat });
@@ -75,7 +90,15 @@ export function buildArchitecture(): Built {
     root.add(s.group);
     signs.push(s);
 
-    const ay = zn.kind === "hill" ? groundY(zn.focus.x, zn.focus.z) + 6.6 : zn.kind === "atrium" ? 5.6 : 4.7;
+    const ay =
+      zn.kind === "hill" ? groundY(zn.focus.x, zn.focus.z) + 6.6
+      : zn.kind === "atrium" ? 5.6
+      : zn.kind === "pond" ? 3.8
+      : zn.kind === "lookout" ? 7.6
+      : zn.kind === "arcade" ? 4.6
+      : zn.kind === "library" ? 4.4
+      : zn.kind === "garden" ? 5
+      : 4.7;
     anchors.set(zn.id, new Vector3(zn.focus.x, ay, zn.focus.z));
   }
 
@@ -97,7 +120,7 @@ export function buildArchitecture(): Built {
     );
   }
 
-  const floor = new Mesh(floorGeometry(floorRects), M.floor);
+  const floor = new Mesh(floorGeometry(floorRects, floorRings), M.floor);
   floor.receiveShadow = true;
   root.add(onLayer(floor, BELOW));
 
@@ -106,16 +129,34 @@ export function buildArchitecture(): Built {
 
 /* ---------------- o piso, num desenho só ---------------- */
 
-function floorGeometry(rects: [number, number, number, number][]) {
+interface Ring { x: number; z: number; r0: number; r1: number }
+
+function floorGeometry(rects: [number, number, number, number][], rings: Ring[]) {
   const pos: number[] = [];
   const nor: number[] = [];
   const idx: number[] = [];
-  rects.forEach(([x0, x1, z0, z1], i) => {
+  rects.forEach(([x0, x1, z0, z1]) => {
+    const o = pos.length / 3;
     pos.push(x0, 0, z0, x1, 0, z0, x1, 0, z1, x0, 0, z1);
     nor.push(0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0);
-    const o = i * 4;
     idx.push(o, o + 2, o + 1, o, o + 3, o + 2);
   });
+  // anéis e discos, para as ilhas redondas
+  const SEG = 80;
+  for (const r of rings) {
+    const o = pos.length / 3;
+    for (let i = 0; i <= SEG; i++) {
+      const a = (i / SEG) * Math.PI * 2;
+      const c = Math.cos(a);
+      const sn = Math.sin(a);
+      pos.push(r.x + c * r.r0, 0, r.z + sn * r.r0, r.x + c * r.r1, 0, r.z + sn * r.r1);
+      nor.push(0, 1, 0, 0, 1, 0);
+    }
+    for (let i = 0; i < SEG; i++) {
+      const a = o + i * 2;
+      idx.push(a, a + 2, a + 1, a + 1, a + 2, a + 3);
+    }
+  }
   const g = new BufferGeometry();
   g.setAttribute("position", new BufferAttribute(new Float32Array(pos), 3));
   g.setAttribute("normal", new BufferAttribute(new Float32Array(nor), 3));
@@ -269,6 +310,11 @@ function sign(zn: Zone): Sign {
   let x: number, y: number, z: number;
   if (zn.kind === "atrium") { x = zn.x + 3.6; y = 5.0; z = zn.z - 7.0; }
   else if (zn.kind === "hill") { x = zn.x + 6.5; y = 4.8; z = zn.z - 5.5; }
+  else if (zn.kind === "pond") { x = zn.x + 5.2; y = 4.4; z = zn.z - 8.2; }
+  else if (zn.kind === "lookout") { x = zn.x - 7.6; y = 4.2; z = zn.z + 3.2; }
+  else if (zn.kind === "arcade") { x = zn.x + 7.4; y = 4.4; z = zn.z - 0.6; }
+  else if (zn.kind === "library") { x = zn.x + 4.8; y = 4.4; z = zn.z - 5.6; }
+  else if (zn.kind === "garden") { x = zn.x + 5.8; y = 4.2; z = zn.z - 4.6; }
   else { x = zn.x + 2.3; y = 3.6; z = zn.z - 4.6; }
   g.position.set(x, y, z);
   g.rotation.y = Math.PI / 4;
@@ -317,4 +363,66 @@ function hill(zn: Zone) {
   cone.position.set(zn.x, -1.42 - 8, zn.z);
   g.add(slab, cone);
   return onLayer(g, BELOW);
+}
+
+/* ---------------- a lagoa e o mirante ---------------- */
+
+function roundSlab(zn: Zone, hole = 0) {
+  const g = new Group();
+  const R = zn.half;
+  let slab: Mesh;
+  if (hole > 0) {
+    const sh = new Shape();
+    sh.absarc(0, 0, R, 0, Math.PI * 2, false);
+    const h = new Path();
+    h.absarc(0, 0, hole, 0, Math.PI * 2, true);
+    sh.holes.push(h);
+    const geo = new ExtrudeGeometry(sh, { depth: 1.4, bevelEnabled: false, curveSegments: 64 });
+    geo.rotateX(Math.PI / 2);
+    slab = new Mesh(geo, M.white);
+    slab.position.set(zn.x, -0.02, zn.z);
+  } else {
+    slab = new Mesh(new CylinderGeometry(R, R * 0.96, 1.4, 72), M.white);
+    slab.position.set(zn.x, -0.72, zn.z);
+  }
+  const cone = new Mesh(new CylinderGeometry(R * 0.86, 0.3, 15, 10), M.trunk);
+  cone.position.set(zn.x, -1.42 - 7.5, zn.z);
+  g.add(slab, cone);
+  return g;
+}
+
+function pondBase(zn: Zone) {
+  const g = roundSlab(zn, POND_R + 0.15);
+  // a bacia: parede de azulejo por dentro e um fundo azul-petróleo
+  const wall = new Mesh(new CylinderGeometry(POND_R + 0.15, POND_R + 0.15, 1.3, 72, 1, true), standard("#dff4ff", { rough: 0.3, side: BackSide, fade: 0 }));
+  wall.position.set(zn.x, -0.67, zn.z);
+  const bed = new Mesh(new CircleGeometry(POND_R + 0.15, 72), standard("#0f6f95", { rough: 0.6, fade: 0 }));
+  bed.rotation.x = -Math.PI / 2;
+  bed.position.set(zn.x, -1.2, zn.z);
+  g.add(wall, bed);
+  return onLayer(shadowed(g, false, true), BELOW);
+}
+
+function lookoutBase(zn: Zone) {
+  const g = roundSlab(zn);
+  // um guarda-corpo cromado em volta, aberto onde chega a ponte
+  const R = zn.half - 0.45;
+  const gap = 0.32;
+  const rail = new TorusGeometry(R, 0.055, 6, 160, Math.PI * 2 - gap * 2);
+  rail.rotateZ(Math.PI / 2 + gap);
+  rail.rotateX(-Math.PI / 2);
+  const top = new Mesh(rail, M.chrome);
+  top.position.set(zn.x, 1.05, zn.z);
+  g.add(top);
+  for (let i = 0; i < 26; i++) {
+    const a = Math.PI / 2 + gap + (i / 25) * (Math.PI * 2 - gap * 2);
+    const post = new Mesh(new CylinderGeometry(0.04, 0.04, 1.05, 6), M.chrome);
+    post.position.set(zn.x + Math.cos(a) * R, 0.52, zn.z - Math.sin(a) * R);
+    g.add(post);
+  }
+  const deco = shadowed(g, false, true);
+  // o corrimão fica no espelho; a base, não
+  onLayer(deco.children[0], BELOW);
+  onLayer(deco.children[1], BELOW);
+  return deco;
 }

@@ -29,6 +29,10 @@ import { buildArchitecture, BELOW, type Built } from "./build";
 import { buildSculpture, type Sculpture } from "./sculptures";
 import { bubbles, clouds, cubes, sparkles } from "./ambient";
 import { Player } from "./player";
+import { buildNpcs, type Npc } from "./npcs";
+import { hiddenStars, jumpPads, popBubbles } from "./play";
+import { buildTubes, type Station, type Tube } from "./tubes";
+import { anodized } from "./materials";
 import { ZONES, groundY, standPoint, walkable, zoneById, type Zone } from "./layout";
 
 /* ============================================================
@@ -104,8 +108,16 @@ export interface WorldEvents {
   moveStart: () => void;
   step: (surface: "tile" | "grass") => void;
   morph: (toMarble: boolean) => void;
-  jump: () => void;
+  jump: (double: boolean) => void;
   land: (impact: number) => void;
+  sit: () => void;
+  launch: () => void;
+  tube: (kind: "in" | "out", st: Station) => void;
+  station: (st: Station | null) => void;
+  npcAction: (npc: Npc) => void;
+  pop: () => void;
+  star: (count: number, total: number) => void;
+  chat: (npc: Npc | null) => void;
   frame: () => void;
 }
 
@@ -141,6 +153,20 @@ export class World {
   private built: Built;
   private sculptures: { zone: Zone; s: Sculpture; near: number }[] = [];
   private hits: { zone: Zone; mesh: Mesh }[] = [];
+  npcs: Npc[] = [];
+  pads!: ReturnType<typeof jumpPads>;
+  pops!: ReturnType<typeof popBubbles>;
+  stars!: ReturnType<typeof hiddenStars>;
+  private gold = false;
+  tubes!: ReturnType<typeof buildTubes>;
+  private ride: { tube: Tube; from: 0 | 1; t: number; dur: number; last: Vector3; exit: Station } | null = null;
+  private pendingTube: Station | null = null;
+  private tubeCooldown = 0;
+  private zoomBefore = 0;
+  stationNear: Station | null = null;
+  private tubeHits: { st: Station; mesh: Mesh }[] = [];
+  talking: Npc | null = null;
+  private talkW = new Map<string, number>();
   private amb: { clouds: ReturnType<typeof clouds>; cubes: ReturnType<typeof cubes>; bubbles: ReturnType<typeof bubbles>; sparks: ReturnType<typeof sparkles> };
   private target = new Vector3();
   private zoom = 24;
@@ -247,20 +273,47 @@ export class World {
       const s = buildSculpture(zone);
       this.scene.add(s.group);
       this.sculptures.push({ zone, s, near: 0 });
-      const hit = new Mesh(new SphereGeometry(zone.kind === "atrium" ? 4.6 : 2.4, 8, 6));
+      const hit = new Mesh(new SphereGeometry(zone.kind === "atrium" ? 4.6 : zone.kind === "pond" ? 4 : zone.kind === "garden" ? 2.8 : 2.4, 8, 6));
       hit.visible = false;
-      hit.position.set(zone.focus.x, zone.kind === "hill" ? 6 : zone.kind === "atrium" ? 2.8 : 2.6, zone.focus.z);
+      hit.position.set(zone.focus.x, zone.kind === "hill" ? 6 : zone.kind === "lookout" ? 4 : zone.kind === "pond" ? 1.6 : zone.kind === "atrium" ? 2.8 : zone.kind === "garden" ? 2.4 : 2.2, zone.focus.z);
       this.scene.add(hit);
       this.hits.push({ zone, mesh: hit });
     }
     this.amb = { clouds: clouds(), cubes: cubes(), bubbles: bubbles(), sparks: sparkles() };
     this.scene.add(this.amb.clouds.object, this.amb.cubes.object, this.amb.bubbles.object, this.amb.sparks.object);
 
+    this.npcs = buildNpcs();
+    for (const n of this.npcs) if (n.object) this.scene.add(n.object);
+    this.pads = jumpPads();
+    this.pops = popBubbles();
+    this.stars = hiddenStars();
+    this.scene.add(this.pads.object, this.pops.object, this.stars.object);
+    this.tubes = buildTubes();
+    this.scene.add(this.tubes.group);
+    for (const st of this.tubes.stations) {
+      const m = new Mesh(new SphereGeometry(1.3, 8, 6));
+      m.visible = false;
+      m.position.set(st.x, st.y + 1.6, st.z);
+      this.scene.add(m);
+      this.tubeHits.push({ st, mesh: m });
+    }
+    if (this.stars.count >= this.stars.total) this.golden(false);
+
     this.scene.add(this.player.root, this.player.contact);
     this.player.contact.layers.set(BELOW);
     this.player.place(1.5, 3.5);
-    this.player.onStep = () => this.on.step?.(groundY(this.player.pos.x, this.player.pos.z) > 0.02 ? "grass" : "tile");
-    this.player.onJump = () => this.on.jump?.();
+    this.player.onStep = () => {
+      this.on.step?.(groundY(this.player.pos.x, this.player.pos.z) > 0.02 ? "grass" : "tile");
+      // correndo, levanta um pouco de brilho do chão
+      if (this.player.speed > 4.5 && Math.random() < 0.5) {
+        this.amb.sparks.emit(this.player.root.position.clone().setY(this.player.pos.y + 0.08), "#ffffff", 1, 0.3, 0.25);
+      }
+    };
+    this.player.onJump = (double) => {
+      this.on.jump?.(double);
+      if (double) this.amb.sparks.emit(this.player.root.position.clone().setY(this.player.root.position.y + 0.4), "#ffffff", 8, 0.6, 1.8);
+    };
+    this.player.onSit = () => this.on.sit?.();
     this.player.onLand = (k) => {
       this.on.land?.(k);
       if (k > 0.5) this.amb.sparks.emit(this.player.root.position.clone().setY(this.player.pos.y + 0.1), "#ffffff", 5, 0.7, 1.4);
@@ -364,8 +417,29 @@ export class World {
   get anchors() { return this.built.anchors; }
 
   /** uma chuva de brilhos na escultura, quando a placa abre */
+  /** a pele dourada, de quem achou as oito estrelas */
+  golden(party = true) {
+    if (this.gold) return;
+    this.gold = true;
+    this.player.skin(anodized("#ffcf6a", 0.12));
+    if (party) {
+      const p = this.player.root.position.clone().setY(this.player.pos.y + 1);
+      this.amb.sparks.emit(p, "#ffd23a", 30, 1.2, 4);
+      this.amb.sparks.emit(p, "#ffffff", 20, 1, 3);
+    }
+  }
+
+  emote(name: "wave" | "dance" | "sit" | "stretch") {
+    if (this.mode === "follow" && !this.inputLocked) this.player.emote(name);
+  }
+
+  meditate(on: boolean) {
+    this.player.meditating = on;
+    if (on) this.player.stop();
+  }
+
   celebrate(zn: Zone) {
-    const c = new Vector3(zn.focus.x, zn.kind === "hill" ? 6 : 2.6, zn.focus.z);
+    const c = new Vector3(zn.focus.x, zn.kind === "hill" ? 6 : zn.kind === "lookout" ? 4.4 : zn.kind === "garden" ? 3 : 2.6, zn.focus.z);
     this.amb.sparks.emit(c, zn.color, 14, 2.6, 2.2);
     this.amb.sparks.emit(c, "#ffffff", 10, 2.6, 2.2);
   }
@@ -413,8 +487,14 @@ export class World {
     const drive = this.drive();
     const driving = !!(drive.x || drive.z);
     if (driving && !this.driving) this.on.moveStart?.();
+    if (driving) this.pendingTube = null;
     this.driving = driving;
-    this.player.update(dt, this.t, this.mode === "follow" ? drive : { x: 0, z: 0, marble: false, jump: false });
+    const riding = !!this.ride;
+    if (riding) this.tickRide(dt);
+    else this.player.update(dt, this.t, this.mode === "follow" ? drive : { x: 0, z: 0, marble: false, jump: false });
+    this.tubeCooldown = Math.max(0, this.tubeCooldown - dt);
+    this.tubes.tick(this.t);
+    this.checkTubes();
     if (this.player.morph > 0.5 && this.player.speed > 2) {
       if (Math.random() < dt * 22) {
         this.amb.sparks.emit(this.player.root.position.clone().setY(this.player.pos.y + 0.3), Math.random() > 0.5 ? "#ff9edf" : "#9ff3ff", 1, 0.4, 0.4);
@@ -426,9 +506,9 @@ export class World {
     let bd = Infinity;
     for (const it of this.sculptures) {
       const z = it.zone;
-      const reach = z.kind === "atrium" ? 7.6 : z.kind === "hill" ? 6.5 : 4.9;
+      const reach = z.kind === "atrium" ? 7.6 : z.kind === "hill" ? 6.5 : z.kind === "pond" ? 8.8 : z.kind === "lookout" || z.kind === "garden" ? 5.6 : z.kind === "arcade" || z.kind === "library" ? 5.2 : 4.9;
       const d = Math.hypot(this.player.pos.x - z.focus.x, this.player.pos.z - z.focus.z);
-      const isNear = this.mode === "follow" && d < reach;
+      const isNear = this.mode === "follow" && !riding && d < reach;
       it.near += ((isNear ? 1 : 0) - it.near) * Math.min(1, dt * 5);
       if (isNear && d < bd) { bd = d; best = z; }
       it.s.tick({ t: this.t, dt, player: this.player.pos, near: it.near, emit: this.amb.sparks.emit });
@@ -442,6 +522,25 @@ export class World {
       this.near = best;
       this.on.near?.(best);
     }
+    this.player.admiring = !!best && (best.kind === "work" || best.kind === "about" || best.kind === "contact" || best.kind === "atrium");
+
+    // quem está perto conversa
+    let talker: Npc | null = null;
+    let td = Infinity;
+    for (const n of this.npcs) {
+      const d = Math.hypot(this.player.pos.x - n.x, this.player.pos.z - n.z);
+      const close = this.mode === "follow" && !riding && n.lines.length > 0 && d < n.reach && this.player.morph < 0.5;
+      if (close && d < td) { td = d; talker = n; }
+      const w = this.talkW.get(n.id) ?? 0;
+      const nw = w + ((close ? 1 : 0) - w) * Math.min(1, dt * 4);
+      this.talkW.set(n.id, nw);
+      n.tick?.(this.t, dt, close ? nw : 0, this.player.pos);
+    }
+    if (talker !== this.talking) {
+      this.talking = talker;
+      this.on.chat?.(talker);
+    }
+    this.player.lookAt = talker && !this.player.moving ? { x: talker.x, z: talker.z } : null;
 
     for (const s of this.built.signs) {
       s.group.position.y = s.base + Math.sin(this.t * 0.9 + s.phase) * 0.12;
@@ -450,6 +549,24 @@ export class World {
     this.tickRipples(dt);
     this.amb.clouds.tick(this.t);
     this.amb.cubes.tick(this.t);
+
+    // plataformas, bolhas e estrelas
+    this.pads.tick(this.t, dt);
+    if (this.mode === "follow" && !riding && !this.player.airborne && this.pads.test(this.player.pos.x, this.player.pos.z)) {
+      this.player.launch(this.player.morph > 0.5 ? 11 : 14);
+      this.amb.sparks.emit(this.player.root.position.clone().setY(0.3), "#ff9edf", 16, 0.8, 3.4);
+      this.on.launch?.();
+    }
+    const h = this.player.height + (this.player.morph > 0.5 ? -1 : 0);
+    const away = new Vector3(1e5, 0, 1e5);
+    this.pops.tick(this.t, dt, riding ? away : this.player.pos, h, this.amb.sparks.emit, () => this.on.pop?.());
+    this.stars.tick(this.t, riding ? away : this.player.pos, this.player.height, this.amb.sparks.emit, (n) => {
+      this.on.star?.(n, this.stars.total);
+      if (n >= this.stars.total) this.golden();
+    });
+    if (this.player.meditating && Math.random() < dt * 4) {
+      this.amb.sparks.emit(this.player.root.position.clone().setY(this.player.pos.y + 1.3 + Math.random()), Math.random() > 0.5 ? "#ffe3a0" : "#ffffff", 1, 1.2, 0.25);
+    }
     this.amb.bubbles.tick(this.t);
 
     this.updateCamera(dt);
@@ -470,14 +587,16 @@ export class World {
       const a = this.t * (this.reduced ? 0 : 0.035);
       goal.set(-14 + Math.sin(a) * 26, 0, -18 + Math.cos(a * 1.3) * 22);
     } else {
-      goal.set(this.player.pos.x, this.player.pos.y * 0.6, this.player.pos.z);
+      // a câmera sobe junto quando o pulo é alto, e vai junto pelo tubo
+      if (this.ride) goal.set(this.player.pos.x, this.player.pos.y * 0.85, this.player.pos.z);
+      else goal.set(this.player.pos.x, this.player.pos.y * 0.6 + Math.max(0, this.player.height - 1) * 0.55, this.player.pos.z);
       goal.x += this.player.vel.x * 0.18;
       goal.z += this.player.vel.y * 0.18;
       // perto de uma obra, o enquadramento puxa a escultura para dentro
       const fz = this.focusZone ?? (this.player.moving ? null : this.near);
       if (fz) {
         const f = fz.focus;
-        const fy = fz.kind === "hill" ? 4.8 : this.focusZone ? 2.8 : 2.2;
+        const fy = fz.kind === "hill" ? 4.8 : fz.kind === "lookout" ? 3.6 : fz.kind === "pond" ? 0.8 : fz.kind === "garden" || fz.kind === "library" ? 2 : this.focusZone ? 2.8 : 2.2;
         this.nearPull += ((this.focusZone ? 0.55 : 0.4) - this.nearPull) * Math.min(1, dt * 2);
         this.pullTo.set(f.x, fy, f.z);
       } else this.nearPull += (0 - this.nearPull) * Math.min(1, dt * 2);
@@ -665,9 +784,18 @@ export class World {
       this.keys.add(e.code);
       if (this.mode !== "follow" || this.inputLocked) return;
       if (e.code === "Space") { e.preventDefault(); if (!e.repeat) this.jumpQueued = true; }
-      if ((e.code === "KeyE" || e.code === "Enter") && this.near && !e.repeat) {
-        e.preventDefault();
-        this.on.interact?.(this.near);
+      if ((e.code === "KeyE" || e.code === "Enter") && !e.repeat) {
+        // um NPC com convite tem a vez; senão, a placa da sala
+        if (this.talking?.action) {
+          e.preventDefault();
+          this.on.npcAction?.(this.talking);
+        } else if (this.stationNear) {
+          e.preventDefault();
+          this.enterTube(this.stationNear);
+        } else if (this.near) {
+          e.preventDefault();
+          this.on.interact?.(this.near);
+        }
       }
       if (e.code.startsWith("Arrow")) e.preventDefault();
     });
@@ -707,7 +835,7 @@ export class World {
         this.pointer.x = e.clientX;
         this.pointer.y = e.clientY;
       } else if (e.pointerType === "mouse") {
-        c.style.cursor = this.pickZone(e.clientX, e.clientY) ? "pointer" : "";
+        c.style.cursor = this.pickZone(e.clientX, e.clientY) || this.pickTube(e.clientX, e.clientY) ? "pointer" : "";
       }
     });
     const end = (e: PointerEvent) => {
@@ -719,6 +847,12 @@ export class World {
       this.pointer = null;
       const held = performance.now() - p.down > 260;
       if (held) return;
+      const tube = this.pickTube(e.clientX, e.clientY);
+      if (tube) {
+        this.ripple(tube.x, tube.z, tube.tube.color);
+        this.enterTube(tube);
+        return;
+      }
       const zone = this.pickZone(e.clientX, e.clientY);
       if (zone) {
         const s = standPoint(zone);
@@ -751,6 +885,128 @@ export class World {
     const ny = -((cy - rect.top) / rect.height) * 2 + 1;
     this.ray.setFromCamera(new Vector2(nx, ny), this.camera);
   }
+
+  /** clicou num tubo ou numa boca: devolve a estação por onde entrar */
+  private pickTube(cx: number, cy: number): Station | null {
+    this.setRay(cx, cy);
+    const meshes = [...this.tubeHits.map((t) => t.mesh), ...this.tubes.hits];
+    const hit = this.ray.intersectObjects(meshes, false)[0];
+    if (!hit) return null;
+    const mouth = this.tubeHits.find((t) => t.mesh === hit.object);
+    if (mouth) return mouth.st;
+    // no meio do tubo: entra pela ponta mais perto de onde o boneco está
+    const tube = this.tubes.tubes.find((t) => t.hit === hit.object)!;
+    const p = this.player.pos;
+    const [a, b] = tube.ends;
+    return Math.hypot(p.x - a.x, p.z - a.z) <= Math.hypot(p.x - b.x, p.z - b.z) ? a : b;
+  }
+
+  /* ---------------- os tubos ---------------- */
+
+  /** pede para entrar num tubo: perto, entra já; longe, vira bolinha e vai até a boca */
+  enterTube(st: Station) {
+    if (this.ride || this.mode !== "follow") return;
+    const d = Math.hypot(this.player.pos.x - st.x, this.player.pos.z - st.z);
+    if (d < 2.2) { this.startRide(st); return; }
+    this.pendingTube = st;
+    // a boca é um obstáculo; o alvo é a beira dela, do lado de quem chega
+    let ax = this.player.pos.x - st.x;
+    let az = this.player.pos.z - st.z;
+    const al = Math.hypot(ax, az) || 1;
+    ax = st.x + (ax / al) * 1.35;
+    az = st.z + (az / al) * 1.35;
+    if (!walkable(ax, az)) {
+      const hx = st.zone.hub.x - st.x;
+      const hz = st.zone.hub.z - st.z;
+      const hl = Math.hypot(hx, hz) || 1;
+      ax = st.x + (hx / hl) * 1.35;
+      az = st.z + (hz / hl) * 1.35;
+    }
+    this.player.goTo(ax, az);
+    this.player.autoMarble = true;
+    this.on.moveStart?.();
+  }
+
+  private checkTubes() {
+    if (this.ride || this.mode !== "follow") return;
+    const p = this.player.pos;
+    let near: Station | null = null;
+    let nd = 3.4;
+    for (const st of this.tubes.stations) {
+      const d = Math.hypot(p.x - st.x, p.z - st.z);
+      if (d < nd) { nd = d; near = st; }
+      // a bolinha que encosta na boca é sugada
+      // (só quem rola por conta própria; uma rota automática não cai no tubo sem querer)
+      const rolling = this.player.morph > 0.5 && this.player.path.length === 0;
+      if (this.tubeCooldown <= 0 && !this.player.airborne && d < 1.5 && (rolling || this.pendingTube === st)) {
+        this.startRide(st);
+        return;
+      }
+    }
+    if (near !== this.stationNear) {
+      this.stationNear = near;
+      this.on.station?.(near);
+    }
+  }
+
+  private startRide(st: Station) {
+    this.pendingTube = null;
+    this.player.stop();
+    this.ride = {
+      tube: st.tube,
+      from: st.end,
+      t: 0,
+      dur: 0.9 + st.tube.length / 34,
+      last: new Vector3(st.x, st.y + 0.6, st.z),
+      exit: st.tube.ends[st.end === 0 ? 1 : 0],
+    };
+    this.zoomBefore = this.zoomGoal;
+    this.zoomGoal = Math.max(this.zoomGoal, 11.5);
+    const mouth = new Vector3(st.x, st.y + 0.6, st.z);
+    this.amb.sparks.emit(mouth, st.tube.color, 16, 0.8, 3);
+    this.amb.sparks.emit(mouth, "#ffffff", 10, 0.6, 2.4);
+    if (this.stationNear) { this.stationNear = null; this.on.station?.(null); }
+    this.on.tube?.("in", st);
+  }
+
+  private tickRide(dt: number) {
+    const r = this.ride!;
+    r.t += dt;
+    const k = Math.min(1, r.t / r.dur);
+    // acelera ao entrar e freia ao chegar
+    const e = k < 0.5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+    const p = r.tube.curve.getPointAt(r.from === 0 ? e : 1 - e);
+    const dir = p.clone().sub(r.last);
+    const speed = dir.length() / Math.max(dt, 1e-4);
+    r.last.copy(p);
+    this.player.ride(p, dir.normalize(), speed, dt);
+    if (Math.random() < dt * 34) this.amb.sparks.emit(p.clone(), Math.random() > 0.5 ? r.tube.color : "#ffffff", 1, 0.3, 0.2);
+    if (k >= 1) this.endRide();
+  }
+
+  private endRide() {
+    const r = this.ride!;
+    this.ride = null;
+    const ex = r.exit;
+    // sai da boca para o lado de dentro da ilha
+    let dx = ex.zone.hub.x - ex.x;
+    let dz = ex.zone.hub.z - ex.z;
+    const L = Math.hypot(dx, dz) || 1;
+    dx /= L;
+    dz /= L;
+    let x = ex.x + dx * 1.7;
+    let z = ex.z + dz * 1.7;
+    if (!walkable(x, z)) { x = ex.zone.hub.x; z = ex.zone.hub.z; }
+    this.player.leave(x, z, Math.atan2(dx, dz));
+    this.tubeCooldown = 1.4;
+    this.zoomGoal = this.zoomBefore || this.zoomGoal;
+    const mouth = new Vector3(ex.x, ex.y + 1, ex.z);
+    this.amb.sparks.emit(mouth, r.tube.color, 18, 0.8, 3.4);
+    this.amb.sparks.emit(mouth, "#ffffff", 12, 0.6, 2.6);
+    this.on.tube?.("out", ex);
+  }
+
+  get riding() { return !!this.ride; }
 
   private pickZone(cx: number, cy: number): Zone | null {
     this.setRay(cx, cy);
@@ -788,6 +1044,7 @@ export class World {
     }
     this.player.goTo(px, pz);
     this.player.autoMarble = false;
+    this.pendingTube = null;
     if (tap) {
       this.ripple(px, pz);
       this.amb.sparks.emit(new Vector3(px, groundY(px, pz) + 0.2, pz), "#ffffff", 3, 0.5, 1.2);

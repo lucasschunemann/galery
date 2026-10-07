@@ -40,6 +40,107 @@ os olhos.
 Cada sala tem um letreiro em pixel, um pedestal com um anel no chão e uma
 placa (o painel lateral) com o caso completo.
 
+Além das salas, há três lugares redondos sem obra, feitos para parar:
+
+- **A colina**, depois do Sobre: grama de papel de parede, uma estrela cromada
+  e uma colher que acompanha você com os olhos.
+- **A lagoa**, depois do Sendeski: uma piscina com carpas de cromo,
+  vitórias-régias e uma gota de vidro, e um urso de fone e óculos escuros
+  debaixo de um guarda-sol. A placa dela explica o som e liga a música.
+- **O mirante**, depois do TravelDone: guarda-corpo cromado, um banco, uma
+  luneta e um anjo de menu de DVD com auréola de disco. De noite, os fachos de
+  luz dele acendem.
+
+Mais três lugares redondos, cada um com uma coisa para fazer:
+
+- **O fliperama**, depois do Acronos: três gabinetes com telinhas em pixel, uma
+  ficha gigante e um jogo de verdade, a Chuva de estrelas (com recorde salvo
+  no navegador).
+- **A estante**, depois do Contato: prateleiras de livros, um livro aberto que
+  folheia sozinho e os quatro artigos do site antigo, que abrem pela placa.
+- **O jardim**, depois da PF Advogados: areia rastelada, um bonsai de
+  cerejeira e uma respiração guiada de meio minuto.
+
+## O caso completo
+
+A placa lateral é o resumo. O botão "Abrir o caso completo" leva a obra para
+a tela inteira: as imagens dentro de um monitor que liga como tubo de TV, com
+lupa que segue o cursor, legenda de cada imagem, os blocos do processo e a
+ficha técnica. As setas trocam de imagem (e o som é de trocar de canal).
+
+As imagens vieram do portfólio antigo, no Framer, e moram em `public/work/`.
+Só são baixadas quando alguém abre o caso, então não pesam na entrada.
+
+## Os tubos
+
+Como no Snaptic: tubos de vidro atravessam o céu e ligam as ilhas mais
+distantes. São seis linhas, cada uma com a sua cor e uma luz tracejada correndo
+por dentro:
+
+| Linha | Liga |
+|---|---|
+| rosa | átrio e a colina |
+| dourada | átrio e o fliperama |
+| verde | átrio e o jardim |
+| azul-claro | fliperama e a lagoa |
+| lilás | jardim e o mirante |
+| azul | estante e a colina |
+
+Cada ponta tem uma boca no chão, com um redemoinho de luz e um funil de vidro.
+A bolinha que encosta na boca (rolando com `Shift`) é sugada e corre pelo tubo,
+acelerando na saída e freando na chegada, até saltar do outro lado. Como boneco,
+dá para apertar `E` perto da boca, ou clicar no tubo ou na etiqueta dela: ele
+vira bolinha e entra sozinho. Uma viagem leva de 2 a 3 segundos; a pé, o mesmo
+trajeto leva de 10 a 15. No minimapa os tubos aparecem tracejados.
+
+Rotas automáticas (catálogo, minimapa) não caem num tubo sem querer: só entra
+quem rola por conta própria ou pediu para entrar.
+
+## Brincadeiras
+
+- **Plataformas de salto**, no átrio e no fliperama: jogam o boneco lá no alto,
+  com mortal.
+- **Bolhas** baixas espalhadas pelas ilhas, que estouram quando você encosta e
+  voltam depois.
+- **Oito estrelas escondidas.** Duas só se alcançam pelas plataformas. Achar
+  todas deixa o boneco de ouro, e a galeria lembra disso na próxima visita.
+
+## Quem mora aqui
+
+Chegando perto, os NPCs falam num balão, letra por letra, cada um com a sua voz
+(bipes numa altura de nota própria). Cada visita mostra a próxima fala.
+
+| Quem | Onde |
+|---|---|
+| Visitante de cromo rosa | sentado na beirada da ponte entre o átrio e a sala 01 |
+| Fotógrafa de cromo verde | fotografando o cubo do Acronos |
+| Visitante de cromo lilás | no banco do mirante |
+| Urso | na lagoa, dançando o que toca no fone dele |
+| Anjo | flutuando no mirante |
+| Colher | atrás da colina |
+| Clipe | na estante, um clipe de papel que oferece ajuda com os artigos |
+| Visitante de cromo dourado | meditando, flutuando no jardim |
+| Jogador de cromo azul | no fliperama, jogando |
+| Robô-guia | no átrio, com o convite para o tour |
+
+Alguns NPCs fazem um convite no balão (o tour, jogar, ver os artigos,
+respirar junto). Dá para aceitar clicando ou com `E`.
+
+Uma bolinha de gude também fica dando oitos no canto do átrio.
+
+## O boneco
+
+A animação é por poses que se misturam, com uma mola em cada junta
+(`src/world/figure.ts`). Andando, ele balança o quadril, inclina nas curvas e a
+cabeça quica no passo. No ar, encolhe subindo e abre os braços caindo; o
+segundo pulo vira mortal; na volta ao chão, dobra os joelhos. Parado, respira e
+troca o peso de perna, e depois de uns segundos começa a fazer coisas: olhar em
+volta, se espreguiçar, bater o pé, olhar o relógio, acenar para a câmera. Perto
+de uma obra, põe as mãos para trás. Com o som ligado, dança no tempo da música.
+Esquecido por muito tempo, senta no chão de pernas cruzadas. Quando alguém fala
+com ele, vira a cabeça para quem fala. Parado de frente para a beirada, abre os
+braços e se equilibra. Meditando no jardim, flutua.
+
 ## Controles
 
 | | |
@@ -48,7 +149,8 @@ placa (o painel lateral) com o caso completo.
 | clique no chão | ir até lá |
 | clique na escultura | ir até ela e abrir a placa |
 | `Shift` | virar bolinha de gude e rolar (mais rápido) |
-| `Espaço` | pular |
+| `Espaço` | pular; no ar, de novo, dá um mortal |
+| `1` `2` `3` `4` | gestos: acenar, dançar, sentar, se espreguiçar |
 | `E` ou `Enter` | abrir a placa da obra mais próxima |
 | `C` | catálogo, com acesso direto a qualquer sala |
 | `Esc` | fechar |
@@ -90,9 +192,14 @@ Tudo sintetizado na hora com Web Audio, nenhum arquivo. Começa desligado;
 
 ## Interface
 
-A interface sai de poucas peças, todas em `src/style.css`: vidro fosco com um
-brilho no topo, botões de gel do Aqua (azul, prata e na cor da sala), contas de
-gel para números, teclas de teclado e rótulos em mono. Três alturas (32, 40 e
+A interface sai de poucas peças, todas em `src/style.css`. A principal é a
+cápsula: aro de cromo com o mesmo degradê do logotipo (a faixa escura do
+horizonte), miolo de gelatina colorida iluminado por baixo, uma tampa de
+brilho, um reflexo que segue o cursor e um risco de luz que atravessa no
+hover. Ela se inclina um pouco na direção do mouse e afunda quando apertada.
+Redonda, vira bolinha de gude. Em volta: vidro fosco com aro metálico, contas
+de gelatina para números, teclas de plástico translúcido como as do iMac, e
+bandejas de abas onde uma gota desliza até a aba sob o cursor. Três alturas (32, 40 e
 48 px), três raios (pílula, cartão de 18 e folha de 26) e uma família
 tipográfica, Inter, com JetBrains Mono para rótulos.
 
@@ -133,8 +240,11 @@ O resto do conteúdo também mora em `src/data/`: `projects.ts` para as obras
 | Motor | `src/world/world.ts` | renderização em pixel, piso espelhado, câmera isométrica, entrada |
 | Arquitetura | `src/world/build.ts` | ilhas, muros com arcos, pontes, pedestais, letreiros, a colina |
 | Esculturas | `src/world/sculptures.ts` | uma por sala, todas geradas em código |
-| Boneco | `src/world/player.ts` | o andar, o pulo, a bolinha, a colisão |
+| Boneco | `src/world/player.ts`, `src/world/figure.ts` | o corpo, as poses, o andar, o pulo, a bolinha, a colisão |
+| NPCs | `src/world/npcs.ts` | os outros visitantes, o urso, as falas |
 | Ambiente | `src/world/ambient.ts` | nuvens, cubos soltos, bolhas e brilhos |
+| Tubos | `src/world/tubes.ts` | a rede de tubos, as bocas e as curvas no céu |
+| Brincadeiras | `src/world/play.ts` | plataformas de salto, bolhas de estourar, estrelas escondidas |
 | Materiais | `src/world/materials.ts` | cromo, porcelana, vidro, o piso espelhado e o esmaecer no céu |
 | Céu | `src/world/env.ts` | as paletas de dia e noite e o ambiente pintado em canvas |
 | Interface | `src/main.ts`, `src/ui/` | intro, HUD, placas, catálogo, minimapa, logotipo |

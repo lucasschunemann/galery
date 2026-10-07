@@ -132,6 +132,20 @@ export function gloss(color: string, opts: { rough?: number; side?: Side } = {})
   return lit(m, 0.75);
 }
 
+/** cromo com película de arco-íris, como a face de um CD */
+export function iridescent(color = "#ffffff") {
+  const m = new MeshPhysicalMaterial({
+    color,
+    metalness: 1,
+    roughness: 0.14,
+    iridescence: 1,
+    iridescenceIOR: 1.7,
+    iridescenceThicknessRange: [180, 820],
+  });
+  patch(m, "irid", 1);
+  return lit(m, 1.5);
+}
+
 export function anodized(color: string, rough = 0.2) {
   return standard(color, { metal: 1, rough, env: 1.35 });
 }

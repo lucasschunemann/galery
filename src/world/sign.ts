@@ -37,6 +37,11 @@ export function signSpec(zn: Zone): SignSpec {
   if (zn.kind === "atrium") return { bg: "#2f3fe0", edge: "#bff3ff", kicker: "GALERIA VON", title: "bem-vindo!", foot: "ande por aqui" };
   if (zn.kind === "about") return { bg: "#1f6f8b", edge: "#9ff6ff", kicker: "SOBRE", title: "Lucas", foot: "blumenau, sc" };
   if (zn.kind === "contact") return { bg: "#16758f", edge: "#9ff6ff", kicker: "CONTATO", title: "telepatia", foot: "ou e-mail" };
+  if (zn.kind === "pond") return { bg: "#1288c4", edge: "#bff3ff", kicker: "UM LUGAR PRA PARAR", title: "a lagoa", foot: "escute" };
+  if (zn.kind === "arcade") return { bg: "#d9781a", edge: "#fff1b8", kicker: "INSIRA UMA FICHA", title: "fliperama", foot: "recorde: ???" };
+  if (zn.kind === "library") return { bg: "#2c4fc9", edge: "#cfe0ff", kicker: "ARTIGOS / 04", title: "a estante", foot: "leia um" };
+  if (zn.kind === "garden") return { bg: "#2f8f5a", edge: "#d6ffe6", kicker: "UM LUGAR PRA RESPIRAR", title: "o jardim", foot: "devagar" };
+  if (zn.kind === "lookout") return { bg: "#b42f8f", edge: "#ffd6f2", kicker: "UM LUGAR PRA OLHAR", title: "o mirante", foot: "olhe pra cima" };
   return { bg: "#3f9a2c", edge: "#e6ffb8", kicker: "FIM DA GALERIA", title: "obrigado!", foot: "volte sempre" };
 }
 

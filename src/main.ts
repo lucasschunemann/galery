@@ -1,12 +1,17 @@
 import "./style.css";
 import { World } from "./world/world";
-import { BRIDGES, ZONES, zoneAt, zoneById, type Zone } from "./world/layout";
+import { BRIDGES, ZONES, isRound, zoneAt, zoneById, type Zone } from "./world/layout";
+import type { Npc } from "./world/npcs";
+import type { Station } from "./world/tubes";
 import { PROJECTS } from "./data/projects";
 import { PERSON } from "./data/site";
 import { signURL } from "./world/sign";
 import { h, icons, svg } from "./ui/dom";
 import { logo } from "./ui/logo";
-import { aboutView, atriumView, contactView, hillView, projectView, type Nav, type View } from "./ui/content";
+import { aboutView, arcadeView, atriumView, contactView, gardenView, hillView, libraryView, lookoutView, pondView, projectView, type Nav, type View } from "./ui/content";
+import { createViewer } from "./ui/viewer";
+import { createArcade } from "./ui/arcade";
+import { createCalm } from "./ui/calm";
 import { setMusicTheme, setSound, sfx, soundOn } from "./audio";
 
 /* ============================================================
@@ -94,8 +99,10 @@ const brand = h("button", { class: "brand glass", type: "button", "aria-label": 
   h("span", { class: "brand__sep" }),
   h("span", { class: "brand__txt" }, h("b", {}, PERSON.name), h("span", {}, `${PERSON.role} · ${PERSON.city}`)),
 );
+const starCount = h("b", {}, "0");
+const starChip = h("div", { class: "starchip glass pill", title: "Estrelas achadas" }, h("span", { class: "bead" }, svg(icons.spark)), starCount, h("span", { class: "label" }, "de 8"));
 const top = h("header", { class: "hud hud--top" },
-  brand,
+  h("div", { class: "hud__left" }, brand, starChip),
   h("div", { class: "hud__right" },
     h("nav", { class: "dock glass", "aria-label": "Seções" }, catTab, aboutTab, contactTab),
     h("div", { class: "dock glass" }, themeTab, soundTab, pxTab),
@@ -103,18 +110,55 @@ const top = h("header", { class: "hud hud--top" },
 );
 app.append(top);
 
+/* a gota de gelatina que desliza até a aba sob o cursor, e volta para a aba atual */
+const glides: (() => void)[] = [];
+for (const dock of top.querySelectorAll<HTMLElement>(".dock")) {
+  const g = h("span", { class: "dock__glide", "aria-hidden": "true" });
+  dock.prepend(g);
+  const to = (t: HTMLElement | null) => {
+    if (!t || !t.offsetWidth) { dock.classList.remove("is-glide"); return; }
+    g.style.setProperty("--gx", `${t.offsetLeft}px`);
+    g.style.width = `${t.offsetWidth}px`;
+    dock.classList.add("is-glide");
+  };
+  const home = () => to(dock.querySelector<HTMLElement>('.tab[aria-current="true"]'));
+  dock.addEventListener("pointerover", (e) => to((e.target as Element).closest<HTMLElement>(".tab")));
+  dock.addEventListener("pointerleave", home);
+  glides.push(() => { if (!dock.matches(":hover")) home(); });
+}
+
+/* as cápsulas: o reflexo segue o cursor, e elas se inclinam um pouco na direção dele */
+let magnet: HTMLElement | null = null;
+app.addEventListener("pointermove", (e) => {
+  if (e.pointerType !== "mouse") return;
+  const b = (e.target as Element).closest<HTMLElement>(".gel");
+  if (b !== magnet) {
+    magnet?.style.removeProperty("--tx");
+    magnet?.style.removeProperty("--ty");
+    magnet = b;
+  }
+  if (!b) return;
+  const r = b.getBoundingClientRect();
+  const dx = e.clientX - (r.left + r.width / 2);
+  const dy = e.clientY - (r.top + r.height / 2);
+  b.style.setProperty("--mx", `${(((e.clientX - r.left) / r.width) * 100).toFixed(1)}%`);
+  b.style.setProperty("--tx", `${(dx * 0.1).toFixed(2)}px`);
+  b.style.setProperty("--ty", `${(dy * 0.16 - 1).toFixed(2)}px`);
+});
+
 brand.addEventListener("click", () => goTo("atrio"));
 catTab.addEventListener("click", () => (catalog.classList.contains("is-open") ? closeCatalog() : openCatalog()));
 aboutTab.addEventListener("click", () => goTo("sobre"));
 contactTab.addEventListener("click", () => goTo("contato"));
-themeTab.addEventListener("click", () => {
+themeTab.addEventListener("click", () => toggleNight());
+function toggleNight() {
   const night = (world?.theme ?? root.dataset.theme) !== "night";
   if (world) world.setTheme(night ? "night" : "day");
   else root.dataset.theme = night ? "night" : "day";
   setMusicTheme(night ? "night" : "day");
   sfx.theme(night);
   syncButtons();
-});
+}
 soundTab.addEventListener("click", () => {
   setSound(!soundOn());
   syncButtons();
@@ -141,6 +185,7 @@ function syncButtons() {
   aboutTab.setAttribute("aria-current", String(panelZone?.id === "sobre"));
   contactTab.setAttribute("aria-current", String(panelZone?.id === "contato"));
   document.querySelector('meta[name="theme-color"]')?.setAttribute("content", night ? "#1c1356" : "#cfe9fb");
+  for (const g of glides) g();
 }
 
 /* ---------------- HUD de baixo ---------------- */
@@ -149,10 +194,11 @@ const keysToggle = h("button", { class: "gel gel--silver gel--icon keys__toggle"
 const keys = h("div", { class: "keys" },
   h("div", { class: "keys__card glass card" },
     hint(["W", "A", "S", "D"], "andar"),
-    hint(["Shift"], "rolar"),
+    hint(["Shift"], "rolar e entrar nos tubos"),
     hint(["Espaço"], "pular"),
     hint(["E"], "ver a placa"),
     hint(["C"], "catálogo"),
+    hint(["1", "2", "3", "4"], "gestos"),
     hint(["Esc"], "fechar"),
   ),
   keysToggle,
@@ -194,11 +240,23 @@ for (const b of BRIDGES) {
   const bz = b.axis === "x" ? b.at : b.b.z;
   mapSvg.append(sv("line", { class: "map__b", x1: mx(ax, az), y1: my(ax, az), x2: mx(bx, bz), y2: my(bx, bz) }));
 }
+// os tubos, tracejados, com uma curva para não cruzar as ilhas
+if (world) {
+  for (const tb of world.tubes.tubes) {
+    const [a, c] = tb.ends;
+    const x1 = mx(a.x, a.z), y1 = my(a.x, a.z), x2 = mx(c.x, c.z), y2 = my(c.x, c.z);
+    const qx = (x1 + x2) / 2 + (y2 - y1) * 0.18;
+    const qy = (y1 + y2) / 2 - (x2 - x1) * 0.18 - 4;
+    const path = sv("path", { class: "map__t", d: `M${x1.toFixed(1)} ${y1.toFixed(1)}Q${qx.toFixed(1)} ${qy.toFixed(1)} ${x2.toFixed(1)} ${y2.toFixed(1)}` });
+    path.style.setProperty("stroke", tb.color);
+    mapSvg.append(path);
+  }
+}
 const mapZones = new Map<string, SVGGElement>();
 for (const z of ZONES) {
   const g = sv("g", { class: "map__z", "data-zone-i": zi(z) }) as SVGGElement;
   g.style.setProperty("--accent-z", z.color);
-  const t = z.kind === "hill" ? z.half * 0.8 : z.half;
+  const t = isRound(z) ? z.half * 0.8 : z.half;
   const pts = [[-t, -t], [t, -t], [t, t], [-t, t]].map(([dx, dz]) => {
     const px = mx(z.x + dx, z.z + dz);
     const py = my(z.x + dx, z.z + dz);
@@ -237,6 +295,57 @@ for (const z of ZONES) {
 }
 app.append(labels);
 
+/* as bocas dos tubos: uma etiqueta dizendo para onde cada uma leva */
+const tubeTags = new Map<Station, HTMLElement>();
+if (world) {
+  for (const st of world.tubes.stations) {
+    const b = bead("→", st.tube.color);
+    const sub = h("small", {}, touch ? "toque para entrar" : "E ou clique para entrar");
+    const t = h("button", { class: "tag tag--tube glass", type: "button", tabindex: -1 }, b, h("span", { class: "tag__txt" }, h("span", {}, `Tubo para ${st.to.label}`), sub));
+    t.addEventListener("click", () => world!.enterTube(st));
+    tubeTags.set(st, t);
+    labels.append(t);
+  }
+}
+
+/* ---------------- balão de fala ---------------- */
+
+const bubbleName = h("b", { class: "label" });
+const bubbleText = h("span", {});
+const bubbleAct = h("button", { class: "gel gel--accent gel--sm bubble__act", type: "button" });
+const bubble = h("div", { class: "bubble glass", "aria-live": "polite" }, bubbleName, bubbleText, bubbleAct);
+bubbleAct.addEventListener("click", () => speaker && npcAction(speaker));
+labels.append(bubble);
+let speaker: Npc | null = null;
+let typing = 0;
+const said = new Map<string, number>();
+
+/** um NPC chegou perto (ou foi embora): mostra a próxima fala dele, letra por letra */
+function say(n: Npc | null) {
+  clearInterval(typing);
+  if (!n) {
+    bubble.classList.remove("is-on");
+    speaker = null;
+    return;
+  }
+  speaker = n;
+  const i = said.get(n.id) ?? 0;
+  said.set(n.id, i + 1);
+  const line = n.lines[i % n.lines.length];
+  bubbleName.textContent = n.name;
+  bubbleText.textContent = "";
+  bubble.classList.add("is-on");
+  bubble.classList.toggle("has-act", !!n.action);
+  if (n.action) bubbleAct.replaceChildren(h("span", {}, n.action.label), touch ? "" : kbd("E"));
+  sfx.talk(n.voice, line.length);
+  let k = 0;
+  typing = window.setInterval(() => {
+    k += 1;
+    bubbleText.textContent = line.slice(0, k);
+    if (k >= line.length) clearInterval(typing);
+  }, 26);
+}
+
 /* ---------------- placa ---------------- */
 
 const panelBead = h("span", { class: "bead bead--lg" });
@@ -252,13 +361,79 @@ const panel = h("aside", { class: "panel glass sheet", role: "dialog", "aria-lab
 panelClose.addEventListener("click", () => closePanel());
 app.append(panel);
 
-const nav: Nav = { go: (id) => goTo(id), catalog: () => openCatalog() };
+/* ---------------- o caso completo ---------------- */
+
+let flipQuiet = true;
+const viewer = createViewer({
+  open: () => sfx.screen(),
+  close: () => sfx.close(),
+  flip: () => { if (!flipQuiet) sfx.channel(); flipQuiet = false; },
+  lock: (on) => { if (world) world.inputLocked = on || catalog.classList.contains("is-open"); },
+  go: (id) => { if (world) world.travelTo(id, (zn) => openPanel(zn)); },
+});
+app.append(viewer.el);
+
+const nav: Nav = {
+  go: (id) => goTo(id),
+  study: (p, i = 0) => { flipQuiet = true; viewer.open(p, i); },
+  catalog: () => openCatalog(),
+  sound: () => soundOn(),
+  toggleSound: () => { setSound(!soundOn()); syncButtons(); },
+  night: () => (world?.theme ?? root.dataset.theme) === "night",
+  toggleNight: () => toggleNight(),
+  play: () => { closePanel(false); arcade.open(); },
+  record: () => arcade.best,
+  breathe: () => { closePanel(false); calm.start(); },
+};
+
+/* ---------------- o fliperama e a respiração ---------------- */
+
+const arcade = createArcade({
+  sound: (k, c) => sfx.game(k, c),
+  lock: (on) => { if (world) world.inputLocked = on; },
+  record: (n) => toast(`Novo recorde no fliperama: ${n} pontos.`),
+});
+app.append(arcade.el);
+
+let zoomBefore = 0;
+const calm = createCalm({
+  start: () => {
+    world?.meditate(true);
+    if (world) { zoomBefore = world.zoomGoal; world.zoomGoal = Math.min(world.zoomGoal, 6.2); }
+    root.classList.add("is-calm");
+  },
+  stop: (done) => {
+    world?.meditate(false);
+    if (world && zoomBefore) world.zoomGoal = zoomBefore;
+    root.classList.remove("is-calm");
+    if (done) { toast("Quatro respirações. Pode seguir quando quiser."); sfx.sent(); }
+  },
+  phase: (inhale) => sfx.breath(inhale),
+});
+app.append(calm.el);
+
+/** o que acontece quando você aceita o convite de um NPC */
+function npcAction(n: Npc) {
+  if (!n.action) return;
+  say(null);
+  if (n.action.id === "tour") {
+    toast("O tour começou. Na placa, use Próxima para seguir de sala em sala.", 7000);
+    goTo(PROJECTS[0].id);
+  } else if (n.action.id === "play") nav.play();
+  else if (n.action.id === "read") goTo("estante");
+  else if (n.action.id === "breathe") nav.breathe();
+}
 
 function viewFor(z: Zone): View {
   if (z.kind === "work") return projectView(z, PROJECTS[z.project!], nav);
   if (z.kind === "about") return aboutView(z, nav);
   if (z.kind === "contact") return contactView(z, sfx);
   if (z.kind === "hill") return hillView(z, nav);
+  if (z.kind === "pond") return pondView(z, nav);
+  if (z.kind === "lookout") return lookoutView(z, nav);
+  if (z.kind === "arcade") return arcadeView(z, nav);
+  if (z.kind === "library") return libraryView(z, nav);
+  if (z.kind === "garden") return gardenView(z, nav);
   return atriumView(z, nav);
 }
 
@@ -354,7 +529,7 @@ const catalog = h("div", { class: "catalog glass sheet", role: "dialog", "aria-m
   ),
   h("ul", { class: "catalog__list" }, ...rows),
   h("footer", { class: "catalog__foot" },
-    h("div", { class: "links" }, h("span", { class: "label" }, "Outras salas"), extra("atrio", "Átrio"), extra("sobre", "Sobre"), extra("contato", "Contato"), extra("colina", "A colina")),
+    h("div", { class: "links" }, h("span", { class: "label" }, "Outras salas"), extra("atrio", "Átrio"), extra("sobre", "Sobre"), extra("contato", "Contato"), extra("lagoa", "A lagoa"), extra("mirante", "O mirante"), extra("fliperama", "O fliperama"), extra("estante", "A estante"), extra("jardim", "O jardim"), extra("colina", "A colina")),
     touch ? null : hint(["C"], "abre e fecha"),
   ),
 );
@@ -452,6 +627,11 @@ addEventListener("keydown", (e) => {
     return;
   }
   if (typing) return;
+  const emotes = { Digit1: "wave", Digit2: "dance", Digit3: "sit", Digit4: "stretch" } as const;
+  if (e.code in emotes && !e.metaKey && !e.ctrlKey) {
+    world?.emote(emotes[e.code as keyof typeof emotes]);
+    return;
+  }
   if (e.code === "KeyC" && !e.metaKey && !e.ctrlKey) {
     if (catalog.classList.contains("is-open")) closeCatalog();
     else openCatalog();
@@ -490,6 +670,7 @@ if (world) {
     },
     interact: (z) => openPanel(z),
     moveStart: () => {
+      if (calm.running) calm.stop();
       if (panel.classList.contains("is-open")) closePanel();
       toastEl.classList.remove("is-on");
       keys.classList.remove("is-open");
@@ -497,8 +678,31 @@ if (world) {
     },
     step: (s) => sfx.step(s),
     morph: (m) => sfx.marble(m),
-    jump: () => sfx.jump(),
+    jump: (double) => sfx.jump(double),
     land: (k) => sfx.land(k),
+    sit: () => sfx.sit(),
+    chat: (n) => say(n),
+    npcAction: (n) => npcAction(n),
+    launch: () => sfx.launch(),
+    tube: (kind, st) => {
+      const tube = st.tube;
+      sfx.tube(kind, 0.9 + tube.length / 34);
+      if (kind === "in") toastEl.classList.remove("is-on");
+    },
+    station: (st) => {
+      for (const [s, t] of tubeTags) t.classList.toggle("is-near", s === st);
+    },
+    pop: () => sfx.pop(),
+    star: (n, total) => {
+      syncStars(n);
+      if (n >= total) {
+        sfx.gold();
+        toast("Você achou as oito estrelas. O boneco agora é de ouro.", 8000);
+      } else {
+        sfx.star(n);
+        toast(`Estrela ${n} de ${total}.`, 3000);
+      }
+    },
     frame: () => {
       for (const z of ZONES) {
         const t = tags.get(z.id)!;
@@ -508,6 +712,12 @@ if (world) {
         t.style.transform = `translate3d(${pos.x.toFixed(1)}px, ${pos.y.toFixed(1)}px, 0) translate(-50%, -100%)`;
       }
       const p = w.player.pos;
+      for (const [st, t] of tubeTags) {
+        const far = w.riding || Math.hypot(p.x - st.x, p.z - st.z) > 13 || panelZone !== null;
+        w.toScreen(st.anchor, pos);
+        t.classList.toggle("is-off", far || !pos.on);
+        t.style.transform = `translate3d(${pos.x.toFixed(1)}px, ${pos.y.toFixed(1)}px, 0) translate(-50%, -100%)`;
+      }
       const cx = mx(p.x, p.z).toFixed(1);
       const cy = my(p.x, p.z).toFixed(1);
       me.setAttribute("cx", cx);
@@ -524,9 +734,29 @@ if (world) {
       }
       if (panelZone && w.near?.id === panelZone.id) prompt.classList.remove("is-on");
       sfx.roll(w.player.morph > 0.5 ? Math.min(1, w.player.speed / 13.5) : 0);
+      w.player.musicOn = soundOn();
+      const near = (id: string, r: number) => {
+        const z = zoneById(id)!;
+        return Math.max(0, Math.min(1, 1 - (Math.hypot(p.x - z.x, p.z - z.z) - r * 0.5) / r));
+      };
+      sfx.ambience(near("lagoa", 14), near("mirante", 13));
+      if (speaker) {
+        w.toScreen(speaker.anchor, pos);
+        // o balão nunca sai da tela, nem passa por baixo da barra de cima
+        pos.x = Math.max(130, Math.min(innerWidth - 130, pos.x));
+        pos.y = Math.max(140, pos.y);
+        bubble.style.transform = `translate3d(${pos.x.toFixed(1)}px, ${pos.y.toFixed(1)}px, 0) translate(-50%, calc(-100% - 12px))`;
+      }
     },
   });
   w.start();
+  syncStars(w.stars.count);
+}
+
+function syncStars(n: number) {
+  starCount.textContent = String(n);
+  starChip.classList.toggle("is-on", n > 0);
+  starChip.classList.toggle("is-gold", n >= 8);
 }
 
 syncButtons();

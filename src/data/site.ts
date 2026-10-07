@@ -3,7 +3,41 @@ export const PERSON = {
   role: "Product designer",
   city: "Blumenau, SC",
   email: "lucas.vhschunemann@gmail.com",
+  linkedin: "https://www.linkedin.com/in/lucas-von-helden/",
+  instagram: "https://www.instagram.com/lucasvonhelden/",
 };
+
+/** os artigos que moram no site antigo, no Framer; a estante aponta para eles */
+export const ARTICLES = [
+  {
+    title: "Do código ao design: minha jornada do frontend para o UX",
+    tag: "Tech e design",
+    date: "31 dez 2024",
+    href: "https://lucasvon.framer.website/stories/ux-frontend",
+    color: "#3d5bff",
+  },
+  {
+    title: "Feng Shui no UX design",
+    tag: "UX design",
+    date: "12 fev 2025",
+    href: "https://lucasvon.framer.website/stories/fengshui",
+    color: "#14c3a5",
+  },
+  {
+    title: "A arte da simplicidade: filosofia budista e UX design",
+    tag: "Vida e design",
+    date: "27 fev 2025",
+    href: "https://lucasvon.framer.website/stories/ux-buda",
+    color: "#ff9a2b",
+  },
+  {
+    title: "Rituais de foco: pequenos hábitos no processo criativo",
+    tag: "Disciplina",
+    date: "12 mar 2025",
+    href: "https://lucasvon.framer.website/stories/rituals",
+    color: "#ff4fa3",
+  },
+];
 
 export const ABOUT = {
   bio: [
@@ -24,6 +58,7 @@ export const ABOUT = {
     ["Função", "Product designer, foco em UX/UI"],
     ["Hoje", "CPO e co-fundador na neth!"],
     ["Também", "UX/UI designer na Área Central"],
+    ["Experiência", "4+ anos, 15+ projetos entregues"],
     ["Formação", "Interaction Design Foundation"],
     ["Local", "Blumenau, Santa Catarina (GMT-3)"],
     ["Situação", "Aberto a projetos freelance"],

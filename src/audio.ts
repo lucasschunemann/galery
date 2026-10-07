@@ -57,6 +57,10 @@ let padFilter: BiquadFilterNode;
 let airFilter: BiquadFilterNode;
 let rollGain: GainNode;
 let rollFilter: BiquadFilterNode;
+let waterGain: GainNode;
+let windGain: GainNode;
+let lastWater = 0;
+let lastWind = 0;
 let noise: AudioBuffer;
 
 let on = false;
@@ -157,6 +161,28 @@ function ensure() {
   rollGain = new GainNode(c, { gain: 0 });
   roll.connect(rollFilter).connect(rollGain).connect(fxBus);
   roll.start();
+
+  // perto da lagoa: água correndo, filtrada e mexendo devagar
+  const water = new AudioBufferSourceNode(c, { buffer: noise, loop: true, playbackRate: 0.7 });
+  const wf = new BiquadFilterNode(c, { type: "lowpass", frequency: 650, Q: 0.4 });
+  const wLfo = new OscillatorNode(c, { frequency: 0.3 });
+  wLfo.connect(new GainNode(c, { gain: 220 })).connect(wf.frequency);
+  waterGain = new GainNode(c, { gain: 0 });
+  water.connect(wf).connect(waterGain).connect(fxBus);
+  waterGain.connect(new GainNode(c, { gain: 0.5 })).connect(reverb);
+  water.start();
+  wLfo.start();
+
+  // no mirante: vento, mais agudo e com rajadas
+  const wind = new AudioBufferSourceNode(c, { buffer: noise, loop: true, playbackRate: 1.1 });
+  const vf = new BiquadFilterNode(c, { type: "bandpass", frequency: 1200, Q: 0.6 });
+  const vLfo = new OscillatorNode(c, { frequency: 0.11 });
+  vLfo.connect(new GainNode(c, { gain: 700 })).connect(vf.frequency);
+  windGain = new GainNode(c, { gain: 0 });
+  wind.connect(vf).connect(windGain).connect(fxBus);
+  windGain.connect(new GainNode(c, { gain: 0.6 })).connect(reverb);
+  wind.start();
+  vLfo.start();
 
   document.addEventListener("visibilitychange", () => {
     if (!ctx || !on) return;
@@ -369,11 +395,149 @@ export const sfx = {
     puff(t, "highpass", 4200, 3000, 0.022, 0.028, { rev: 0.1 });
   },
 
-  jump() {
+  jump(double = false) {
     if (!live()) return;
     const t = ctx!.currentTime;
+    if (double) {
+      // o mortal: um assobio que sobe e uma cascata curta
+      tone(t, 420, 1400, 0.3, 0.04, { type: "triangle", rev: 0.35, echo: 0.2 });
+      puff(t, "bandpass", 600, 3200, 0.42, 0.03, { attack: 0.08, rev: 0.3 });
+      [84, 88, 91, 96].forEach((m, i) => bell(m, t + 0.1 + i * 0.06, 0.3, { decay: 0.7, out: fxBus, rev: 0.4, pan: -0.4 + i * 0.25 }));
+      return;
+    }
     tone(t, 300, 640, 0.16, 0.045, { rev: 0.2 });
     bell(91, t + 0.03, 0.25, { decay: 0.6, out: fxBus, rev: 0.3 });
+  },
+
+  /** o tubo da TV ligando: estalo, chiado agudo, e o sinal entrando */
+  screen() {
+    if (!live()) return;
+    const t = ctx!.currentTime;
+    puff(t, "highpass", 3000, 6000, 0.06, 0.05);
+    tone(t + 0.02, 15600, 15000, 0.5, 0.006);
+    tone(t + 0.04, 90, 60, 0.25, 0.08, { rev: 0.2 });
+    puff(t + 0.05, "bandpass", 400, 3200, 0.45, 0.03, { attack: 0.15, rev: 0.4 });
+    [72, 79, 84].forEach((m, i) => bell(m, t + 0.28 + i * 0.07, 0.4, { decay: 1.8, out: fxBus, rev: 0.5, echo: 0.25 }));
+  },
+
+  /** trocar de imagem é trocar de canal */
+  channel() {
+    if (!live()) return;
+    const t = ctx!.currentTime;
+    puff(t, "bandpass", 2400, 1800, 0.09, 0.04, { q: 1.2 });
+    tone(t + 0.02, 1400, 1700, 0.05, 0.02, { type: "square" });
+  },
+
+  /** a plataforma de salto: mola e um assobio subindo */
+  launch() {
+    if (!live()) return;
+    const t = ctx!.currentTime;
+    tone(t, 110, 520, 0.35, 0.09, { rev: 0.2 });
+    tone(t + 0.02, 500, 1900, 0.5, 0.035, { type: "triangle", rev: 0.4, echo: 0.3 });
+    puff(t, "bandpass", 300, 4200, 0.6, 0.04, { attack: 0.05, rev: 0.4 });
+  },
+
+  /** o tubo: sucção na entrada (um sopro que sobe por toda a viagem), estalo e sino na saída */
+  tube(kind: "in" | "out", dur = 3) {
+    if (!live()) return;
+    const t = ctx!.currentTime;
+    if (kind === "in") {
+      tone(t, 180, 900, 0.35, 0.06, { type: "triangle", rev: 0.3 });
+      puff(t, "bandpass", 300, 2600, Math.max(0.6, dur), 0.05, { attack: 0.25, q: 0.7, rev: 0.4 });
+      [79, 84, 91].forEach((m, i) => bell(m, t + 0.08 + i * 0.05, 0.3, { decay: 1, out: fxBus, rev: 0.4 }));
+    } else {
+      tone(t, 900, 260, 0.2, 0.06, { rev: 0.3 });
+      puff(t, "highpass", 2500, 5000, 0.08, 0.05);
+      [84, 88, 91, 96].forEach((m, i) => bell(m, t + 0.04 + i * 0.05, 0.4, { decay: 1.6, out: fxBus, rev: 0.5, echo: 0.3, pan: -0.3 + i * 0.2 }));
+    }
+  },
+
+  /** bolha estourando */
+  pop() {
+    if (!live()) return;
+    const t = ctx!.currentTime;
+    const f = rand(700, 1100);
+    tone(t, f, f * 2.6, 0.07, 0.07, { rev: 0.3 });
+    puff(t, "highpass", 3500, 6000, 0.04, 0.035);
+    bell(rand(88, 96) | 0, t + 0.03, 0.25, { decay: 0.6, out: fxBus, rev: 0.4 });
+  },
+
+  /** uma estrela achada: um arpejo que sobe com a contagem */
+  star(n: number) {
+    if (!live()) return;
+    const t = ctx!.currentTime;
+    const base = ROOM_NOTES[theme][0];
+    for (let i = 0; i <= Math.min(n, 7); i++) bell(base + [0, 2, 4, 7, 9, 12, 14, 16][i], t + i * 0.055, 0.5, { decay: 1.8, out: fxBus, rev: 0.5, echo: 0.3, pan: -0.5 + i * 0.14 });
+  },
+
+  /** as oito estrelas: fanfarra de sinos */
+  gold() {
+    if (!live()) return;
+    const t = ctx!.currentTime;
+    const chord = theme === "day" ? [60, 64, 67, 72, 76, 79, 84, 88, 91] : [56, 60, 63, 68, 72, 75, 80, 84, 87];
+    chord.forEach((m, i) => bell(m, t + i * 0.08, 0.7, { decay: 3.2, out: fxBus, rev: 0.7, echo: 0.4, pan: -0.7 + i * 0.17 }));
+    chord.slice(0, 4).forEach((m, i) => bell(m + 12, t + 0.9 + i * 0.16, 0.5, { decay: 2.8, out: fxBus, rev: 0.7, echo: 0.4 }));
+  },
+
+  /** respiração guiada: um sopro que sobe (inspira) ou desce (expira) */
+  breath(inhale: boolean) {
+    if (!live()) return;
+    const t = ctx!.currentTime;
+    puff(t, "bandpass", inhale ? 300 : 900, inhale ? 900 : 260, 4, 0.05, { attack: inhale ? 3.2 : 0.4, q: 0.5, rev: 0.6 });
+    bell(inhale ? 72 : 67, t, 0.3, { decay: 3.5, out: fxBus, rev: 0.7, ratio: 2.01 });
+  },
+
+  /** o minijogo: pegou, perdeu, acabou */
+  game(kind: "catch" | "gold" | "miss" | "over" | "start", combo = 0) {
+    if (!live()) return;
+    const t = ctx!.currentTime;
+    if (kind === "catch") tone(t, hz(76 + Math.min(combo, 12)), hz(83 + Math.min(combo, 12)), 0.08, 0.04, { type: "square", rev: 0.1 });
+    else if (kind === "gold") [84, 88, 91].forEach((m, i) => tone(t + i * 0.05, hz(m), hz(m), 0.07, 0.035, { type: "square", rev: 0.15 }));
+    else if (kind === "miss") tone(t, 220, 110, 0.18, 0.05, { type: "square" });
+    else if (kind === "start") [72, 76, 79, 84].forEach((m, i) => tone(t + i * 0.07, hz(m), hz(m), 0.08, 0.035, { type: "square" }));
+    else [79, 75, 72, 67].forEach((m, i) => tone(t + i * 0.12, hz(m), hz(m) * 0.98, 0.14, 0.04, { type: "square", rev: 0.2 }));
+  },
+
+  /** sentou no chão: um tum macio e um suspiro */
+  sit() {
+    if (!live()) return;
+    const t = ctx!.currentTime;
+    tone(t, 120, 70, 0.14, 0.05, { rev: 0.2 });
+    puff(t + 0.05, "lowpass", 900, 300, 0.5, 0.025, { attack: 0.12, rev: 0.4 });
+  },
+
+  /** a fala dos NPCs: bipes curtos, um por sílaba, na nota de cada um */
+  talk(voice: number, chars: number) {
+    if (!live()) return;
+    const t = ctx!.currentTime;
+    const n = Math.min(14, Math.max(2, Math.round(chars / 3)));
+    const steps = [0, 2, 4, 5, 7, 9, 12];
+    for (let i = 0; i < n; i++) {
+      const m = voice + steps[(Math.random() * steps.length) | 0];
+      tone(t + i * 0.062, hz(m), hz(m) * rand(0.94, 1.08), 0.05, 0.022, { type: i % 3 ? "triangle" : "square", rev: 0.12, pan: rand(-0.15, 0.15) });
+    }
+  },
+
+  /** ambiências de lugar, chamadas todo quadro com a proximidade (0 a 1) */
+  ambience(waterLevel: number, windLevel: number) {
+    if (!ctx || !waterGain) return;
+    if (!live()) { waterLevel = 0; windLevel = 0; }
+    const now = ctx.currentTime;
+    if (Math.abs(waterLevel - lastWater) > 0.02) {
+      waterGain.gain.setTargetAtTime(waterLevel * 0.09, now, 0.3);
+      lastWater = waterLevel;
+    }
+    if (Math.abs(windLevel - lastWind) > 0.02) {
+      windGain.gain.setTargetAtTime(windLevel * 0.06, now, 0.4);
+      lastWind = windLevel;
+    }
+    // bolhas estourando de vez em quando
+    if (waterLevel > 0.2 && Math.random() < waterLevel * 0.02) {
+      const f = rand(380, 700);
+      tone(now, f, f * 2.2, 0.07, 0.03 * waterLevel, { rev: 0.4, pan: rand(-0.4, 0.4) });
+    }
+    // e um brilho no vento
+    if (windLevel > 0.3 && Math.random() < windLevel * 0.006) bell(rand(88, 98) | 0, now, 0.18, { decay: 1.6, out: fxBus, rev: 0.7, echo: 0.4, pan: rand(-0.6, 0.6) });
   },
 
   land(k: number) {

@@ -1,8 +1,21 @@
+export interface Shot {
+  src: string;
+  caption: string;
+}
+
+export interface Section {
+  title: string;
+  items: string[];
+}
+
 export interface Project {
   id: string;
   title: string;
   kind: string;
   year: string;
+  /** o mês, quando existe, para a ficha do caso completo */
+  date: string;
+  service: string;
   client: string;
   industry: string;
   tagline: string;
@@ -13,11 +26,13 @@ export interface Project {
   color: string;
   link?: string;
   /**
-   * Imagens do caso, em ordem. Coloque os arquivos em `public/work/<id>/`
-   * e liste aqui só o caminho, por exemplo "/work/acronos/01.webp".
-   * O painel mostra a primeira como capa e as outras logo abaixo.
+   * Imagens do caso, em ordem, com legenda. Os arquivos ficam em
+   * `public/work/<id>/`. A placa mostra a primeira como capa; o caso
+   * completo mostra todas, em tamanho grande.
    */
-  images?: string[];
+  images?: Shot[];
+  /** blocos do caso completo: pilares, etapas, entregas */
+  sections?: Section[];
 }
 
 /* ============================================================
@@ -38,6 +53,8 @@ export const PROJECTS: Project[] = [
     title: "Acompanha",
     kind: "Produto",
     year: "2025–2026",
+    date: "2025 a 2026",
+    service: "Design de produto",
     client: "Acompanha",
     industry: "Materiais de construção",
     tagline: "SaaS que mostra pra lojas de material de construção se elas estão comprando bem.",
@@ -48,12 +65,25 @@ export const PROJECTS: Project[] = [
     role: "Design de produto",
     stack: ["Figma"],
     color: "#ff6a2b",
+    sections: [
+      {
+        title: "O que eu desenhei",
+        items: [
+          "Telas e fluxos principais, hoje em desenvolvimento",
+          "A tela de produto, refeita várias vezes até chegar numa coluna única com indicadores de confiança nos dados",
+          "O motor de créditos da Reforma Tributária, com um simulador editável na própria tela",
+          "O módulo de Educação",
+        ],
+      },
+    ],
   },
   {
     id: "acronos",
     title: "Acronos",
     kind: "Interface",
     year: "2025",
+    date: "Fevereiro de 2025",
+    service: "Design system",
     client: "Área Central",
     industry: "Software",
     tagline: "Sistema de design para consistência entre os produtos digitais da Área Central.",
@@ -65,12 +95,38 @@ export const PROJECTS: Project[] = [
     stack: ["Figma", "Design tokens"],
     color: "#3d5bff",
     link: "https://acronosds.framer.website",
+    images: [
+      { src: "/work/acronos/01.jpg", caption: "A documentação do Acronos DS: navegação lateral com styleguides e componentes, e atalhos para os mais usados." },
+      { src: "/work/acronos/02.jpg", caption: "A página Sobre explica por que o sistema existe e o que ele resolve para os times." },
+    ],
+    sections: [
+      {
+        title: "Os quatro pilares",
+        items: [
+          "Consistência: uma identidade visual só, entre todos os produtos",
+          "Velocidade: componentes reutilizáveis e documentados aceleram o desenvolvimento",
+          "Acessibilidade: interfaces inclusivas, alinhadas aos padrões",
+          "Escalabilidade: o sistema cresce junto com as plataformas",
+        ],
+      },
+      {
+        title: "O que tem dentro",
+        items: [
+          "Styleguides de cor, tipografia, espaçamento e efeitos",
+          "Componentes de navegação, formulário, avatar, avisos, botões e categorias",
+          "Foco em produtos SaaS, pensado mobile-first",
+          "Changelog e acesso direto ao arquivo no Figma",
+        ],
+      },
+    ],
   },
   {
     id: "sendeski",
     title: "Sendeski Café",
     kind: "Produto",
     year: "2025",
+    date: "Junho de 2025",
+    service: "Protótipo",
     client: "Sendeski Café",
     industry: "Café gourmet",
     tagline: "Site para uma marca de café gourmet brasileira, construído em torno do produto.",
@@ -81,12 +137,36 @@ export const PROJECTS: Project[] = [
     role: "Web design",
     stack: ["Framer"],
     color: "#c07a3e",
+    images: [
+      { src: "/work/sendeski/01.jpg", caption: "A home abre com o ritual do café: foto de produto em tela cheia e tipografia serifada." },
+      { src: "/work/sendeski/02.jpg", caption: "A página de produto, com variações de tamanho, preço e selos de qualidade logo abaixo da compra." },
+    ],
+    sections: [
+      {
+        title: "Pesquisa e descoberta",
+        items: [
+          "Análise de concorrentes locais e internacionais de café gourmet",
+          "Tendências de design minimalista e storytelling visual para produtos premium",
+          "Persona: quem toma café gourmet e procura experiências autênticas e exclusivas",
+        ],
+      },
+      {
+        title: "Wireframes e arquitetura",
+        items: [
+          "Hierarquia clara, com produtos premium e promoções em destaque",
+          "Layout responsivo, pensado para desktop e mobile",
+          "Navegação simples entre produtos, loja online e a marca",
+        ],
+      },
+    ],
   },
   {
     id: "wf-odontologia",
     title: "WF Odontologia",
     kind: "Web",
     year: "2025",
+    date: "Março de 2025",
+    service: "Website",
     client: "WF Odontologia",
     industry: "Odontologia",
     tagline: "Landing page minimalista para uma clínica odontológica.",
@@ -98,12 +178,18 @@ export const PROJECTS: Project[] = [
     stack: ["Framer"],
     color: "#14c3a5",
     link: "https://wfodontologia.framer.website",
+    images: [
+      { src: "/work/wf-odontologia/01.jpg", caption: "A home: chamada curta, foto da equipe e um único botão de contato." },
+      { src: "/work/wf-odontologia/02.jpg", caption: "Quem atende e o que a clínica faz, com as especialidades em etiquetas." },
+    ],
   },
   {
     id: "traveldone",
     title: "TravelDone",
     kind: "Web",
     year: "2025",
+    date: "Março de 2025",
+    service: "Landing page",
     client: "MetaCumprida",
     industry: "Infoproduto",
     tagline: "Landing page para o infoproduto TravelDone, da MetaCumprida.",
@@ -115,12 +201,18 @@ export const PROJECTS: Project[] = [
     stack: ["Framer"],
     color: "#ff4fa3",
     link: "https://traveldone.framer.website",
+    images: [
+      { src: "/work/traveldone/01.jpg", caption: "O topo da landing page: a promessa, uma foto de família viajando e a chamada para começar." },
+      { src: "/work/traveldone/02.jpg", caption: "Quem está por trás do curso, com selos de prova: mais de 15 países e 15 anos viajando." },
+    ],
   },
   {
     id: "pf-advogados",
     title: "PF Advogados",
     kind: "Web",
     year: "2024",
+    date: "Janeiro de 2024",
+    service: "Website",
     client: "PF Advogados",
     industry: "Advocacia",
     tagline: "Site institucional para um escritório de advocacia.",
@@ -132,6 +224,10 @@ export const PROJECTS: Project[] = [
     stack: ["Framer"],
     color: "#7b5cff",
     link: "https://passigfirmino.adv.br",
+    images: [
+      { src: "/work/pf-advogados/01.jpg", caption: "A home vai direto à dor de quem chega: a suspensão da CNH, com contato por WhatsApp sempre à mão." },
+      { src: "/work/pf-advogados/02.jpg", caption: "Quem somos: a equipe, a especialidade em direito de trânsito e os valores do escritório." },
+    ],
   },
 ];
 
